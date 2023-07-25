@@ -22,17 +22,14 @@ hide_default_format = """
 st.markdown(hide_default_format, unsafe_allow_html=True)
 
 # Menu latéral 
-st.sidebar.image("new_logo_datascientest.png", width=100)
-st.sidebar.title("Recommandations musicales")
+st.sidebar.title("INTITULE DU CERTIFICAT - Research projet")
 st.sidebar.header("Menu")
-pages = ["Page d'accueil", "Présentation du projet", "Jeux de données", "Visualisations", "Modélisation", "Bilan", "Recommandations musicales"]
+pages = ["Home page", "Introduction", "Datasets", "Data visualizations", "Data modeling", "Conclusion", "Recommendation systems"]
 page = st.sidebar.radio("", options = pages)
 
-st.sidebar.header("Auteurs")
+st.sidebar.header("Author")
 st.sidebar.markdown("""
-Anna Petit - [LinkedIn](https://www.linkedin.com/in/anna-poncova-petit-814a08207/)  
-Julie Le Rudulier - [LinkedIn](https://www.linkedin.com/in/julielerudulier/)   
-Kevin Martin - [LinkedIn](https://www.linkedin.com/in/kevin-martin-52b41a278/)
+Julie Le Rudulier - [LinkedIn](https://www.linkedin.com/in/julielerudulier/)  
 """) 
 
 # Gestion des images et des datasets
@@ -51,8 +48,8 @@ top15genres = pd.read_csv('top15genres.csv', index_col = 0)
 
 # Page d'accueil 
 if page == pages[0]: 
-    st.title("Recommandations musicales")
-    st.markdown("#### Prédire des titres de musique selon deux approches différentes de machine learning")
+    st.title("Research project: Music recommendation systems")
+    st.markdown("#### Predict songs accurately using 2 different Machine Learning algorithms")
     st.markdown("##")
     col1, col2, col3 = st.columns([1,5,1])
     with col1:
@@ -68,7 +65,7 @@ if page == pages[0]:
 
 # Page 1 - Présentation du projet
 if page == pages[1]: 
-    st.header("Présentation du projet")
+    st.header("Introduction")
     st.markdown("#### Objectif et contexte")
     tab01, tab02 = st.tabs(["Cadre du sujet", "Approche choisie"])
     with tab01:
