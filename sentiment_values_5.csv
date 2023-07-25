@@ -1,0 +1,6 @@
+,hashtag,vader_min,vader_max,vader_sum,vader_avg,afinn_min,afinn_max,afinn_sum,afinn_avg,ol_min,ol_max,ol_sum,ol_avg,ss_min,ss_max,ss_sum,ss_avg,no_name1,no_name2,no_name3,no_name4
+0,relaxtime,0.8,0.8,2.4,0.8,,,,,0.7375,0.7375,0.7375,0.7375,,,,,,,,
+1,melovechilicheese,0.8,0.8,0.8,0.8,,,,,0.9,0.9,0.9,0.9,1.0,1.0,1.0,1.0,0.8,0.8,0.8,0.8
+2,greatmusic,0.8,0.8,2.4,0.8,1.0,1.0,1.0,1.0,0.8875,0.8875,0.8875,0.8875,1.0,1.0,1.0,1.0,0.8,0.8,0.8,0.8
+3,rockballad,0.7,0.7,0.7,0.7,,,,,,,,,,,,,,,,
+4,amonamarth,0.3,0.3,0.3,0.3,,,,,,,,,0.0,0.0,0.0,0.0,,,,
