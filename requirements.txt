@@ -1,0 +1,10 @@
+matplotlib-inline==0.1.6
+numpy==1.24.1
+pandas==1.5.2
+pandas-datareader==0.10.0
+plotly==5.11.0
+scikit-learn==1.2.0
+scipy==1.10.0
+seaborn==0.12.2
+streamlit==1.16.0
+streamlit-option-menu==0.3.2
