@@ -187,7 +187,7 @@ if page == pages[3]:
                                                                                     weights = top10artists["Popularity (mean)"]))
                 st.plotly_chart(fig_top10artists, theme = "streamlit")
                 st.write("This visualization shows that artists who have the most songs in the dataset, such as The Beatles with a total of 279 tracks for instance, have very low popularity values: 0.5 on average for Ella Fitzgerald, 1 for Stevie Wonder...")
-                st.markdown("**We do not know how this dataset was constructed but this visualization seems to support our primary analysis: artists with the highest values of popularity are underrepresented in the dataset to the detriment of artists with low ratings.**")
+                st.markdown("We do not know how this dataset was constructed but this visualization seems to support our primary analysis: **artists with the highest values of popularity are underrepresented in the dataset to the detriment of artists with low ratings.**")
                 st.write("This could limit our results if our system was partly based on popularity.")
                 st.write("")
                 with st.expander("View source code", expanded = False):
