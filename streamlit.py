@@ -21,19 +21,6 @@ hide_default_format = """
        """
 st.markdown(hide_default_format, unsafe_allow_html=True)
 
-st.markdown(
-    """
-    <style>
-    .css-1jc7ptx, .e1ewe7hr3, .viewerBadge_container__1QSob,
-    .styles_viewerBadge__1yB5_, .viewerBadge_link__1S137,
-    .viewerBadge_text__1JaDK {
-        display: none;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
 # Gestion des images et des datasets
 image = Image.open('target.png')
 flimage = ImageOps.mirror(image)
@@ -52,7 +39,7 @@ top15genres = pd.read_csv('top15genres.csv', index_col = 0)
 
 # Menu latéral 
 st.sidebar.image("logo_mines.png", output_format = "PNG", width = 200)
-st.sidebar.header("Music recommendations - Research projet")
+st.sidebar.header("[NAME OF CERTIFICATE] - Research projet")
 st.sidebar.header("Menu")
 pages = ["Home page", "Introduction", "Datasets", "Data visualizations", "Data modeling", "Conclusion", "Recommendation system"]
 page = st.sidebar.radio("Select a page", options = pages)
@@ -114,7 +101,7 @@ if page == pages[2]:
     tabDS1, tabDS2, tabDS3, tabDS4, tabDS5 = st.tabs(['Dataset #1', 'Dataset #2', 'Dataset #3', 'Dataset #4', 'Dataset #5'])
     with tabDS1:   
         st.markdown("##### Dataset #1: 'Dataset'")
-        st.write("The first dataset is titled 'Dataset'. It is a dataset of Spotify tracks over a range of 125 different music genres, associated with multiple audio features such as the tracks' tempo, their mode, valence, danceability, liveness...") 
+        st.write("The first dataset is titled 'Dataset'. It is a dataset of Spotify tracks over a range of 125 different music genres, associated with multiple audio features such as the tracks' tempo, their mode, valence, danceability, liveness... While we have no information regarding the release date of the songs in this dataset, it seems to contain tracks from past and present time.") 
         st.write("There are 20 original columns in this dataset - 14 numeric variables, 5 categorial variables and 1 Boolean variable - and 114 000 rows. Its size is 20.12Mo. This dataset is avaible on [Kaggle](https://www.kaggle.com/datasets/maharshipandya/-spotify-tracks-dataset).")
         st.write("First 5 rows of the dataset:")
         dataset_5 = pd.read_csv("dataset_5.csv", index_col = 0)
@@ -155,35 +142,35 @@ if page == pages[2]:
        
 # Page 3 - Data visualizations
 if page == pages[3]:
-    st.header("Visualisations")
-    tab_top, tab_correlations, tab_linearite = st.tabs(["Classements et répartitions des valeurs", "Corrélations", "Linéarité"])
+    st.header("Data visualizations")
+    tab_top, tab_correlations, tab_linearite = st.tabs(["Data distribution", "Correlation", "Linearity"])
     with tab_top:
-        tab1, tab2, tab3 = st.tabs(["Artistes", "Morceaux", "Genres musicaux"])
+        tab1, tab2, tab3 = st.tabs(["Artists", "Songs", "Music genres"])
         with tab1:
-            tab111, tab222 = st.tabs(["Top 15 des artistes les plus populaires", "Top 10 des artistes les plus présents dans notre dataset"])
+            tab111, tab222 = st.tabs(["Most popular artists in dataset", "Artists with most songs in dataset"])
             with tab111:
-                st.markdown("#### Top 15 des artistes les plus populaires")
+                st.markdown("#### Top 15 most popular artists")
                 fig_top15artists = px.area(top15artists, 
-                                           x = "Popularité moyenne", 
-                                           y = "Artistes", 
-                                           color = "Genres musicaux", 
-                                           line_group = "Nombre total de morceaux")
+                                           x = "Popularity (mean)", 
+                                           y = "Artists", 
+                                           color = "Genres", 
+                                           line_group = "Number of songs in dataset")
                 fig_top15artists.update_yaxes(autorange = "reversed")
                 fig_top15artists.update_xaxes(showgrid = False)
                 fig_top15artists.update_yaxes(showgrid = False)
                 st.plotly_chart(fig_top15artists, theme = "streamlit")
-                st.write("Ce graphique révèle une grande diversité parmi les artistes les plus populaires, s'agissant des genres musicaux qui leur correspondent, ou encore de leur pays d'origine (Espagne, Argentine, Écosse, Angleterre, Chili, États-Unis...).")
-                st.write("En revanche, ces artistes ont seulement 2 morceaux en moyenne dans notre jeu de données.")
-                st.markdown("**Les artistes les plus populaires ne semblent pas être beaucoup représentés dans notre dataset ; nous avons donc souhaité savoir quel était le niveau de popularité des artistes les plus présents dans notre jeu de données.**")
-                st.write("Dans la mesure où nos recommandations vont s'appuyer sur la similarité des contenus et la popularité, il est important que nous ayons une bonne compréhension de la composition de notre jeu de données à cet égard.")
+                st.write("This visualization shows that the most popular artists come from all around the world: Spain, Argentina, Scotland, England, Chile, the United States...")
+                st.write("However it appears that these artists only have 2 songs on average in the dataset.")
+                st.markdown("**The most popular artists seem to be underrepresented in our dataset.**")
+                st.write("Our system's recommendations will be based on content similary between tracks, but popularity could be a secondary factor in our final ranking of similar songs. For that matter, it is important that we have a clear understanding of the distribution of the variables. Creating a visualization of artists who have the most songs in our dataset will help us do that.")
                 st.write("")
-                with st.expander("Voir le code", expanded = False):
+                with st.expander("View source code", expanded = False):
                     code = '''
                     fig_top15artists = px.area(top15artists, 
-                    x = "Popularité moyenne",
-                    y = "Artistes", 
-                    color = "Genre", 
-                    line_group = "Nombre total de morceaux")
+                    x = "Popularity (mean)", 
+                    y = "Artists", 
+                    color = "Genres", 
+                    line_group = "Number of songs in dataset")
                     fig_top15artists.update_yaxes(autorange = "reversed")
                     fig_top15artists.update_xaxes(showgrid = False)
                     fig_top15artists.update_yaxes(showgrid = False)
@@ -191,26 +178,25 @@ if page == pages[3]:
                     st.code(code, language = 'python')
 
             with tab222:
-                st.markdown("#### Top 10 des artistes les plus présents dans notre dataset")
+                st.markdown("#### Top 10 artists with most songs in dataset")
                 fig_top10artists = px.treemap(top10artists,
-                                            path = [px.Constant("Top 10 des artistes ayant le plus de morceaux dans le jeu de données"), 'Artistes', "Nombre total de morceaux", "Genres musicaux"], values = 'Nombre total de morceaux',
-                                            color = "Popularité moyenne", hover_data = ["Popularité moyenne"], 
+                                            path = [px.Constant("Top 10 artists with most songs"), 'Artists', "Number of songs in dataset", "Genres"], values = 'Number of songs in dataset',
+                                            color = "Popularity (mean)", hover_data = ["Popularity (mean)"], 
                                             color_continuous_scale = 'RdBu',
-                                            color_continuous_midpoint = np.average(top10artists['Popularité moyenne'], 
-                                                                                    weights = top10artists['Popularité moyenne']))
+                                            color_continuous_midpoint = np.average(top10artists["Popularity (mean)"], 
+                                                                                    weights = top10artists["Popularity (mean)"]))
                 st.plotly_chart(fig_top10artists, theme = "streamlit")
-                st.write("Nous constatons ici une tendance complètement contraire à celle observée avec le précédent graphique : les artistes ayant le plus de morceaux dans notre dataset (279 au total pour les Beatles par exemple) ont pour la plupart des notes de popularité très basses : 0,5 en moyenne pour Ella Fitzgerald, 1 pour Stevie Wonder.")
-                st.write("Les genres musicaux auxquels correspondent ces artistes semblent également être plus spécifiques et un peu moins grand public que la pop, le rock et encore le hip-hop : psych-rock, grunge, honky-tonk, indian, goth...")
-                st.markdown("**Nous ne savons pas comment a été constitué notre dataset principal mais cette visualisation confirme notre hypothèse selon laquelle les artistes les plus populaires, sur lesquelles nous allons faire reposer nos recommandations en priorité, semblent être sous-représentés dans notre jeu de données.**")
-                st.write("Cela risque de limiter davatange nos possibilités de recommandations.")
+                st.write("This visualization shows that artists who have the most songs in the dataset, such as The Beatles with a total of 279 tracks for instance, have very low popularity values: 0.5 on average for Ella Fitzgerald, 1 for Stevie Wonder...")
+                st.markdown("**We do not know how this dataset was constructed but this visualization seems to support our primary analysis: artists with the highest values of popularity are underrepresented in the dataset to the detriment of artists with low ratings.**")
+                st.write("This could limit our results if our system was partly based on popularity.")
                 st.write("")
-                with st.expander("Voir le code", expanded = False):
+                with st.expander("View source code", expanded = False):
                     code = '''fig_top10artists = px.treemap(top10artists,
-                                            path = [px.Constant("Top 10 des artistes ayant le plus de morceaux dans le jeu de données"), 'Artistes', "Nombre total de morceaux", "Genres musicaux"], values = 'Nombre total de morceaux',
-                                            color = "Popularité moyenne", hover_data = ["Popularité moyenne"], 
+                                            path = [px.Constant("Top 10 artists with most songs"), 'Artists', "Number of songs in dataset", "Genres"], values = 'Number of songs in dataset',
+                                            color = "Popularity (mean)", hover_data = ["Popularity (mean)"], 
                                             color_continuous_scale = 'RdBu',
-                                            color_continuous_midpoint = np.average(top10artists['Popularité moyenne'], 
-                                                                                    weights = top10artists['Popularité moyenne']))
+                                            color_continuous_midpoint = np.average(top10artists["Popularity (mean)"], 
+                                                                                    weights = top10artists["Popularity (mean)"]))
                 st.plotly_chart(fig_top10artists, theme = "streamlit")'''
                     st.code(code, language = 'python')
 
