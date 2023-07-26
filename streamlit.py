@@ -13,14 +13,6 @@ import graphviz
 import plotly.express as px
 
 # Masquage du footer 
-hide_streamlit_style = """
-            <style>
-            [data-testid="stToolbar"] {visibility: hidden !important;}
-            footer {visibility: hidden !important;}
-            </style>
-            """
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
-
 hide_default_format = """
        <style>
        #MainMenu {visibility: hidden; }
@@ -52,7 +44,6 @@ top15titres = pd.read_csv('top15titres.csv', index_col = 0)
 top15genres = pd.read_csv('top15genres.csv', index_col = 0)
 
 # Menu latéral 
-st.sidebar.image("logo_mines.png", output_format = "PNG")
 st.sidebar.image("logo_mines.png", output_format = "PNG", width = 200)
 st.sidebar.header("Music recommendations - Research projet")
 st.sidebar.header("Menu")
