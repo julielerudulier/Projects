@@ -13,6 +13,14 @@ import graphviz
 import plotly.express as px
 
 # Masquage du footer 
+hide_streamlit_style = """
+            <style>
+            [data-testid="stToolbar"] {visibility: hidden !important;}
+            footer {visibility: hidden !important;}
+            </style>
+            """
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+
 hide_default_format = """
        <style>
        #MainMenu {visibility: hidden; }
@@ -38,6 +46,7 @@ top15titres = pd.read_csv('top15titres.csv', index_col = 0)
 top15genres = pd.read_csv('top15genres.csv', index_col = 0)
 
 # Menu latéral 
+st.sidebar.image("logo_mines.png", output_format = "PNG")
 st.sidebar.image("logo_mines.png", output_format = "PNG", width = 200)
 st.sidebar.header("Music recommendations - Research projet")
 st.sidebar.header("Menu")
@@ -91,52 +100,51 @@ if page == pages[1]:
         st.write("One of the initial objectives of this project will be to determine which attributes are essential to provide effective similarity between tracks, through the degree of linearity or correlation of the songs' features or automatic feature selection.")
         st.write("Once key features will be identified, the main objective will be to design a system with very specific instructions so that it provides users with the most accurate recommendations possible, considering the datasets used for this project are only a small part of far more comprehensive datasets.") 
         st.write("Allowing users to rate the recommendations and save their ratings in a database was not in the scope of this project.")
-        
-        
+            
 # Page 2 - Datasets
 if page == pages[2]: 
     st.header("Datasets")
-    st.write("Five datasets were made available to carry out this project, including data such as : \n- Information and attributes of songs played on Spotify; \n- Hashtags published on Twitter by users who were listening to music; \n- Hashtags published on Twitter and their aggregate sentiment values, assessed through multiple sentiment dictionaries.") 
+    st.write("Five datasets were made available to carry out this project, including data such as: \n- Information and attributes of songs played on Spotify; \n- Hashtags published on Twitter by users who were listening to music; \n- Hashtags published on Twitter and their aggregate sentiment values, assessed through multiple sentiment dictionaries.") 
     st.markdown("###")
 
     tabDS1, tabDS2, tabDS3, tabDS4, tabDS5 = st.tabs(['Dataset #1', 'Dataset #2', 'Dataset #3', 'Dataset #4', 'Dataset #5'])
     with tabDS1:   
-        st.markdown("##### Dataset #1 : 'Dataset'")
-        st.write("The first dataset is titled “Dataset”. It is a dataset of Spotify tracks over a range of 125 different music genres, associated with multiple audio features of the tracks, such as their tempo, mode, valence, danceability, liveness...") 
-        st.write("Ce dataset contient 20 colonnes et 114 000 lignes, pour un poids total de 20,12 Mo. Il est composé de 14 variables numériques, 5 variables catégorielles et une variable booléenne.")         
-        st.write("Aperçu du dataset :")
+        st.markdown("##### Dataset #1: 'Dataset'")
+        st.write("The first dataset is titled 'Dataset'. It is a dataset of Spotify tracks over a range of 125 different music genres, associated with multiple audio features such as the tracks' tempo, their mode, valence, danceability, liveness...") 
+        st.write("There are 20 original columns in this dataset - 14 numeric variables, 5 categorial variables and 1 Boolean variable - and 114 000 rows. Its size is 20.12Mo. This dataset is avaible on [Kaggle](https://www.kaggle.com/datasets/maharshipandya/-spotify-tracks-dataset).")
+        st.write("First 5 rows of the dataset:")
         dataset_5 = pd.read_csv("dataset_5.csv", index_col = 0)
         st.dataframe(dataset_5)
 
     with tabDS2:
-        st.markdown("##### Dataset #2 : User Track Hashtag Timestamp")
-        st.write("Notre second dataset se nomme “User Track Hashtag Timestamp”. Il contient des informations relatives à des hashtags publiés sur Twitter lors d’écoute de morceaux de musique. Pour chaque publication sont définis un numéro d’identification du morceau écouté, un numéro d’identification de la personne qui écoute le morceau, le hashtag associé au morceau et/ou au post, ainsi que le jour et l’heure à laquelle a été publié le post par l’utilisateur.") 
-        st.write("Ce dataset contient 4 colonnes et 17 560 113 lignes, pour un poids total de 1,31 Go.")
-        st.write("Aperçu du dataset :")
+        st.markdown("##### Dataset #2: 'User_Track_Hashtag_Timestamp'")
+        st.write("The second dataset is titled 'User Track Hashtag Timestamp'. It contains basic information on 11.6 million music listening events of 139K users and 346K tracks collected from Twitter.") 
+        st.write("There are 4 original columns and 17,560,113 rows in this dataset. Its size is 1.31Go. This dataset is avaible on [Kaggle](https://www.kaggle.com/datasets/chelseapower/nowplayingrs?select=user_track_hashtag_timestamp.csv).")
+        st.write("First 5 rows of the dataset:")
         utht_5 = pd.read_csv("user_track_hashtag_timestamp_5.csv", index_col = 0)
         st.dataframe(utht_5)
         
     with tabDS3:
-        st.markdown("##### Dataset #3 : Sentiment Values")
-        st.write("Notre troisième dataset se nomme “Sentiment Values”. Il contient des informations relatives aux sentiments exprimés sur Twitter par l’intermédiaire de hashtags. Les données comprennent les hashtags eux-mêmes, ainsi que les sentiments associés, définis selon 4 dictionnaires de sentiments différents. Pour chacun de ces dictionnaires ont été listés le minimum, maximum, la somme et la moyenne de tous les sentiments exprimés pour un même hashtag existant.") 
-        st.write("Ce dataset contient 21 colonnes et 5 290 lignes, pour un poids total de 382 Ko.")
-        st.write("Aperçu du dataset :")
+        st.markdown("##### Dataset #3: 'Sentiment_Values'")
+        st.write("The third dataset is titled 'Sentiment Values'. It is linked to the second and fourth datasets and the 11.6 million music listening events, and contains sentiment information for hashtags. It contains the hashtag itself and the sentiment values gathered via four different sentiment dictionaries: AFINN, Opinion Lexicon, Sentistrength Lexicon and vader. For each of these dictionaries, the minimum, maximum, sum and average of all sentiments of the tokens of the hashtag were listed if available.") 
+        st.write("There are 21 original columns and et 5,290 rows in this dataset. Its size is 382Ko. This dataset is avaible on [Kaggle](https://www.kaggle.com/datasets/chelseapower/nowplayingrs?select=user_track_hashtag_timestamp.csv).")
+        st.write("First 5 rows of the dataset:")
         sentiment_5 = pd.read_csv("sentiment_values_5.csv", index_col = 0)
         st.dataframe(sentiment_5)
 
         with tabDS4:
-            st.markdown("##### Dataset #4 : Context Content Features")
-            st.write("Notre quatrième dataset se nomme “Context Content Features”. Chaque ligne de ce dataset correspond aux informations techniques de morceaux de musique ayant fait l'objet d'un ou plusieurs tweets. Ce jeu de données contient également les informations de localisation (si elles existent), de langue et de timing des tweets.") 
-            st.write("Ce dataset contient 22 colonnes et 11 614 671 lignes, pour un poids total de 2,21 Go.")
-            st.write("Aperçu du dataset :")
+            st.markdown("##### Dataset #4: 'Context_Content_Features'")
+            st.write("The fourth dataset is titled 'Context Content Features'. It contains all context and content features of the 11.6 million music listening events on Twitter. For each listening event, the id of the event, user_id, track_id, artist_id, and content features regarding the track mentioned in the event were listed. Content features include instrumentalness, liveness, speechiness... Context features regarding the listening event such as the language of the tweet were also listed in this dataset.") 
+            st.write("There are 22 original columns and 11,614,671 rows in this dataset. Its size is 2.21Go. This dataset is avaible on [Kaggle](https://www.kaggle.com/datasets/chelseapower/nowplayingrs?select=user_track_hashtag_timestamp.csv).")
+            st.write("First 5 rows of the dataset:")
             ccf_5 = pd.read_csv("ccf_reduit_5.csv", index_col = 0)
             st.dataframe(ccf_5)
 
     with tabDS5:
-        st.markdown("##### Dataset #5 : Module4 Cleaned")
+        st.markdown("##### Dataset #5: 'Module4 Cleaned'")
         st.write("Notre cinquième et dernier dataset se nomme 'Module4 Cleaned'. Ce jeu de données regroupe en fait les datasets 'Sentiment Values', 'User Track Hashtag Timestamp' et 'Context Content Features'. Chacun de ces datasets a été préalablement nettoyé, certaines colonnes ont été supprimées ou renommées, d’autres regroupées.") 
         st.write("Nous avons décidé de ne pas utiliser ce dataset, car nous ne connaissions pas l’approche méthodologique selon laquelle il a été constitué. Dans la mesure où nous disposons des trois datasets originaux à partir desquels ce jeu de données a été conçu, nous avons préféré faire nos regroupements de données nous-mêmes, dans d'autres datasets.")
-        st.write("Aperçu du dataset :")
+        st.write("First 5 rows of the dataset:")
         module4_5 = pd.read_csv("module4_cleaned_5.csv", index_col = 0)
         st.dataframe(module4_5)
         st.divider()
