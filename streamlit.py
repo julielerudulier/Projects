@@ -29,6 +29,12 @@ hide_default_format = """
        """
 st.markdown(hide_default_format, unsafe_allow_html=True)
 
+hide_github_icon = “”"
+
+.css-1jc7ptx, .e1ewe7hr3, .viewerBadge_container__1QSob, .styles_viewerBadge__1yB5_, .viewerBadge_link__1S137, .viewerBadge_text__1JaDK{ display: none; } #MainMenu{ visibility: hidden; } footer { visibility: hidden; } header { visibility: hidden; }
+“”"
+st.markdown(hide_github_icon, unsafe_allow_html=True)
+
 # Gestion des images et des datasets
 image = Image.open('target.png')
 flimage = ImageOps.mirror(image)
@@ -86,7 +92,7 @@ if page == pages[1]:
     with tab1:
         st.markdown("##### Project context")
         st.write("The aim of this project is to recommend songs accurately to users, based on data retrieved from Spotify and Twitter.")
-        st.write("This project started in January 2023. A paper on data cleaning and exploration was handed in to Faculty members on March 10th. This paper also included data visualizations and a primary analysis of trends in data. A second paper on data modeling was handed in to Faculty members in May.")
+        st.write("This project started in January 2023. A paper on data cleansing and exploration was handed in to Faculty members on March 10th. This paper also included data visualizations and a primary analysis of trends in data. A second paper on data modeling was handed in to Faculty members in May.")
         st.write("The final essay was handed to Faculty members in June, while the outcomes of this project as well as the recommendation system were presented to a jury on June 26th 2023.")
     with tab2:    
         st.markdown("##### Approach")
@@ -132,25 +138,24 @@ if page == pages[2]:
         sentiment_5 = pd.read_csv("sentiment_values_5.csv", index_col = 0)
         st.dataframe(sentiment_5)
 
-        with tabDS4:
-            st.markdown("##### Dataset #4: 'Context_Content_Features'")
-            st.write("The fourth dataset is titled 'Context Content Features'. It contains all context and content features of the 11.6 million music listening events on Twitter. For each listening event, the id of the event, user_id, track_id, artist_id, and content features regarding the track mentioned in the event were listed. Content features include instrumentalness, liveness, speechiness... Context features regarding the listening event such as the language of the tweet were also listed in this dataset.") 
-            st.write("There are 22 original columns and 11,614,671 rows in this dataset. Its size is 2.21Go. This dataset is avaible on [Kaggle](https://www.kaggle.com/datasets/chelseapower/nowplayingrs?select=user_track_hashtag_timestamp.csv).")
-            st.write("First 5 rows of the dataset:")
-            ccf_5 = pd.read_csv("ccf_reduit_5.csv", index_col = 0)
-            st.dataframe(ccf_5)
+    with tabDS4:
+        st.markdown("##### Dataset #4: 'Context_Content_Features'")
+        st.write("The fourth dataset is titled 'Context Content Features'. It contains all context and content features of the 11.6 million music listening events on Twitter. For each listening event, the id of the event, user_id, track_id, artist_id, and content features regarding the track mentioned in the event were listed. Content features include instrumentalness, liveness, speechiness... Context features regarding the listening event such as the language of the tweet were also listed in this dataset.") 
+        st.write("There are 22 original columns and 11,614,671 rows in this dataset. Its size is 2.21Go. This dataset is avaible on [Kaggle](https://www.kaggle.com/datasets/chelseapower/nowplayingrs?select=user_track_hashtag_timestamp.csv).")
+        st.write("First 5 rows of the dataset:")
+        ccf_5 = pd.read_csv("ccf_reduit_5.csv", index_col = 0)
+        st.dataframe(ccf_5)
 
     with tabDS5:
         st.markdown("##### Dataset #5: 'Module4 Cleaned'")
-        st.write("Notre cinquième et dernier dataset se nomme 'Module4 Cleaned'. Ce jeu de données regroupe en fait les datasets 'Sentiment Values', 'User Track Hashtag Timestamp' et 'Context Content Features'. Chacun de ces datasets a été préalablement nettoyé, certaines colonnes ont été supprimées ou renommées, d’autres regroupées.") 
-        st.write("Nous avons décidé de ne pas utiliser ce dataset, car nous ne connaissions pas l’approche méthodologique selon laquelle il a été constitué. Dans la mesure où nous disposons des trois datasets originaux à partir desquels ce jeu de données a été conçu, nous avons préféré faire nos regroupements de données nous-mêmes, dans d'autres datasets.")
+        st.write("The fifth and last dataset is titled 'Module4 Cleaned'. It is a combination of the following datasets: 'Sentiment Values', 'User Track Hashtag Timestamp' and 'Context Content Features'. Data for each of these datasets were previously cleansed.") 
+        st.write("During the data exploration phase of this project, we were not entirely sure how we were going to process data in order to design our recommendation system. We thus decided to let this dataset aside and do the data cleansing process ourselves. As a result, this dataset was not used in this project.")
+        st.write("This dataset is available on [Kaggle](https://www.kaggle.com/code/chelseapower/module4-project/output).")
         st.write("First 5 rows of the dataset:")
         module4_5 = pd.read_csv("module4_cleaned_5.csv", index_col = 0)
         st.dataframe(module4_5)
-        st.divider()
-        st.write("Tous nos datasets sont accessibles librement sur le site [kaggle.com](https://kaggle.com/).", unsafe_allow_html=True)
-
-# Page 3 - Visualisations
+       
+# Page 3 - Data visualizations
 if page == pages[3]:
     st.header("Visualisations")
     tab_top, tab_correlations, tab_linearite = st.tabs(["Classements et répartitions des valeurs", "Corrélations", "Linéarité"])
