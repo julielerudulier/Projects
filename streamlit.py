@@ -323,8 +323,6 @@ if page == pages[3]:
                     plt.ylabel('Popularité globale', labelpad = 20, fontsize = 12);'''
                     st.code(code, language = 'python')
                 st.write("")
-                st.divider()
-                st.write("")
                 st.write("S'agissant du nombre de morceaux par famille de genres en revanche, le regroupement a pour effet une sur-représentation de certains genres comme les musiques du monde, ou le genre 'Divers'.")
                 st.write("Le graphique ci-dessous nous permet également de constater que certains genres parmi les plus populaires, comme le hip-hop ou la pop, restent globalement sous-représentés.")
                 fig_num_genres = px.scatter(numgenres,
