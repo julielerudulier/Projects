@@ -495,7 +495,7 @@ if page == pages[4]:
                 st.write("The range of the Silhouette value is between +1 and -1. A high value is desirable and indicates that the point is placed in the correct cluster. If many points have a negative Silhouette value, it may indicate that we have created too many or too few clusters.")
                 st.write("In our case, the Silhouette scores are close to 0 which indicates that our algorithm is not very efficient.")
                 st.write("The visualization also reveals that the highest Silhouette value is 7.")
-                st.divider()
+                st.write("")
                 st.write("To decide between the two values (8 as obtained with the KElbowVisualizer and 7 as obtained with the Silhouette score plot) we decided to display a Silhouette Plot for every value of k ranging from 6 to 10.")
                 st.write("")
                 tab_6, tab_7, tab_8, tab_9, tab_10 = st.tabs(["6 Clusters", "7 Clusters", "8 Clusters", "9 Clusters", "10 Clusters"])
