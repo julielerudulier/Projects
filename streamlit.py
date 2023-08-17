@@ -331,6 +331,7 @@ if page == pages[3]:
                     plt.ylabel('Popularity', labelpad = 20, fontsize = 12);'''
                     st.code(code, language = 'python')
                 st.write("")
+                st.write("")
                 st.write("However the visualization below reveals that despite being combined in larger categories, a lot of the most popular genres such as Pop and Hip-Hop still have less tracks in the dataset than other genres such as World music, which accounts for 13.2% of all tracks.")
                 fig_num_genres = px.scatter(numgenres,
                                            x = "Genres",
