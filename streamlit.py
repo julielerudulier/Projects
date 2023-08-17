@@ -41,7 +41,7 @@ top15genres = pd.read_csv('top15genres.csv', index_col = 0)
 st.sidebar.image("logo_mines.png", output_format = "PNG", width = 200)
 st.sidebar.header("[NAME OF CERTIFICATE] - Research projet")
 st.sidebar.header("Menu")
-pages = ["Home page", "Introduction", "Datasets", "Data visualizations", "Data modeling", "Conclusion", "Recommendation system"]
+pages = ["Home Page", "Introduction", "Datasets", "Data Visualizations", "Data Modeling", "Conclusion", "Recommendation System"]
 page = st.sidebar.radio("Select a page", options = pages)
 st.sidebar.header("Author")
 st.sidebar.markdown("""
@@ -51,7 +51,7 @@ st.sidebar.image(fliJLR, width = 100, output_format = "PNG")
 
 # Page d'accueil 
 if page == pages[0]: 
-    st.markdown("### Music recommendations: Recommending songs through two different Machine Learning algorithms")
+    st.markdown("### Music Recommendations: Recommending Songs Through Two Different Machine Learning Algorithms")
     st.markdown("##")
     col1, col2, col3 = st.columns([1,5,1])
     with col1:
@@ -73,36 +73,37 @@ if page == pages[0]:
 # Page 1 - Introduction
 if page == pages[1]: 
     st.header("Introduction")
-    tab1, tab2, tab3 = st.tabs(['Project context', 'Approach', 'Research objectives'])
+    tab1, tab2, tab3 = st.tabs(['Project Context', 'Approach', 'Research Objectives'])
     with tab1:
-        st.markdown("##### Project context")
+        st.markdown("##### Project Context")
         st.write("The aim of this project is to recommend songs accurately to users, based on data retrieved from Spotify and Twitter.")
-        st.write("This project started in January 2023. A paper on data cleansing and exploration was handed in to Faculty members on March 10th. This paper also included data visualizations and a primary analysis of trends in data. A second paper on data modeling was handed in to Faculty members in May.")
-        st.write("The final essay was handed to Faculty members in June, while the outcomes of this project as well as the recommendation system were presented to a jury on June 26th 2023.")
+        st.write("This project started in January 2023. A paper on data cleansing and exploration was handed in to Faculty members in March. This paper also included data visualizations and a primary analysis of trends in data. A second paper on data modeling was handed in in May.")
+        st.write("The final essay was handed in to Faculty members in June, while the outcomes of this project as well as the recommendation system were presented to a jury on June 26th, 2023.")
     with tab2:    
         st.markdown("##### Approach")
-        st.write("There are mainly four recommendation methods that are commonly used in music recommender systems: \n- Content-based filtering, \n- Context-based filtering, \n- Collaborative filtering, \n- And hybrid methods, which combine the other filtering methods and minimize the issues a single method can have.")
-        st.write("The former method was preferred to conduct this project. Most streaming platforms use collaborative filtering systems, sometimes combined with other algorithms. It thus seemed more interesting to design a different type of recommendation system that is not solely based on ratings, but rather that is based on technical features of songs.")
-        st.write("Recommender systems do not always provide the most accurate recommendations. To help improve users' satisfaction, we chose to design two different systems based on content analysis: \n - A system based on clustering; \n - A system based on a similarity matrix.")
-        st.write("The two algorithms will thus be able to recommend songs based on similar attributes that they share with the seed track, through two different methods and distance metrics. Both systems will operate simultaneously and each will recommend one song, so that users can pick the song they like the most.")
+        st.write("There are mainly four recommendation methods that are commonly used in music recommender systems: \n- Content-based filtering; \n- Context-based filtering; \n- Collaborative filtering; \n- And hybrid methods, which combine the other filtering methods and minimize the issues a single method can have.")
+        st.write("The former method was preferred to conduct this project. Indeed, most streaming platforms generally use collaborative filtering systems, sometimes combined with other algorithms. It thus seemed more interesting to design a system that is not based on ratings and reactions by similar users, but rather that is based on the similarity of the songs' technical features.")
+        st.write("Also, recommender systems do not always provide the most accurate recommendations. To help improve users' satisfactione we chose to build our system based on two different algorithms : \n - A clustering algorithm; \n - A similarity matrix.")
+        st.write("The two algorithms should return songs based on similar attributes that they share with a seed track, through two different methods and distance metrics. Both systems will operate simultaneously and each will recommend one song so that users can pick the song they like the most.")
     with tab3:   
-        st.markdown("##### Research objectives") 
+        st.markdown("##### Research Objectives") 
         st.write("In the music domain, content-based filtering ranks songs based on how similar they are to a seed song according to some similarity measure, which focuses on an objective distance between items and does not include any subjective factors. This makes it possible to recommend new items that do not have any user ratings associated with them.")    
-        st.write("One of the initial objectives of this project will be to determine which attributes are essential to provide effective similarity between tracks, through the degree of linearity or correlation of the songs' features or automatic feature selection.")
-        st.write("Once key features will be identified, the main objective will be to design a system with very specific instructions so that it provides users with the most accurate recommendations possible, considering the datasets used for this project are only a small part of far more comprehensive datasets.") 
-        st.write("Allowing users to rate the recommendations and save their ratings in a database was not in the scope of this project.")
+        st.write("As a result one of the initial objectives of this project will be to determine which attributes are essential to provide effective similarity between tracks, through the degree of linearity or correlation of the songs' features for instance, or through automatic feature selection.")
+        st.write("Once key features will be identified, the main objective will be to design a system with very specific instructions so that it provides users with the most accurate recommendations possible, considering the number of songs contained in the datasets of this project is rather small.") 
+        st.write("It should be noted that allowing users to rate the recommendations and save their ratings in a database was not in the scope of this project.")
             
 # Page 2 - Datasets
 if page == pages[2]: 
     st.header("Datasets")
-    st.write("Five datasets were made available to carry out this project, including data such as: \n- Information and attributes of songs played on Spotify; \n- Hashtags published on Twitter by users who were listening to music; \n- Hashtags published on Twitter and their aggregate sentiment values, assessed through multiple sentiment dictionaries.") 
+    st.write("Five datasets were made available to carry out this project with data such as: \n- Information and attributes of songs played on Spotify; \n- Hashtags published on Twitter by users who were listening to music; \n- The hashtags' aggregate sentiment values, assessed through multiple sentiment dictionaries.") 
+    st.write("After several unsuccessful attempts at creating relevant algorithms with the multiple datasets available, we established that our key variables were all contained in one dataset and we decided to focus our work on this one dataset only: the dataset #1")
     st.markdown("###")
 
     tabDS1, tabDS2, tabDS3, tabDS4, tabDS5 = st.tabs(['Dataset #1', 'Dataset #2', 'Dataset #3', 'Dataset #4', 'Dataset #5'])
     with tabDS1:   
         st.markdown("##### Dataset #1: 'Dataset'")
         st.write("The first dataset is titled 'Dataset'. It is a dataset of Spotify tracks over a range of 125 different music genres, associated with multiple audio features such as the tracks' tempo, their mode, valence, danceability, liveness... While we have no information regarding the release date of the songs in this dataset, it seems to contain tracks from past and present time.") 
-        st.write("There are 20 original columns in this dataset - 14 numeric variables, 5 categorial variables and 1 Boolean variable - and 114 000 rows. Its size is 20.12Mo. This dataset is avaible on [Kaggle](https://www.kaggle.com/datasets/maharshipandya/-spotify-tracks-dataset).")
+        st.write("There are 20 original columns in this dataset - 14 numeric variables, 5 categorial variables and 1 Boolean variable - and 114 000 rows. Its size is 20.12Mo. This dataset is available on [Kaggle](https://www.kaggle.com/datasets/maharshipandya/-spotify-tracks-dataset).")
         st.write("First 5 rows of the dataset:")
         dataset_5 = pd.read_csv("dataset_5.csv", index_col = 0)
         st.dataframe(dataset_5)
@@ -110,23 +111,23 @@ if page == pages[2]:
     with tabDS2:
         st.markdown("##### Dataset #2: 'User_Track_Hashtag_Timestamp'")
         st.write("The second dataset is titled 'User Track Hashtag Timestamp'. It contains basic information on 11.6 million music listening events of 139K users and 346K tracks collected from Twitter.") 
-        st.write("There are 4 original columns and 17,560,113 rows in this dataset. Its size is 1.31Go. This dataset is avaible on [Kaggle](https://www.kaggle.com/datasets/chelseapower/nowplayingrs?select=user_track_hashtag_timestamp.csv).")
+        st.write("There are 4 original columns and 17,560,113 rows in this dataset. Its size is 1.31Go. This dataset is available on [Kaggle](https://www.kaggle.com/datasets/chelseapower/nowplayingrs?select=user_track_hashtag_timestamp.csv).")
         st.write("First 5 rows of the dataset:")
         utht_5 = pd.read_csv("user_track_hashtag_timestamp_5.csv", index_col = 0)
         st.dataframe(utht_5)
         
     with tabDS3:
         st.markdown("##### Dataset #3: 'Sentiment_Values'")
-        st.write("The third dataset is titled 'Sentiment Values'. It is linked to the second and fourth datasets and the 11.6 million music listening events, and contains sentiment information for hashtags. It contains the hashtag itself and the sentiment values gathered via four different sentiment dictionaries: AFINN, Opinion Lexicon, Sentistrength Lexicon and vader. For each of these dictionaries, the minimum, maximum, sum and average of all sentiments of the tokens of the hashtag were listed if available.") 
-        st.write("There are 21 original columns and et 5,290 rows in this dataset. Its size is 382Ko. This dataset is avaible on [Kaggle](https://www.kaggle.com/datasets/chelseapower/nowplayingrs?select=user_track_hashtag_timestamp.csv).")
+        st.write("The third dataset is titled 'Sentiment Values'. It is linked to the 11.6 million music listening events listed in dataset #2 and contains hashtags and their associated sentiment values gathered via four different sentiment dictionaries: AFINN, Opinion Lexicon, Sentistrength Lexicon and Vader. For each of these dictionaries, the minimum, maximum, sum and average of all sentiments of the tokens of the hashtag were listed if available.") 
+        st.write("There are 21 original columns and 5,290 rows in this dataset. Its size is 382Ko. This dataset is available on [Kaggle](https://www.kaggle.com/datasets/chelseapower/nowplayingrs?select=user_track_hashtag_timestamp.csv).")
         st.write("First 5 rows of the dataset:")
         sentiment_5 = pd.read_csv("sentiment_values_5.csv", index_col = 0)
         st.dataframe(sentiment_5)
 
     with tabDS4:
         st.markdown("##### Dataset #4: 'Context_Content_Features'")
-        st.write("The fourth dataset is titled 'Context Content Features'. It contains all context and content features of the 11.6 million music listening events on Twitter. For each listening event, the id of the event, user_id, track_id, artist_id, and content features regarding the track mentioned in the event were listed. Content features include instrumentalness, liveness, speechiness... Context features regarding the listening event such as the language of the tweet were also listed in this dataset.") 
-        st.write("There are 22 original columns and 11,614,671 rows in this dataset. Its size is 2.21Go. This dataset is avaible on [Kaggle](https://www.kaggle.com/datasets/chelseapower/nowplayingrs?select=user_track_hashtag_timestamp.csv).")
+        st.write("The fourth dataset is titled 'Context Content Features'. It contains all context and content features of the 11.6 million Twitter music listening events. For each event, content features regarding the track mentioned in the tweet were listed, such as instrumentalness, liveness, speechiness... Context features regarding the listening event such as the language of the tweet were also listed in this dataset.") 
+        st.write("There are 22 original columns and 11,614,671 rows in this dataset. Its size is 2.21Go. This dataset is available on [Kaggle](https://www.kaggle.com/datasets/chelseapower/nowplayingrs?select=user_track_hashtag_timestamp.csv).")
         st.write("First 5 rows of the dataset:")
         ccf_5 = pd.read_csv("ccf_reduit_5.csv", index_col = 0)
         st.dataframe(ccf_5)
@@ -134,22 +135,25 @@ if page == pages[2]:
     with tabDS5:
         st.markdown("##### Dataset #5: 'Module4 Cleaned'")
         st.write("The fifth and last dataset is titled 'Module4 Cleaned'. It is a combination of the following datasets: 'Sentiment Values', 'User Track Hashtag Timestamp' and 'Context Content Features'. Data for each of these datasets were previously cleansed.") 
-        st.write("During the data exploration phase of this project, we were not entirely sure how we were going to process data in order to design our recommendation system. We thus decided to let this dataset aside and do the data cleansing process ourselves. As a result, this dataset was not used in this project.")
+        st.write("During the data exploration phase of this project, we were not entirely sure how we were going to process data in order to design our recommendation system. For that reason we decided to let this dataset aside and do the data cleansing process ourselves. As a result, this dataset was not used at all in this project.")
         st.write("This dataset is available on [Kaggle](https://www.kaggle.com/code/chelseapower/module4-project/output).")
         st.write("First 5 rows of the dataset:")
         module4_5 = pd.read_csv("module4_cleaned_5.csv", index_col = 0)
         st.dataframe(module4_5)
        
-# Page 3 - Data visualizations
+# Page 3 - Data Visualizations
 if page == pages[3]:
-    st.header("Data visualizations")
-    tab_top, tab_correlations, tab_linearite = st.tabs(["Data distribution", "Correlation", "Linearity"])
+    st.header("Data Visualizations")
+    st.write("Using visual elements like charts and graphs will provide us with an accessible way to see and understand trends, outliers, and patterns in our data. Furthermore, capturing the distribution of key variables will allow us to understand critical statistical properties of the data we will work with, and it will help us make educated data-driven decisions on key outcomes when designing our recommendation system.")
+    tab_top, tab_correlations, tab_linearite = st.tabs(["Trends in Data", "Correlation", "Linearity"])
     with tab_top:
-        tab1, tab2, tab3 = st.tabs(["Artists", "Songs", "Music genres"])
+        tab1, tab2, tab3 = st.tabs(["Artists", "Songs", "Music Genres"])
         with tab1:
-            tab111, tab222 = st.tabs(["Most popular artists in dataset", "Artists with most songs in dataset"])
+            tab111, tab222 = st.tabs(["Most Popular Artists In Dataset", "Artists With Most Songs In Dataset"])
             with tab111:
-                st.markdown("#### Top 15 most popular artists")
+                st.markdown("#### Top 15 Most Popular Artists")
+                st.write("The visualization below shows that the most popular artists come from all around the world: Spain, Argentina, Scotland, England, Chile, the United States... However it appears that these artists only have two songs on average in the dataset.")
+                st.markdown("**The most popular artists seem to be underrepresented in our dataset.**")
                 fig_top15artists = px.area(top15artists, 
                                            x = "Popularity (mean)", 
                                            y = "Artists", 
@@ -159,18 +163,17 @@ if page == pages[3]:
                 fig_top15artists.update_xaxes(showgrid = False)
                 fig_top15artists.update_yaxes(showgrid = False)
                 st.plotly_chart(fig_top15artists, theme = "streamlit")
-                st.write("This visualization shows that the most popular artists come from all around the world: Spain, Argentina, Scotland, England, Chile, the United States...")
-                st.write("However it appears that these artists only have 2 songs on average in the dataset.")
-                st.markdown("**The most popular artists seem to be underrepresented in our dataset.**")
-                st.write("Our system's recommendations will be based on content similary between tracks, but popularity could be a secondary factor in our final ranking of similar songs. For that matter, it is important that we have a clear understanding of the distribution of the variables. Creating a visualization of artists who have the most songs in our dataset will help us do that.")
+                st.write("Our recommendations will be based on similary between tracks, but popularity could be a secondary factor in our final ranking of similar songs. For that matter, it is important that we have a clear understanding of the observations' distribution.")
+                st.write("If popular artists only have two tracks on average in our dataset, a close look at the artists with the most songs in the dataset will help confirm the idea that popular artists are underrepresent.")
                 st.write("")
-                with st.expander("View source code", expanded = False):
+                with st.expander("View Source Code", expanded = False):
                     code = '''
                     fig_top15artists = px.area(top15artists, 
-                    x = "Popularity (mean)", 
-                    y = "Artists", 
-                    color = "Genres", 
-                    line_group = "Number of songs in dataset")
+                        x = "Popularity (mean)", 
+                        y = "Artists", 
+                        color = "Genres", 
+                        line_group = "Number of songs in dataset"
+                    )
                     fig_top15artists.update_yaxes(autorange = "reversed")
                     fig_top15artists.update_xaxes(showgrid = False)
                     fig_top15artists.update_yaxes(showgrid = False)
@@ -178,7 +181,8 @@ if page == pages[3]:
                     st.code(code, language = 'python')
 
             with tab222:
-                st.markdown("#### Top 10 artists with most songs in dataset")
+                st.markdown("#### Top 10 Artists With Most Songs In Dataset")
+                st.write("The treemap below indicates that artists with the most songs in the dataset, such as The Beatles with a total of 279 tracks for instance, have very low popularity values: 0.5 on average for Ella Fitzgerald, 1 for Stevie Wonder...")
                 fig_top10artists = px.treemap(top10artists,
                                             path = [px.Constant("Top 10 artists with most songs"), 'Artists', "Number of songs in dataset", "Genres"], values = 'Number of songs in dataset',
                                             color = "Popularity (mean)", hover_data = ["Popularity (mean)"], 
@@ -186,11 +190,10 @@ if page == pages[3]:
                                             color_continuous_midpoint = np.average(top10artists["Popularity (mean)"], 
                                                                                     weights = top10artists["Popularity (mean)"]))
                 st.plotly_chart(fig_top10artists, theme = "streamlit")
-                st.write("This visualization shows that artists who have the most songs in the dataset, such as The Beatles with a total of 279 tracks for instance, have very low popularity values: 0.5 on average for Ella Fitzgerald, 1 for Stevie Wonder...")
                 st.markdown("We do not know how this dataset was constructed but this visualization seems to support our primary analysis: **artists with the highest values of popularity are underrepresented in the dataset to the detriment of artists with low ratings.**")
                 st.write("This could limit our results if our system was partly based on popularity.")
                 st.write("")
-                with st.expander("View source code", expanded = False):
+                with st.expander("View Source Code", expanded = False):
                     code = '''fig_top10artists = px.treemap(top10artists,
                                             path = [px.Constant("Top 10 artists with most songs"), 'Artists', "Number of songs in dataset", "Genres"], values = 'Number of songs in dataset',
                                             color = "Popularity (mean)", hover_data = ["Popularity (mean)"], 
@@ -201,24 +204,25 @@ if page == pages[3]:
                     st.code(code, language = 'python')
 
         with tab2:
-            st.markdown("#### Top 15 des morceaux les plus populaires")
+            st.markdown("#### Top 15 Most Popular Songs In Dataset")
+            st.write("The visualization below reveals another potential issue with the data: almost half of the most popular songs are reggaeton tracks but in the dataset these songs are listed as belonging to other music genres, such as latino, reggae and latin.")
             fig_top15titres = px.area(top15titres,
-                                      x = "Popularité", 
-                                      y = "Morceaux",
-                                      color = "Genres musicaux")
+                                      x = "Popularity", 
+                                      y = "Songs",
+                                      color = "Genres")
             fig_top15titres.update_yaxes(autorange = "reversed")
             fig_top15titres.update_xaxes(showgrid = False)
             fig_top15titres.update_yaxes(showgrid = False)
             st.plotly_chart(fig_top15titres, theme = "streamlit")
-            st.write("Près de la moitié des titres de ce classement correspondent au genre reggaeton. Or dans notre dataset, ces morceaux sont classés sous d'autres genres : latino, reggae et latin.")
-            st.markdown("**Les valeurs de notre dataset liées au genre musical ne semblent donc pas être totalement fiables.**")
+            st.markdown("**Track genre values in our dataset could be misleading and should probably not be taken into account as a primary feature as a consequence.**")
+            st.write("A closer look at the music genres listed in the dataset will help us know more about the reliability of the 'track_genre' variable.")
             st.write("")
-            with st.expander("Voir le code", expanded = False):
+            with st.expander("View Source Code", expanded = False):
                 code = '''
                 fig_top15titres = px.area(top15titres,
-                x = "Popularité", 
-                y = "Morceaux",
-                color = "Genres musicaux")
+                    x = "Popularity", 
+                    y = "Songs",
+                    color = "Genres")
                 fig_top15titres.update_yaxes(autorange = "reversed")
                 fig_top15titres.update_xaxes(showgrid = False)
                 fig_top15titres.update_yaxes(showgrid = False)
@@ -226,63 +230,66 @@ if page == pages[3]:
                 st.code(code, language = 'python')
 
         with tab3:
-            tab11, tab22, tab33, tab44 = st.tabs(["Top 15", "Popularité des genres", "Top 5 des morceaux par genre", "Répartition des valeurs après regroupement"])
+            tab11, tab22, tab33, tab44 = st.tabs(["Top 15 Most Popular Genres", "Popularity of Genres", "Top 5 Songs per Genre", "Distribution of Popularity Values"])
             with tab11:
-                st.markdown("#### Top 15 des genres musicaux les plus populaires")
+                st.markdown("#### Top 15 Most Popular Genres In Dataset")
+                st.write("With the visualization below we can see that the most popular music genres in the dataset are actually subgenres: Progressive house, Deep house...") 
+                st.write("More importantly, they do not correspond to the genres of the most popular songs in the dataset, except for the genre Pop.")
                 fig_top15genres = px.area(top15genres,
-                                      x = "Popularité moyenne", 
-                                      y = "Genres musicaux",
-                                      color = "Genres musicaux")
+                                      x = "Popularity (mean)", 
+                                      y = "Music genres",
+                                      color = "Music genres")
                 fig_top15genres.update(layout_showlegend=False)
                 fig_top15genres.update_xaxes(showgrid = False)
                 fig_top15genres.update_yaxes(showgrid = False)
                 st.plotly_chart(fig_top15genres, theme = "streamlit")
-                st.write("Seul un genre musical parmi ceux figurant dans les autres classements de popularité figure ici : la pop.")
-                st.markdown("**Il semble donc y avoir une disparité entre les genres les plus populaires et les morceaux/artistes les plus populaires.**")
+                st.write("This finding brings out a discrepancy between popularity values of songs and artists, and their associated genres.")
+                st.markdown("**Consequently, our algorithm should be designed in such a manner that the songs recommended to users are the result of a balanced system that is built on content similarity but that also takes into account popularity values of songs, leaving out the notion of music genres.**")
                 st.write("")
-                with st.expander("Voir le code", expanded = False):
+                with st.expander("View Source Code", expanded = False):
                     code = '''
                     fig_top15genres = px.area(top15genres,
-                    x = "Popularité moyenne",
-                    y = "Genres musicaux",
-                    color = "Genres musicaux")
-                    fig_top15genres.update(layout_showlegend=False)
+                        x = "Popularity (mean)", 
+                        y = "Music genres",
+                        color = "Music genres")
+                    fig_top15genres.update(layout_showlegend = False)
                     fig_top15genres.update_xaxes(showgrid = False)
                     fig_top15genres.update_yaxes(showgrid = False)
                     st.plotly_chart(fig_top15genres, theme = "streamlit")'''
                     st.code(code, language = 'python')
                 
             with tab22:
-                st.markdown("#### Popularité moyenne et nombre de morceaux par genre")
+                st.markdown("#### Popularity of Genres and Number of Songs per Genre")
+                st.write("The visualization below supports our first findings: the music genres to which belong the most popular songs (Hip-Hop, Electro, Reggaeton, Dance...) tend to have fewer tracks in the dataset than most other genres, while a lot of subgenres with very low popularity values (Grindcore, Black metal, Bluegrass...) have the most songs in the dataset.")
                 ratio = pd.DataFrame(dataset_sample.groupby('track_genre')['track_name'].nunique())
                 ratio = ratio.reset_index()
-                ratio = ratio.rename(columns = ({'track_genre' : 'Genres musicaux', 'track_name' : 'Nombre de morceaux'}))
-                ratio['Genres musicaux'] = ratio['Genres musicaux'].str.capitalize()
+                ratio = ratio.rename(columns = ({'track_genre' : 'Music genres', 'track_name' : 'Number of songs'}))
+                ratio['Music genres'] = ratio['Music genres'].str.capitalize()
                 ratio = ratio.drop(102, axis = 0)
                 ratio = ratio.reset_index()
                 ratio = ratio.drop(columns = 'index', axis = 1)
-                ratio['Popularité moyenne'] = pop_genre['Popularité moyenne']
+                ratio['Popularity (mean)'] = pop_genre['Popularity (mean)']
                 fig_pop_genre = px.scatter(ratio,
-                                           x = "Genres musicaux",
-                                           y = "Nombre de morceaux",
-                                           size = "Popularité moyenne",
-                                           color = "Popularité moyenne",
-                                           hover_name = "Genres musicaux",
+                                           x = "Music genres",
+                                           y = "Number of songs",
+                                           size = "Popularity (mean)",
+                                           color = "Popularity (mean)",
+                                           hover_name = "Music genres",
                                            color_continuous_scale = "reds")
                 fig_pop_genre.update_xaxes(showgrid = False)
                 fig_pop_genre.update_yaxes(showgrid = False)
                 st.plotly_chart(fig_pop_genre, theme = "streamlit", use_container_width = True)
+                st.write("**It thus confirms the idea that popularity should be used in our system as a leverage variable to balance our results.**")
                 st.write("")
-                st.write("La plupart des genres musicaux ayant les popularités moyennes les plus élevées sont également les genres les plus représentés dans notre dataset.")
-                st.write("")
-                with st.expander("Voir le code", expanded = False):
+                with st.expander("View Source Code", expanded = False):
                     code = '''
-                    fig = px.scatter(
-                        pop_genre,
-                        x = "Genres musicaux",
-                        y = "Popularité moyenne",
-                        color = "Popularité moyenne",
-                        color_continuous_scale = "reds",
+                    fig = px.scatter(ratio,
+                        x = "Music genres",
+                        y = "Number of songs",
+                        size = "Popularity (mean)",
+                        color = "Popularity (mean)",
+                        hover_name = "Music genres",
+                        color_continuous_scale = "reds"
                     )
                     fig.update_xaxes(showgrid = False)
                     fig.update_yaxes(showgrid = False)
@@ -290,74 +297,77 @@ if page == pages[3]:
                     st.code(code, language = 'python')
                 
             with tab33:
-                st.markdown("#### Top 5 des morceaux les plus populaires par genre")
+                st.markdown("#### Top 5 Most Popular Songs per Music Genre")
                 st.write("")
                 dataset_sample['artists'] = dataset_sample['artists'].str.title()
                 dataset_sample['track_name'] = dataset_sample['track_name'].str.capitalize()
+                dataset_sample['track_genre'] = dataset_sample['track_genre'].str.capitalize()
                 dataset_sample['titre'] = dataset_sample['track_name'] + ' - ' + dataset_sample['artists']
                 genres = sorted(set(dataset_sample['track_genre'].unique()))
-                choix = st.selectbox("Sélectionner un genre musical", genres)
+                choix = st.selectbox("Select a Music Genre", genres)
                 st.write("")
                 fig, ax = plt.subplots(figsize=(12,8))
                 sns.barplot(x = 'popularity', y = 'titre', data = dataset_sample[dataset_sample['track_genre'] == choix].sort_values(by = 'popularity', ascending = False).iloc[:5], ax = ax, palette = 'coolwarm')
                 for i in ax.containers:
                     ax.bar_label(i,)
-                plt.title('Classement des 5 titres ayant la popularité la plus élevée dans le genre \''+choix+'\'', pad = 20, fontsize = 14)
-                plt.xlabel('Popularité', labelpad = 20, fontsize = 12)
-                plt.ylabel('Chanson', labelpad = 20, fontsize = 12)
+                plt.title('Top 5 Most Popular Songs in Genre \''+choix+'\'', pad = 20, fontsize = 14)
+                plt.xlabel('Popularity', labelpad = 20, fontsize = 12)
+                plt.ylabel('Songs', labelpad = 20, fontsize = 12)
                 boxplot_chart = st.pyplot(fig)    
 
             with tab44:
-                st.markdown("#### Répartition des valeurs après regroupement des genres")
+                st.markdown("#### Distribution of Popularity Values")
+                st.write("If we combine similar subgenres, the distribution of popularity values for each genre seems to be much more homogeneous.")
+                st.write("The top 4 most popular genres are then Pop, Dance, Hip-Hop and Reggaeton, which correlates the genres of the most popular songs in the dataset.")
                 st.write("")
-                st.write("Si l'on regroupe les genres musicaux par grandes familles de genres, on obtient une distribution plus homogène des valeurs de popularité.")
+                st.image("repart_genresEN.png", output_format = "PNG")
                 st.write("")
-                st.image("repart_genres.png", output_format = "PNG")
-                st.write("")
-                with st.expander("Voir le code", expanded = False):
+                with st.expander("View Source Code", expanded = False):
                     code = '''
                     sns.catplot(x = 'track_genre', y = 'popularity', kind ='boxen', data = genres, height = 15, aspect = 2, palette = 'coolwarm')
                     plt.xticks(rotation = 60)
-                    plt.title('Répartition des valeurs de popularité par genre musical \n (après regroupement des genres)', pad = 20, fontsize = 14)
-                    plt.xlabel('Genres musicaux', labelpad = 20, fontsize = 12)
-                    plt.ylabel('Popularité globale', labelpad = 20, fontsize = 12);'''
+                    plt.title('Distribution of popularity values per music genre', pad = 20, fontsize = 14)
+                    plt.xlabel('Music genres', labelpad = 20, fontsize = 12)
+                    plt.ylabel('Popularity', labelpad = 20, fontsize = 12);'''
                     st.code(code, language = 'python')
                 st.write("")
-                st.write("S'agissant du nombre de morceaux par famille de genres en revanche, le regroupement a pour effet une sur-représentation de certains genres comme les musiques du monde, ou le genre 'Divers'.")
-                st.write("Le graphique ci-dessous nous permet également de constater que certains genres parmi les plus populaires, comme le hip-hop ou la pop, restent globalement sous-représentés.")
+                st.divider()
+                st.write("")
+                st.write("However the visualization below reveals that despite being combined in larger categories, a lot of the most popular genres such as Pop and Hip-Hop still have less tracks in the dataset than other genres such as World music, which accounts for 13.2% of all tracks.")
                 fig_num_genres = px.scatter(numgenres,
-                                           x = "Genres musicaux",
-                                           y = "Nombre de morceaux",
-                                           size = "Popularité moyenne",
-                                           color = "Popularité moyenne",
-                                           hover_name = "Genres musicaux",
+                                           x = "Genres",
+                                           y = "Number of songs",
+                                           size = "Popularity (mean)",
+                                           color = "Popularity (mean)",
+                                           hover_name = "Genres",
                                            color_continuous_scale = "reds")
                 fig_num_genres.update_xaxes(showgrid = False)
                 fig_num_genres.update_yaxes(showgrid = False)
                 st.plotly_chart(fig_num_genres, theme = "streamlit", use_container_width = True)
                 st.write("")
-                with st.expander("Voir le code", expanded = False):
+                with st.expander("View Source Code", expanded = False):
                     code = '''
                     fig_num_genres = px.scatter(numgenres,
-                                           x = "Genres musicaux",
-                                           y = "Nombre de morceaux",
-                                           size = "Popularité moyenne",
-                                           color = "Popularité moyenne",
-                                           hover_name = "Genres musicaux",
-                                            color_continuous_scale = "reds")
+                                           x = "Genres",
+                                           y = "Number of songs",
+                                           size = "Popularity (mean)",
+                                           color = "Popularity (mean)",
+                                           hover_name = "Genres",
+                                           color_continuous_scale = "reds")
                     fig_num_genres.update_xaxes(showgrid = False)
                     fig_num_genres.update_yaxes(showgrid = False)
                     st.plotly_chart(fig_num_genres, theme = "streamlit", use_container_width = True)'''
                     st.code(code, language = 'python')
             
     with tab_correlations:
-        st.markdown("#### Corrélations des caractéristiques techniques")
+        st.markdown("#### Correlation of Songs' Attributes")
+        st.write("The heatmap below shows that there is no particular relationship between the dataset's variables, except for the 'loudness' and 'energy' features for which the correlation value is 0.76.")
         st.write("")
-        st.image("correlation.png")
+        st.image("correlationEN.png", output_format = "PNG")
         st.write("")
-        st.write("Cette data visualisation ne révèle aucune corrélation particulière entre les variables, à l’exception des variables “loudness” et “energy”, pour lesquelles le niveau de corrélation est estimé à 0.76. Ces deux variables ne semblent cependant pas avoir d’impact particulier sur la popularité.")
+        st.write("This indicates that **we will probably have to perform feature selection to reduce the number of input variables by eliminating all redundant or irrelevant features and narrowing down the set of features to those most relevant to our machine learning model.**")
         st.write("")
-        with st.expander("Voir le code", expanded = False):
+        with st.expander("View Source Code", expanded = False):
             code = '''cor = dataset.corr()
             plt.figure(figsize = (11,11))
             sns.heatmap(cor, center = 0, annot = True, cmap = 'coolwarm')
@@ -365,286 +375,296 @@ if page == pages[3]:
             st.code(code, language = 'python')
 
     with tab_linearite:
-        st.markdown("#### Linéarité entre les caractéristiques techniques")
+        st.markdown("#### Linearity of Songs' Attributes")
+        st.write("This visualization also highlights the lack of correlation between the variables as it shows how disseminated the data are.")
         st.write("")
-        st.image("linearite.png")
+        st.image("linearite.png", output_format = "PNG")
         st.write("")
-        st.write("Cette data visualisation ne nous donne pas d’indications très précises, et confirme plutôt notre hypothèse évoquée juste avant. Les morceaux les plus populaires correspondent plutôt aux morceaux les plus dansants, mais la popularité, bonne ou mauvaise, est globalement diffuse à travers toutes les valeurs possibles de dansabilité.")
-        st.write("Il en est de même pour l’énergie dégagée par le morceau et le tempo : quel que soit le degré d’énergie véhiculée par la musique et la vitesse du morceau, la popularité peut être aussi bonne que mauvaise. À noter : les vitesses proches de 0 correspondent à des morceaux exclusivement parlés (podcasts, récits d’histoire…).")
-        st.write("S’agissant du mode, ici encore, que les morceaux soient plutôt tristes (mode mineur) ou joyeux (mode majeur), la popularité peut être aussi bonne que mauvaise.")
-        st.write("Enfin seul le caractère “loudness” semble avoir un impact plus marqué sur la popularité, puisque les morceaux les plus populaires sont plutôt les morceaux les plus intenses. Nous ne savons pas néanmoins comment a été calculée cette variable, et un même niveau d’intensité (de loudness) peut correspondre à beaucoup de genres musicaux différents.")
+        st.write("**It finding confirms the need to perform feature selection to identify automatically the most relevant features.** Our model and our results may not be accurate otherwise.")
         st.write("")
-        with st.expander("Voir le code", expanded = False):
+        with st.expander("View Source Code", expanded = False):
             code = '''plt.figure(figsize = (12,12))
             sns.pairplot(dataset[['popularity', 'danceability', 'energy', 'loudness', 'mode', 'tempo']], diag_kind='kde', palette = 'coolwarm');'''
             st.code(code, language = 'python')         
     
-# Page 4 - Modélisation
+# Page 4 - Data Modeling
 if page == pages[4]: 
-    st.header("Modélisation")
-    st.markdown("Notre problème s’apparente à un problème de machine learning de type :blue[clustering]. Il nous a effectivement semblé que le regroupement de morceaux similaires en clusters serait une approche pertinente pour atteindre notre objectif. Notre objectif était ensuite de classer et trier les morceaux selon leur popularité, pour proposer aux utilisateurs les recommandations les plus intéressantes possibles.")
+    st.header("Data Modeling")
+    st.markdown("In this project we do not have a specific outcome variable that we are trying to predict. Instead we have a set of numeric features that we want to use to find collections of observations that share similar characteristics. As a result, our problem is an unsupervised learning problem, and our goal is to group automatically data points according to the similarities between them. In addition, there seems to be no particular correlation between the dataset's variables.")
+    st.write("We thus chose an unsupervised learning clustering algorithm to process our data and find natural clusters if they exist in the data: **K-means clustering.** Once objects will be divided into clusters, we will sort them by popularity so that the chance that users enjoy the songs recommended to them is the highest.")
     st.markdown("###")
     
-    tab1, tab2, tab3 = st.tabs(["Réduction de dimension", "Choix du modèle et optimisation", "Mise en place de l'algorithme"])
+    tab1, tab2, tab3 = st.tabs(["Dimensionality Reduction", "Implementation of K-means Clustering", "Algorithm Configuration"])
     with tab1:
-        st.markdown("#### Réduction de dimension")
-        st.write("Pour ce type de problèmes, les méthodes de réduction de dimension telles que les méthodes d’analyse de variance sont préférées à la mesure de la dépendance entre la variable cible et les features, plutôt utilisée pour les problèmes supervisés.")
-        st.write("Notre choix de méthode de réduction de dimension s’est donc orienté donc vers une méthode de *feature selection*, grâce à laquelle nous espérions pouvoir déterminer un sous-ensemble de features optimales, qui nous serviraient ensuite pour notre algorithme de machine learning.")
-        st.markdown("Nous avons utilisé une méthode :blue[ACP (Analyse en Composantes Principales)] sur trois versions différentes de notre dataset : \n- une version avec les 125 genres musicaux ; \n- une version les 125 genres regroupés en 24 grandes familles de genres ; \n- une dernière version sans aucun genre musical.")
+        st.markdown("#### Dimensionality Reduction")
+        st.write("We chose a popular unsupervised learning technique for reducing the dimensionality of data: The Principal Component Analysis.") 
+        st.write("PCA usually increases interpretability yet, at the same time, minimizes information loss. It also helps to find the most significant features in a dataset and it should help in finding a sequence of linear combinations of variables. This will be particularly useful in our situation since our variables do not seem to have any type of relationship.")
+        st.markdown("We performed PCA to three different versions of our dataset: \n- one that includes all 125 music subgenres; \n- one that includes 24 groups of music genres; \n- one that does not contain any genre at all.")
         st.markdown("###")
-        
-        tab_complet, tab_avec, tab_no = st.tabs(["Avec le dataset complet", "Avec regroupement des genres musicaux", "Sans les genres musicaux"])
+        tab_complet, tab_avec, tab_no = st.tabs(["PCA to Entire Dataset", "PCA to Dataset With 24 Groups of Music Genres", "PCA to Dataset Without Any Genre"])
         with tab_complet:
-            tab_var, tab_sum = st.tabs(["Variance expliquée", "Somme cumulative"])
+            tab_var, tab_sum = st.tabs(["Explained Variance Ratio", "Cumulative Explained Variance"])
             with tab_var:
+                st.markdown("#### Selecting the Number of Dimensions")
+                st.write("The explained variance ratio is calculated to select the optimal number of dimensions in the PCA. The visualization below shows a PCA scree plot of the dataset, with the blue line representing the explained variance ratio. The ratio represents the variance explained by each of the principal components, starting with the first component, which is the principal component that explains most of the variance.")     
                 st.write("")
-                st.image("varexpsans.png")
-                st.write("")
-                st.write("La courbe d'évolution de la variance expliquée décroît fortement puis se stabilise autour de 0.0075 pour un nombre de composantes se situant entre 15 et 17. La part de variance expliquée est donc plus importante sur les premières composantes principales puis décroît rapidement.")
+                st.image("varexpfull.png", output_format = "PNG")
             with tab_sum:
+                st.write("When the ratios are summed, the total value is equal to 1, indicating that the 129 components together explain 100% of the variance of the dataset. More usefully, the variance ratio explained is used as a cumulative sum, such as indicated by the blue curve in the visualization below.") 
                 st.write("")
-                st.image("cumsumsans.png")
+                st.image("cumsumfull.png", output_format = "PNG")
                 st.write("")
-                st.write("Nous avons ajusté notre ACP sur les données pour conserver 90% de la variance expliquée, et le nombre de composantes retenues a finalement été de 109. C’est une réduction de 15% puisque nous disposions au départ de 129 variables, mais nous avons estimé que le résultat n’était pas à la hauteur de nos attentes.")
+                st.write("After performing ACP to the entire dataset, we found that **109 components were required to explain at least 90% of the information in the dataset from the cumulative explained variance.** Since only 15% of the components were reduced, we considered such results to be below our expectations and decided in consequence to perform ACP to another version of the dataset: a version where all subgenres were regrouped into 24 larger music genres.")
         with tab_avec:
-            tab_var, tab_sum = st.tabs(["Variance expliquée", "Somme cumulative"])
+            tab_var, tab_sum = st.tabs(["Explained Variance Ratio", "Cumulative Explained Variance"])
             with tab_var:
+                st.markdown("#### Selecting the Number of Dimensions")
+                st.write("On this second attempt, we replaced the 114 original subgenres with only 24 distinct values instead, and performed ACP to this new version of the dataset. The visualization below illustrates the variance of each principal component.")
                 st.write("")
-                st.image("varexpavec.png")
-                st.write("")
+                st.image("varexpwith.png", output_format = "PNG")
             with tab_sum:
+                st.write("After plotting the cumulative explained variance, we can see that where our line is drawn for 90%, **the total explained variance is approximately at 35 components.** We managed here to reduce 28% of the components.")
                 st.write("")
-                st.image("cumsumavec.png")
+                st.image("cumsumwith.png", output_format = "PNG")
                 st.write("")
-                st.write("La somme cumulative de la variance expliquée sur le graphique ci-dessus nous indique qu'il faut ici 36 Composantes Principales pour obtenir 90% de variance expliquée.")
-                st.write("C’est une réduction de 28% puisque nous disposions avec cette version “réduite” du dataset, de 46 variables au départ. Ce résultat est meilleur, mais nous espérions pouvoir réduire davantage le nombre de composantes.")
+                st.write("Let's see if we can have an even higher reduction rate when the 'track_genre's' variable is completely removed from the dataset.")
         with tab_no:
-            tab_var, tab_sum = st.tabs(["Variance expliquée", "Somme cumulative"])
+            tab_var, tab_sum = st.tabs(["Explained Variance Ratio", "Cumulative Explained Variance"])
             with tab_var:
+                st.markdown("#### Selecting the Number of Dimensions")
+                st.write("On this third attempt, we deleted the 'track_genre' variable from the dataset to perform APC to the songs features only. The visualization below illustrates the variance of each principal component for this third version of the dataset.")
                 st.write("")
-                st.image("varexpno.png")
-                st.write("")
-                st.write("On observe ici que les tendances d’évolution de la variance sont globalement identiques avec cette nouvelle version du dataset ; le nombre optimal de composantes quant à lui semble être égal à 11.")
+                st.image("varexpwo.png", output_format = "PNG")
             with tab_sum:
+                st.write("After performing ACP to this third version of the dataset, we found that **12 components out of 14 were required to explain at least 90% of the information in the dataset from the cumulative explained variance.** Only 14% of the components were reduced here, which we considered was far below our expectations once again.")
                 st.write("")
-                st.image("cumsumno.png")
+                st.image("cumsumwo.png")
                 st.write("")
-                st.write("Après avoir ajusté les données pour conserver 90% de la variance expliquée, nous obtenons un nombre de composantes retenues de 12.")
-
+                st.write("After three attemps with three different versions of the dataset, we were not able to reduce effectively the dimensionality of our dataset. We will go on and proceed with the clustering.")
+                
     with tab2:
-        st.markdown("#### Choix du modèle et optimisation")
-        st.markdown("Dans la mesure où nous ne disposions pas d’une variable cible propre, nous nous sommes orientés vers un algorithme de clustering non supervisé : :blue[l’algorithme des K-moyennes (K-means)].")
+        st.markdown("#### Implementation of K-means Clustering")
+        st.write("K-means clustering seemed to be the most appropriate type of algorithm for this project, for it usually helps maximise the similarity of data points within clusters. Also k-means clustering is a comparatively fast algorithm which performance, unlike most other clustering algorithms, scales linearly with the number of data points in the dataset.")
+        st.write("K-means clustering has disadvantages of course, such as sensitivity to outliers or scale. But we believed that it still was the most appropriate, reliable and well-studied unsupervised clustering algorithm for our project.")
         st.write("")
-        tab11, tab22 = st.tabs(["K-means avec genres musicaux regroupés", "K-means sans genres musicaux"])
+        st.markdown("#### Determining the Optimal Number of Clusters")
+        st.write("Like many other clustering algorithms, k-means clustering requires the number of clusters that will be created to be specified ahead of time. For that reason, determining the optimal number of clusters is a fundamental part in generating the clusters.")
+        st.write("There are two main methods to find the optimal number of clusters: The elbow curve method and the Silhouette analysis. We will use the elbow method first and only refer to the Silhouette analysis if needed.")
+        st.write("As we did not succeed in reducing effectively the number of features in our dataset, we will perform k-means clustering to two different versions of our dataset: the version with 24 groups of music genres and the version with no genre at all. We will then be able to compare both clusterings and evaluate their relevance according to what we are trying to achieve.")
+        
+        tab11, tab22 = st.tabs(["K-means on Dataset With 24 Groups of Genres", "K-means on Dataset Without Any Genre"])
         with tab11:
+            st.markdown("##### The Elbow Method")
+            st.write("The elbow method is probably the most well-known method for determining the optimal number of clusters. It is based on calculating the Within-Cluster-Sum of Squared Errors (WSS) for different number of clusters (k) and selecting the k for which change in WSS first starts to diminish. In the plot of WSS-versus-k, this is visible as an elbow.")
+            st.write("We obtained the following plot for WSS-vs-k for our dataset with 24 groups of genres.")
+            st.image("kmeansEN.png", output_format = "PNG")
             st.write("")
-            st.image("kmeans.png")
+            st.write("**We can see here a clear elbow at k = 31.**")
+            st.write("The heatmap below shows all median values for each variable per cluster, after instantiating the k-means estimator class with n_clusters = 31.")
             st.write("")
-            st.write("On remarque que l’inertie stagne à partir de 31 clusters. Nous appliquons alors l’algorithme avec un nombre de clusters égal à 31.")
+            st.image("heatmapK1EN.png", output_format = "PNG")
             st.write("")
-            st.image("heatmapK1.png")
-            st.image("heatmapK2.png")
+            st.write("A closer look at this visualization let us see that each music genre was assigned to one cluster, as it seems the algorithm created clusters based on the genres more than any other variables. Such results are not what we were looking for as our goal was to find collections of observations that share similar characteristics that we were not already aware of.")
             st.write("")
-            st.write("Malheureusement, il semble qu’à chaque cluster correspond peu ou prou un genre musical spécifique. Cela n’est pas forcément étonnant dans la mesure où nous avions réduit le nombre de genres musicaux à 25 ; cette valeur est assez proche de notre nombre total de clusters (31).")
-            st.write("Il semble donc que notre algorithme se soit basé principalement sur les genres pour constituer ses clusters. C’est une approche intéressante, mais elle risque de ne pas nous apporter beaucoup d’informations complémentaires pour notre travail de prédiction.")
-            st.write("Nous avons donc testé le clustering par K-means sur notre jeu de données sans genres musicaux.")
+            st.image("heatmapK11EN.png", output_format = "PNG")
+            st.write("")
+            st.write("As a consequence, we decided to run a k-means algorithm on the dataset after removing the track genre variable.")
             
         with tab22:
-            tab_elbow, tab_k_elbow, tab_silhouette, tab_clusters = st.tabs(["Méthode du coude", "KElbowVisualizer", "Silhouette score", "Clustering"])
+            tab_elbow, tab_k_elbow, tab_silhouette, tab_clusters = st.tabs(["Elbow Method", "KElbowVisualizer", "Silhouette Coefficient", "Clusters"])
             with tab_elbow:
-                st.image("elbow.png")
+                st.markdown("##### The Elbow Method")
+                st.write("The 'track_genre' variable was deleted and k-means clustering was run on this other version of the dataset. The plot below does not allow us to determine the exact point where the rate of decrease shifts as the elbow is not as clear and sharp as previously. This indicates that data is not clearly clustered.")
                 st.write("")
-                st.write("On remarque ici que l’inertie évolue de façon plutôt linéaire et ce graphique ne nous permet pas de déterminer clairement le nombre optimal de clusters.")
-                st.write("Nous nous sommes donc appuyés sur une autre représentation de la méthode du coude via un “KElbowVisualizer”, à l’aide duquel le nombre optimal de clusters peut être estimé automatiquement")
+                st.image("elbowEN.png", output_format = "PNG")
+                st.write("")
+                st.write("In order to determine more precisely the value of k, we used the YellowBrick library as it can implement the elbow method with a distortion metric which computes the sum of squared distances from each point to its assigned center.")
             with tab_k_elbow:
-                st.image("kelbow.png")
+                st.markdown("##### KElbowVisualizer")
+                st.write("The KElbowVisualizer function fit the k-means model for a range of clusters values between 2 to 17. As shown in the figure below, the black vertical line indicates that the elbow point is achieved with 8 clusters.")
                 st.write("")
-                st.write("Cette deuxième représentation, basée non pas sur l’inertie mais sur la distorsion, indique un nombre optimal de clusters égal à 8. Cette estimation se base sur le score obtenu par les différents nombres de clusters testés, ainsi que sur le degré d’inflexion du coude. ")
-                st.write("Cela nous oriente vers un premier résultat possible, mais nous avons préféré poursuivre notre étude à l’aide d’une analyse de silhouette pour déterminer de façon la plus certaine possible le nombre de clusters optimal.")
+                st.image("kelbow.png", output_format = "PNG")
+                st.write("")
+                st.write("In order to validate that result, we decided to use the Silhouette Method to have an additional way of determining the optimal number of clusters.")
             with tab_silhouette:
-                st.write("Nous avons donc réalisé une première représentation graphique du silhouette_score pour un nombre de clusters compris entre 6 et 16 :")
+                st.markdown("##### The Silhouette Coefficient")                
+                st.write("The silhouette value measures how similar a point is to its own cluster (cohesion) compared to other clusters (separation). The Silhouette Score reaches its global maximum at the optimal k. This should ideally appear as a peak in the Silhouette Value-versus-k plot.")
+                st.write("Here is the plot for our own dataset (no genre):")
                 st.write("")
-                st.image("silhouette.png")
+                st.image("silhouetteEN.png", output_format = "PNG")
                 st.write("")
-                st.write("Les silhouette scores sont globalement plutôt proches de la valeur 0, ce qui n’est pas un bon signe pour la robustesse et l’efficacité de notre algorithme.")
-                st.write("On remarque également que le nombre de clusters qui obtient le meilleur silhouette_score est 7. Cette valeur est proche de l’estimation obtenue avec le “KElbowVisualizer”.")
+                st.write("The range of the Silhouette value is between +1 and -1. A high value is desirable and indicates that the point is placed in the correct cluster. If many points have a negative Silhouette value, it may indicate that we have created too many or too few clusters.")
+                st.write("In our case, the Silhouette scores are close to 0 which indicates that our algorithm is not very efficient.")
+                st.write("The visualization also reveals that the highest Silhouette value is 7.")
                 st.divider()
-                st.write("Pour pouvoir déterminer de manière sûre le nombre optimal de clusters, nous avons finalement représenté l’analyse de silhouette pour un nombre de clusters allant de 6 à 10, puisque le nombre idéal de clusters semble se situer entre 7 et 8.")
-                st.write("Sur ces graphiques, les clusters sont représentés les uns par rapport aux autres, et mis en perspective au regard de leur score respectif.")
+                st.write("To decide between the two values (8 as obtained with the KElbowVisualizer and 7 as obtained with the Silhouette score plot) we decided to display a Silhouette Plot for every value of k ranging from 6 to 10.")
                 st.write("")
-                tab_6, tab_7, tab_8, tab_9, tab_10 = st.tabs(["6 clusters", "7 clusters", "8 clusters", "9 clusters", "10 clusters"])
+                tab_6, tab_7, tab_8, tab_9, tab_10 = st.tabs(["6 Clusters", "7 Clusters", "8 Clusters", "9 Clusters", "10 Clusters"])
                 with tab_6:
-                    st.image("6.png")
+                    st.image("6EN.png", output_format = "PNG")
                 with tab_7:
-                    st.image("7.png")
+                    st.image("7EN.png", output_format = "PNG")
                 with tab_8:
-                    st.image("8.png")
+                    st.image("8EN.png", output_format = "PNG")
                 with tab_9:
-                    st.image("9.png")
+                    st.image("9EN.png", output_format = "PNG")
                 with tab_10:
-                    st.image("10.png")
+                    st.image("10EN.png", output_format = "PNG")
                 st.write("")
-                st.write("On peut voir sur les représentations correspondant aux valeurs n_clusters = 8, 9 et 10 que certains clusters sont beaucoup plus grands que d’autres. Nous avons donc orienté notre choix sur un K-means à 6 ou 7 clusters.") 
-                st.write("La représentation pour n_clusters = 7 montre que les clusters 2, 3 et 4 sont globalement plus grands que les 4 autres clusters formés. Pour autant, ceux-ci ont tous une forme plus homogène que les clusters constitués pour n_clusters = 6.") 
-                st.write("Nous avons donc choisi un nombre de clusters égal à 7, ce qui confirme notre hypothèse précédente basée sur le meilleur silhouette_score.")
+                st.write("We already know that the values of the silhouette coefficient are low which is an indicator of low efficiency.")
+                st.write("Consequently we need to look at the distribution between clusters. Clustered areas should have similar sizes or well-distributed points. **The value of n_clusters = 7 seems to be the most optimal value even though all 7 clusters do not have similar sizes.**")
+                st.write("Let's look at the median values for each variable per cluster to see if this clustering seems to be more accurate than previously.")
             with tab_clusters:
-                st.write("Comparons la représentation ci-dessous avec celle réalisée précédemment, et observons les caractéristiques sur lesquels semble s’être appuyé l’algorithme pour effectuer ses regroupements : ")
+                st.markdown("##### Clusters") 
+                st.write("The heatmap below shows all median values for each variable per cluster, after instantiating the k-means estimator class with n_clusters = 7.")
                 st.write("")
-                st.image("heatmapclusters.png")   
+                st.image("heatmapclustersEN.png", output_format = "PNG")   
                 st.write("")
-                st.write("Il semble que les clusters aient été constitués ici au regard des attributs techniques des morceaux, contrairement à notre première tentative qui avait abouti à une classification par genre musical.") 
-                st.write("Même si cela semble logique au vu des variables de notre dataset retravaillé, c’est précisément cette approche vers laquelle nous souhaitions tendre.")
+                st.write("Median values of variables such as the duration, loudness or tempo indicate that each cluster seems to contain a different type of tracks, which was our goal. We aimed at grouping songs with similar characteristics.") 
+                st.write("We have to keep in mind nonetheless that our recommendation system should not be based exclusively on this clustering algorithm, as Silhouette Scores were really low and recommendations might be inaccurate.")
+                st.write("Next we explain in detail how we configured our algorithm to make it relevant and to ensure it returns the best recommendations possible.")
 
     with tab3:
-        st.markdown("#### Mise en place de l'algorithme")
-        st.write("La structuration de notre jeu de données initial n’a pas permis une grande réduction de dimensionnement, et après une première analyse des clusters formés sur la base des caractéristiques techniques, les regroupements se sont avérés intéressants mais pas forcément exploitables en l'état." )
-        st.write("Nous avons donc optimisé notre algorithme par différents niveaux de filtrage, et nous avons réussi à obtenir une fonction qui propose a priori des recommandations pertinentes dans différents genres musicaux, pour des morceaux aussi bien contemporains que plus anciens.")
+        st.markdown("#### Algorithm Configuration")
+        st.write("We did not really succeed in reducing the dimensionality of our dataset and we know that our clusters do not have good Silhouette Scores. The former issue could be linked to the preprocessing of the data while the latter could be the result of the algorithm's sensitivity to the dataset's outliers, although in this case the notion of outlier is a very subjective notion as our data represent audio tracks in a lot of different and specific genres. It is also possible that we did not choose the right machine learning algorithm for our dataset.")
+        st.write("As a result we decided to build the first part of our recommendation system using the clusters created with the k-means algorithm, and add manual steps in order to present users with the best recommendations possible.")
+        st.write("We also decided to base our system on another approach and create a similarity matrix. The elements of the similarity matrix will measure pairwise similarities of objects and we will be able to achieve the best results possible by selecting what we consider to be the most appropriate metric value.")
         st.write("")
         
-        tabAlgo1, tabAlgo2 = st.tabs(["Algorithme principal", "Matrice de similarité"])
+        tabAlgo1, tabAlgo2 = st.tabs(["First Algorithm", "Second Algorithm: Similarity Matrix"])
         with tabAlgo1:
-            tabET1, tabET2, tabET3, tabET4, tabET5, tabET6 = st.tabs(["Étape 1", "Étape 2", "Etape 3", "Étape 4", "Étape 5", "Étape 6"])
+            tabET1, tabET2, tabET3, tabET4, tabET5, tabET6 = st.tabs(["Step 1", "Step 2", "Step 3", "Step 4", "Step 5", "Step 6"])
             with tabET1:
-                st.write(f"**Étape 1 : filtrage selon le cluster Attributs du morceau initial**")
+                st.write(f"**Step 1 : Filtering Of Songs Based On The Seed Song's Cluster**")
                 graph1 = graphviz.Digraph()
-                graph1.edge('Morceau', "Cluster 'Attributs'", color = "red")
+                graph1.edge('Seed Song', "Cluster", color = "red")
                 st.graphviz_chart(graph1, use_container_width = True)
             
             with tabET2:
-                st.write(f"**Étape 2 : filtrage selon plusieurs caractéristiques techniques**")
+                st.write(f"**Step 2 : Additional Filtering Based On Specific Attributes Within Cluster**")
                 graph2 = graphviz.Digraph()
-                graph2.edge('Morceau', "Cluster 'Attributs'")
-                graph2.edge("Cluster 'Attributs'", 'Tempo', color = "red")
-                graph2.edge("Cluster 'Attributs'", 'Loudness', color = "red")
-                graph2.edge("Cluster 'Attributs'", 'Energy', color = "red")
-                graph2.edge("Cluster 'Attributs'", 'Acousticness', color = "red")
-                graph2.edge("Cluster 'Attributs'", 'Danceability', color = "red")
+                graph2.edge('Seed Song', "Cluster")
+                graph2.edge("Cluster", 'Tempo', color = "red")
+                graph2.edge("Cluster", 'Loudness', color = "red")
+                graph2.edge("Cluster", 'Energy', color = "red")
+                graph2.edge("Cluster", 'Acousticness', color = "red")
+                graph2.edge("Cluster", 'Danceability', color = "red")
                 st.graphviz_chart(graph2, use_container_width = True)
                 st.write("")
-                st.write("Nous avons stocké les résultats de ce premier filtrage dans un dataframe.")
+                st.write("At the end of step 2, results are saved in a dataframe.")
 
             with tabET3:
-                st.write(f"**Étape 3 : 2ème filtrage selon le/les genres identiques à celui/ceux du morceau initial**")
+                st.write(f"**Step 3 : Filtering Of Songs Based On Seed Song's Music Genre/Genres**")
                 graph3 = graphviz.Digraph()
-                graph3.edge('Morceau', "Cluster 'Attributs'")
-                graph3.edge("Cluster 'Attributs'", 'Tempo')
-                graph3.edge("Cluster 'Attributs'", 'Loudness')
-                graph3.edge("Cluster 'Attributs'", 'Energy')
-                graph3.edge("Cluster 'Attributs'", 'Acousticness')
-                graph3.edge("Cluster 'Attributs'", 'Danceability')
-                graph3.edge('Morceau', 'Genres similaires', color = "red")
+                graph3.edge('Seed Song', "Cluster")
+                graph3.edge("Cluster", 'Tempo')
+                graph3.edge("Cluster", 'Loudness')
+                graph3.edge("Cluster", 'Energy')
+                graph3.edge("Cluster", 'Acousticness')
+                graph3.edge("Cluster", 'Danceability')
+                graph3.edge('Seed Song', 'Music Genres', color = "red")
                 st.graphviz_chart(graph3, use_container_width = True)
-                st.write("")
-                st.write("Nous avons stocké les résultats de ce premier filtrage dans un dataframe.")
 
             with tabET4:
-                st.write(f"**Étape 4 : filtrage selon plusieurs caractéristiques techniques**")
+                st.write(f"**Step 4 : Additional Filtering Based On Specific Attributes**")
                 graph4 = graphviz.Digraph()
-                graph4.edge('Morceau', "Cluster 'Attributs'")
-                graph4.edge("Cluster 'Attributs'", 'Tempo')
-                graph4.edge("Cluster 'Attributs'", 'Loudness')
-                graph4.edge("Cluster 'Attributs'", 'Energy')
-                graph4.edge("Cluster 'Attributs'", 'Acousticness')
-                graph4.edge("Cluster 'Attributs'", 'Danceability')
-                graph4.edge('Morceau', 'Genres similaires')
-                graph4.edge('Genres similaires', 'Tempo', color = 'red')
-                graph4.edge('Genres similaires', 'Loudness', color = 'red')
-                graph4.edge('Genres similaires', 'Energy', color = 'red')
-                graph4.edge('Genres similaires', 'Acousticness', color = 'red')
-                graph4.edge('Genres similaires', 'Danceability', color = 'red')
+                graph4.edge('Seed Song', "Cluster")
+                graph4.edge("Cluster", 'Tempo')
+                graph4.edge("Cluster", 'Loudness')
+                graph4.edge("Cluster", 'Energy')
+                graph4.edge("Cluster", 'Acousticness')
+                graph4.edge("Cluster", 'Danceability')
+                graph4.edge('Seed Song', 'Music Genres')
+                graph4.edge('Music Genres', 'Tempo', color = 'red')
+                graph4.edge('Music Genres', 'Loudness', color = 'red')
+                graph4.edge('Music Genres', 'Energy', color = 'red')
+                graph4.edge('Music Genres', 'Acousticness', color = 'red')
+                graph4.edge('Music Genres', 'Danceability', color = 'red')
                 st.graphviz_chart(graph4, use_container_width = True)
                 st.write("")
-                st.write("Nous avons également stocké les résultats de ce deuxième filtrage dans un autre dataframe.")
+                st.write("At the end of step 4, results are saved in a second dataframe.")
 
             with tabET5:
-                st.write(f"**Étape 5 : Regroupement des autres morceaux du groupe/de l'interprète**")
+                st.write(f"**Step 5 : Grouping Of All Songs By Seed Artist**")
                 graph5 = graphviz.Digraph()
-                graph5.edge('Morceau', "Cluster 'Attributs'")
-                graph5.edge("Cluster 'Attributs'", 'Tempo')
-                graph5.edge("Cluster 'Attributs'", 'Loudness')
-                graph5.edge("Cluster 'Attributs'", 'Energy')
-                graph5.edge("Cluster 'Attributs'", 'Acousticness')
-                graph5.edge("Cluster 'Attributs'", 'Danceability')
-                graph5.edge('Morceau', 'Genres similaires')
-                graph5.edge('Genres similaires', 'Tempo')
-                graph5.edge('Genres similaires', 'Loudness')
-                graph5.edge('Genres similaires', 'Energy')
-                graph5.edge('Genres similaires', 'Acousticness')
-                graph5.edge('Genres similaires', 'Danceability')
-                graph5.edge('Morceau', "Autres morceaux du groupe", color = 'red')
+                graph5.edge('Seed Song', "Cluster")
+                graph5.edge("Cluster", 'Tempo')
+                graph5.edge("Cluster", 'Loudness')
+                graph5.edge("Cluster", 'Energy')
+                graph5.edge("Cluster", 'Acousticness')
+                graph5.edge("Cluster", 'Danceability')
+                graph5.edge('Seed Song', 'Music Genres')
+                graph5.edge('Music Genres', 'Tempo')
+                graph5.edge('Music Genres', 'Loudness')
+                graph5.edge('Music Genres', 'Energy')
+                graph5.edge('Music Genres', 'Acousticness')
+                graph5.edge('Music Genres', 'Danceability')
+                graph5.edge('Seed Song', "Other Songs By Seed Artist", color = 'red')
                 st.graphviz_chart(graph5, use_container_width = True)
                 st.write("")
-                st.write("Si d'autres morceaux du groupe ou de l'interprète figuraient dans notre dataset initial, nous les avons stockés dans un troisième jeu de données.")
+                st.write("If the dataset contains other songs by the seed artist, these songs will be saved at the end of step 5 in a third dataframe.")
 
             with tabET6:
-                st.write(f"**Étape 6 : définition des priorités dans la remontée des résultats**")
+                st.write(f"**Step 6 : Setting Priorities**")
                 st.write("")
-                tab61, tab62, tab63 = st.tabs(["Priorité 1", "Priorité 2", "Priorité 3"])                    
+                tab61, tab62, tab63 = st.tabs(["Priority 1", "Priority 2", "Priority 3"])                    
                 with tab61:
-                    st.write(f"**Priorité 1 : les autres morceaux du groupe/de l'artiste**")
+                    st.write(f"**Priority 1 : Songs By Seed Artist**")
                     graph11 = graphviz.Digraph()
-                    graph11.edge("Filtrages", "Autres morceaux du groupe", color = "red")
+                    graph11.edge("Filtering process", "Other songs by seed artist", color = "red")
                     st.graphviz_chart(graph11, use_container_width = True)
                 
                 with tab62:
-                    st.write(f"**Priorité 2 : les morceaux issus du/des mêmes genres musicaux**")
+                    st.write(f"**Priority 2 : Songs In Similar Genres As Seed Song**")
                     graph22 = graphviz.Digraph()
-                    graph22.edge("Filtrages", "Autres morceaux du groupe")
-                    graph22.edge("Autres morceaux du groupe", "Genres similaires", label = "Si aucun résultat", color = "red")
+                    graph22.edge("Filtering process", "Other songs by seed artist")
+                    graph22.edge("Other songs by seed artist", "Songs in similar genres", label = "If no result", color = "red")
                     st.graphviz_chart(graph22, use_container_width = True)
                         
                 with tab63:
-                    st.write(f"**Priorité 3 : les morceaux issus du cluster 'Attributs'**")
+                    st.write(f"**Priority 3 : Songs From Seed Song's Cluster**")
                     graph33 = graphviz.Digraph()
-                    graph33.edge("Filtrages", "Autres morceaux du groupe")
-                    graph33.edge("Autres morceaux du groupe", "Genres similaires")
-                    graph33.edge("Genres similaires", "Cluster 'Attributs'", label = "Si aucun résultat", color = "red")
+                    graph33.edge("Filtering process", "Other songs by seed artist")
+                    graph33.edge("Other songs by seed artist", "Songs in similar genres")
+                    graph33.edge("Songs in similar genres", "Songs from seed song's cluster", label = "If no result", color = "red")
                     st.graphviz_chart(graph33, use_container_width = True)
 
         with tabAlgo2:
-            st.write("**Mise en place de la matrice de similarité**")
+            st.write("**Creating the Similarity Matrix**")
             st.write("")
-            st.write("- Construction de la matrice à l'aide des fonctions :blue[pdist] et :blue[squareform] du sous-package scipy.spatial.distance ; \n- Sélection d'une métrique différente de la métrique par défaut (distance euclidienne) : :blue[distance de Mahalanobis] ; \n- Pas de retraitement ou de filtrage additionnel.")
-            st.markdown("##")
-            st.image("matrice.png", caption = 'Extrait de la matrice de similarité')
+            st.write("We created the matrix using the scipy.spatial.distance module and 'pdist' function. This function computes pairwise distances between points using Euclidean distance as the default distance metric. The main advantage of this method is the wide range of metrics available.")
+            st.write("After trying out all metrics, we found that the Mahalanobis metric was the one which returned the best results. The Mahalanobis distance is scale-invariant, yet it takes into account the correlations of the dataset. It is also widely used in cluster analysis.")
+            st.write("We chose to use the matrix's results without adding any human intervention.")
+            st.write("Below is a preview of the matrix:")
+            st.write("")
+            st.image("matrice.png",  output_format = 'PNG')
 
-# Page 5 - Bilan
+# Page 5 - Conclusion
 if page == pages[5]: 
-    st.header("Bilan")
+    st.header("Conclusion")
 
-    tab1, tab2, tab3 = st.tabs(['Revue des objectifs initiaux', "Difficultés rencontrées lors du projet", "Pistes d'amélioration"])
+    tab1, tab2 = st.tabs(['Research Objectives', "Ways of Improvement"])
 
     with tab1:
-        st.markdown("#### Revue des objectifs initiaux")
-        col1, col2 = st.columns([4,1])
-        with col1:
-            st.write("Notre objectif était de réaliser une recommandation pertinente de musique à un utilisateur, sur la base d’un morceau que l’utilisateur avait préalablement choisi ou écouté.") 
-            st.markdown("Nous pouvons fièrement dire que :blue[nous avons atteint cet objectif], et nous l'avons fait de deux manières différentes et complémentaires, que nous allons mettre à l'épreuve dans quelques minutes.")
-        with col2:
-            st.image(flimage, width = None)
-    
-    st.markdown('##')     
+        st.markdown("#### Research Objectives")
+        st.write("In this project, our goal was to create a music recommendation system based on content similarity, using a dataset which contained thousands of songs in various music genres.") 
+        st.write("We chose to group similar tracks automatically by running a k-means algorithm on our dataset, but we were not very successful in creating self-sufficient clusters. We were still able to use the clusters by adding manual steps and fine-tuning our function to create the first part of our recommendation system.") 
+        st.write("The second part was based on a similarity matrix. Using the Mahalanobis metric allowed our function to return the best recommendations possible, given the limited number of songs avaible in our dataset.")
+        st.write("We can thus say that we achieved our goal as we were able to build a music recommendation system allowing users to choose between two songs similar to a seed song of their liking. Although the relevancy of the recommendations is subjective, our system was designed and adjusted so that the songs suggested to users can be considered the most interesting suggestions possible.")
     
     with tab2:
-        st.markdown("#### Difficultés rencontrées lors du projet")
-        st.write("Nous avons fait face à plusieurs difficultés techniques, liées notamment : \n- à la volumétrie de certains jeux de données ; \n- à la structure de certains jeux de données ; \n- aux limites de mémoire vive nécessaire à l’utilisation de nos notebooks ; \n- à l’importation de certains modules et packages.")
-        st.markdown("Plus globalement, nous disposions au départ d'un volume très important de données, dont seulement une partie nous a été réellement utile. :blue[Nous aurions pu aller beaucoup plus loin dans la mise en place de nos modèles si nous avions disposé de davantages de morceaux différents.]")
-        st.write("Le filtrage collaboratif par exemple, est une approche que nous aurions pu comparer aux deux autres méthodes utilisées, mais par manque de données, notre algorithme retournait systématiquement les mêmes résultats. Cette approche n'était donc pas pertinente dans notre contexte.")
-    
-    st.markdown('##')
-    
-    with tab3:
-        st.markdown("#### Pistes d’amélioration")
-        st.markdown("Si nous avions eu plus de temps, nous aurions pu : \n- :blue[agrémenter nos données avec d’autres datasets complémentaires], pour rendre nos algorithmes encore plus performants, et mettre en place un troisième modèle basé sur le filtrage collaboratif ;")
-        st.markdown("- :blue[mettre en place un système de notation des recommandations effectuées] pour évaluer quel modèle parmi les deux retenus semble être le plus pertinent selon les utilisateurs, avec le stockage des notes dans une base de donnée.")
+        st.markdown("#### Ways of Improvement")
+        st.markdown("With more time, we could have: \n- Designed a review system and store ratings of recommendations in a database;")
+        st.markdown("- Searched for additional resources and add songs to the dataset to have a broader selection of tracks to recommend;")
+        st.markdown("- Run alternative dimensionality reduction and unsupervised algorithms to get better results than the clusters created in this project.")
 
-# Page 6 - Recommandations musicales
+# Page 6 - Music recommendations
 if page == pages[6]: 
-    st.header("Recommandations musicales :man_dancing:")
+    st.header("Music recommendations")
     st.markdown('##')
-    st.markdown("##### Entrez le nom de l'artiste ou du morceau que vous souhaitez écouter : ")    
+    st.markdown("##### Please enter the name of the artist or the song you would like to listen to: ")    
     
-    # Fonction de recommandation basée sur les clusters 
+    # Cluster-based function: 
     def reco(track):
         df_track = dataset.loc[(dataset['artist_track'] == track)][['artists', 'track_name', 'artist_track', 'track_genre', 'cluster_genres', 'tempo', 'energy', 'loudness', 'popularity']]
         artist = df_track['artists']
@@ -700,12 +720,12 @@ if page == pages[6]:
         elif not track_infos.empty:
             return track_infos['artist_track'].values[:1]        
 
-    # Matrice de similarité
+    # Similarity matrix
     new_index = list(dfm.index)
     pairwise = pd.DataFrame(squareform(pdist(dfm, 'mahalanobis')))
     pairwise['artist_track'] = new_index
  
-    # Fonction de recommandation basée sur la matrice de similarité 
+    # Matrix-based function:
     def recom(track):
         df = pairwise[pairwise['artist_track'] == track]
         df = df.reset_index(drop = True).T
@@ -719,7 +739,7 @@ if page == pages[6]:
         else:
             return st.write("") 
 
-    # Lecteur Deezer    
+    # Deezer player:
     def player(reco):
         url = "https://api.deezer.com/search?q=" + reco
         request = requests.get(url)
@@ -728,24 +748,24 @@ if page == pages[6]:
         link = "https://widget.deezer.com/widget/auto/track/" + reco_id
         return components.html(f'<iframe title="deezer-widget" src={link} width="100%" height="150" frameborder="0" allowtransparency="true" allow="encrypted-media; clipboard-write"></iframe>')
 
-    # Définition du morceau de départ
+    # Seed track:
     OG = "Nirvana - Smells like teen spirit"
     OG_index = int(dfm2[dfm2['artist_track'] == OG].index.values)
     options = dfm2['artist_track']
     search_bar = st.selectbox("", options, index = OG_index, label_visibility = "collapsed", key = "search")
     player(search_bar)
     
-    # Fonctions de mise à jour de la barre de recherche
+    # Search bar update:
     def callback1():
         st.session_state.search = options[index_reco1]
         
     def callback2():
         st.session_state.search = options[index_reco2]
 
-    # Gestion et affichage des recommandations 
+    # Display of recommendation:
     if search_bar != OG:
         st.markdown('#')
-        st.write(f"Vous avez choisi le titre **{search_bar}**, nous vous proposons les recommandations suivantes :")
+        st.write(f"You selected the song **{search_bar}**, here are the tracks we recommend:")
         track = str(search_bar) 
         reco1 = reco(track)[0]
         reco2 = recom(track)[0]
@@ -755,10 +775,10 @@ if page == pages[6]:
         with col1:
             st.write(f"**{reco1}**")
             player(reco1)
-            bouton1 = st.button('Recommandation suivante', on_click = callback1, key = 1)
+            bouton1 = st.button('Next recommendation', on_click = callback1, key = 1)
         with col2:
             st.write(f"**{reco2}**")
             player(reco2)
-            bouton2 = st.button('Recommandation suivante', on_click = callback2, key = 2)  
+            bouton2 = st.button('Next recommendation', on_click = callback2, key = 2)  
 
     
