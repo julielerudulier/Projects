@@ -493,7 +493,7 @@ if page == pages[4]:
                 st.image("silhouetteEN.png", output_format = "PNG")
                 st.write("")
                 st.write("The range of the Silhouette value is between +1 and -1. A high value is desirable and indicates that the point is placed in the correct cluster. If many points have a negative Silhouette value, it may indicate that we have created too many or too few clusters.")
-                st.write("In our case, the Silhouette scores are close to 0 which indicates that our algorithm is not very efficient. The visualization also reveals that the highest Silhouette value is 7.")
+                st.write("In our case, the Silhouette scores were close to 0 which indicates that our algorithm was not very efficient. The visualization also reveals that the highest Silhouette value was 7.")
                 st.write("To decide between the two values (8 as obtained with the KElbowVisualizer and 7 as obtained with the Silhouette score plot) we decided to display a Silhouette Plot for every value of k ranging from 6 to 10.")
                 st.write("")
                 tab_6, tab_7, tab_8, tab_9, tab_10 = st.tabs(["6 Clusters", "7 Clusters", "8 Clusters", "9 Clusters", "10 Clusters"])
@@ -508,9 +508,9 @@ if page == pages[4]:
                 with tab_10:
                     st.image("10EN.png", output_format = "PNG")
                 st.write("")
-                st.write("We already know that the values of the silhouette coefficient are low which is an indicator of low efficiency.")
-                st.write("Consequently we need to look at the distribution between clusters. Clustered areas should have similar sizes or well-distributed points. **The value of n_clusters = 7 seems to be the most optimal value even though all 7 clusters do not have similar sizes.**")
-                st.write("Let's look at the median values for each variable per cluster to see if this clustering seems to be more accurate than previously.")
+                st.write("We already knew that the values of the silhouette coefficient were low which was an indicator of low efficiency.")
+                st.write("Consequently we had to look at the distribution between clusters. Clustered areas should have similar sizes or well-distributed points. **The value of n_clusters = 7 seemed to be the most optimal value even though all 7 clusters did not have similar sizes.**")
+                st.write("We then looked at the median values for each variable per cluster to see if this clustering seemed to be more accurate than previously.")
             with tab_clusters:
                 st.markdown("##### Clusters") 
                 st.write("The heatmap below shows all median values for each variable per cluster, after instantiating the k-means estimator class with n_clusters = 7.")
