@@ -517,15 +517,15 @@ if page == pages[4]:
                 st.write("")
                 st.image("heatmapclustersEN.png", output_format = "PNG")   
                 st.write("")
-                st.write("Median values of variables such as the duration, loudness or tempo indicate that each cluster seems to contain a different type of tracks, which was our goal. We aimed at grouping songs with similar characteristics.") 
-                st.write("We have to keep in mind nonetheless that our recommendation system should not be based exclusively on this clustering algorithm, as Silhouette Scores were really low and recommendations might be inaccurate.")
+                st.write("Median values of variables such as the duration, loudness or tempo indicate that each cluster seemed to contain a different type of tracks, which was our goal. We aimed at grouping songs with similar characteristics.") 
+                st.write("We had to keep in mind nonetheless that our recommendation system should not be based exclusively on this clustering algorithm, as Silhouette Scores were really low and recommendations might be inaccurate.")
                 st.write("Next we explain in detail how we configured our algorithm to make it relevant and to ensure it returns the best recommendations possible.")
 
     with tab3:
         st.markdown("#### Algorithm Configuration")
-        st.write("We did not really succeed in reducing the dimensionality of our dataset and we know that our clusters do not have good Silhouette Scores. The former issue could be linked to the preprocessing of the data while the latter could be the result of the algorithm's sensitivity to the dataset's outliers, although in this case the notion of outlier is a very subjective notion as our data represent audio tracks in a lot of different and specific genres. It is also possible that we did not choose the right machine learning algorithm for our dataset.")
+        st.write("We did not really succeed in reducing the dimensionality of our dataset and we knew that our clusters did not have good Silhouette Scores. The former issue could be linked to the preprocessing of the data while the latter could be the result of the algorithm's sensitivity to the dataset's outliers, although in this case the notion of outlier is a very subjective notion as our data represent audio tracks in a lot of different and specific genres. It is also possible that we did not choose the right machine learning algorithm for our dataset.")
         st.write("As a result we decided to build the first part of our recommendation system using the clusters created with the k-means algorithm, and add manual steps in order to present users with the best recommendations possible.")
-        st.write("We also decided to base our system on another approach and create a similarity matrix. The elements of the similarity matrix will measure pairwise similarities of objects and we will be able to achieve the best results possible by selecting what we consider to be the most appropriate metric value.")
+        st.write("We also decided to base our system on another approach and create a similarity matrix. The elements of the similarity matrix measure pairwise similarities of objects and we were be able to achieve the best results possible by selecting what we considered to be the most appropriate metric value.")
         st.write("")
         
         tabAlgo1, tabAlgo2 = st.tabs(["First Algorithm", "Second Algorithm: Similarity Matrix"])
