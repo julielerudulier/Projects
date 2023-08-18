@@ -84,7 +84,7 @@ if page == pages[1]:
         st.write("There are mainly four recommendation methods that are commonly used in music recommender systems: \n- Content-based filtering; \n- Context-based filtering; \n- Collaborative filtering; \n- And hybrid methods, which combine the other filtering methods and minimize the issues a single method can have.")
         st.write("The former method was preferred to conduct this project. Indeed, most streaming platforms generally use collaborative filtering systems, sometimes combined with other algorithms. It thus seemed more interesting to design a system that is not based on ratings and reactions by similar users, but rather that is based on the similarity of the songs' technical features.")
         st.write("Also, recommender systems do not always provide the most accurate recommendations. To help improve users' satisfaction we chose to build our system based on two different algorithms : \n - A clustering algorithm; \n - A similarity matrix.")
-        st.write("The two algorithms return songs based on similar attributes that they share with a seed track, through two different methods and distance metrics. Both systems operate simultaneously and each recommend one song so that users can pick the song they like the most.")
+        st.write("The two algorithms return songs based on similar attributes that they share with a seed track, through two different methods and distance metrics. Both systems operate simultaneously and each recommends one song so that users can pick the song they like the most.")
     with tab3:   
         st.markdown("##### Research Objectives") 
         st.write("In the music domain, content-based filtering ranks songs based on how similar they are to a seed song according to some similarity measure, which focuses on an objective distance between items and does not include any subjective factors. This makes it possible to recommend new items that do not have any user ratings associated with them.")    
@@ -102,7 +102,7 @@ if page == pages[2]:
     tabDS1, tabDS2, tabDS3, tabDS4, tabDS5 = st.tabs(['Dataset #1', 'Dataset #2', 'Dataset #3', 'Dataset #4', 'Dataset #5'])
     with tabDS1:   
         st.markdown("##### Dataset #1: 'Dataset'")
-        st.write("The first dataset is titled 'Dataset'. It is a dataset of Spotify tracks over a range of 125 different music genres, associated with multiple audio features such as the tracks' tempo, their mode, valence, danceability, liveness... While we have no information regarding the release date of the songs in this dataset, it seems to contain tracks from past and present time.") 
+        st.write("The first dataset is titled 'Dataset'. It is a dataset of Spotify tracks over a range of 125 different music genres, associated with multiple audio features such as the tracks' tempo, their mode, valence, danceability, liveness... While we have no information regarding the release date of the songs in this dataset, it contains tracks from past and present time.") 
         st.write("There are 20 original columns in this dataset - 14 numeric variables, 5 categorial variables and 1 Boolean variable - and 114 000 rows. Its size is 20.12Mo. This dataset is available on [Kaggle](https://www.kaggle.com/datasets/maharshipandya/-spotify-tracks-dataset).")
         st.write("First 5 rows of the dataset:")
         dataset_5 = pd.read_csv("dataset_5.csv", index_col = 0)
@@ -144,7 +144,8 @@ if page == pages[2]:
 # Page 3 - Data Visualizations
 if page == pages[3]:
     st.header("Data Visualizations")
-    st.write("Using visual elements like charts and graphs will provide us with an accessible way to see and understand trends, outliers, and patterns in our data. Furthermore, capturing the distribution of key variables will allow us to understand critical statistical properties of the data we will work with, and it will help us make educated data-driven decisions on key outcomes when designing our recommendation system.")
+    st.write("Using visual elements like charts and graphs provided us with an accessible way to see and understand trends, outliers, and patterns in our data. Furthermore, capturing the distribution of key variables allowed us to understand critical statistical properties of the data we were about to work with, and it helped us make educated data-driven decisions on key outcomes when designing our recommendation system.")
+    st.write("In this section is a brief overview of our key findings while analyzing data visualizations.")
     tab_top, tab_correlations, tab_linearite = st.tabs(["Trends in Data", "Correlation", "Linearity"])
     with tab_top:
         tab1, tab2, tab3 = st.tabs(["Artists", "Songs", "Music Genres"])
