@@ -427,20 +427,20 @@ if page == pages[4]:
                 st.write("")
                 st.image("cumsumwith.png", output_format = "PNG")
                 st.write("")
-                st.write("We removed completely the 'track_genre' variable and performed PCA to this new version of the dataset to see if we could obtain an even higher reduction rate.")
+                st.write("Still, we decided to remove completely the 'track_genre' variable and performed PCA to this new and third version of the dataset to see if we could obtain an even higher reduction rate.")
         with tab_no:
             tab_var, tab_sum = st.tabs(["Explained Variance Ratio", "Cumulative Explained Variance"])
             with tab_var:
                 st.markdown("#### Selecting the Number of Dimensions")
-                st.write("On this third attempt, we deleted the 'track_genre' variable from the dataset to perform APC to the songs features only. The visualization below illustrates the variance of each principal component for this third version of the dataset.")
+                st.write("On this third attempt, we deleted the 'track_genre' variable from the dataset to perform PCA to the songs' features only. The visualization below illustrates the variance of each principal component for this third version of the dataset.")
                 st.write("")
                 st.image("varexpwo.png", output_format = "PNG")
             with tab_sum:
-                st.write("After performing ACP to this third version of the dataset, we found that **12 components out of 14 were required to explain at least 90% of the information in the dataset from the cumulative explained variance.** Only 14% of the components were reduced here, which we considered was far below our expectations once again.")
+                st.write("After performing PCA to this third version of the dataset, we found that **12 components out of 14 were required to explain at least 90% of the information in the dataset from the cumulative explained variance.** Only 14% of the components were reduced here, which we considered was far below our expectations once again.")
                 st.write("")
                 st.image("cumsumwo.png")
                 st.write("")
-                st.write("After three attemps with three different versions of the dataset, we were not able to reduce effectively the dimensionality of our dataset. We will go on and proceed with the clustering.")
+                st.write("After three attemps with three different versions of the dataset, we were not able to reduce effectively the dimensionality of our dataset. We went on and proceeded with the clustering.")
                 
     with tab2:
         st.markdown("#### Implementation of K-means Clustering")
@@ -450,7 +450,7 @@ if page == pages[4]:
         st.markdown("#### Determining the Optimal Number of Clusters")
         st.write("Like many other clustering algorithms, k-means clustering requires the number of clusters that will be created to be specified ahead of time. For that reason, determining the optimal number of clusters is a fundamental part in generating the clusters.")
         st.write("There are two main methods to find the optimal number of clusters: The elbow curve method and the Silhouette analysis. We will use the elbow method first and only refer to the Silhouette analysis if needed.")
-        st.write("As we did not succeed in reducing effectively the number of features in our dataset, we will perform k-means clustering to two different versions of our dataset: the version with 24 groups of music genres and the version with no genre at all. We will then be able to compare both clusterings and evaluate their relevance according to what we are trying to achieve.")
+        st.write("As we did not succeed in reducing effectively the number of features in our dataset, we performed k-means clustering to two different versions of our dataset: the version with 24 groups of music genres and the version with no genre at all. We were then able to compare both clusterings and evaluate their relevance according to what we were trying to achieve.")
         
         tab11, tab22 = st.tabs(["K-means on Dataset With 24 Groups of Genres", "K-means on Dataset Without Any Genre"])
         with tab11:
@@ -464,11 +464,10 @@ if page == pages[4]:
             st.write("")
             st.image("heatmapK1EN.png", output_format = "PNG")
             st.write("")
-            st.write("A closer look at this visualization let us see that each music genre was assigned to one cluster, as it seems the algorithm created clusters based on the genres more than any other variables. Such results are not what we were looking for as our goal was to find collections of observations that share similar characteristics that we were not already aware of.")
+            st.write("A closer look at this visualization let us see that each music genre was assigned to one cluster, as it seems the algorithm created clusters based on the genres more than any other variables. Such results were not what we were looking for as our goal was to find collections of observations that shared similar characteristics that we were not already aware of.")
+            st.write("As a consequence, we decided to run a k-means algorithm on the dataset after removing the 'track_genre' variable.")
             st.write("")
             st.image("heatmapK11EN.png", output_format = "PNG")
-            st.write("")
-            st.write("As a consequence, we decided to run a k-means algorithm on the dataset after removing the track genre variable.")
             
         with tab22:
             tab_elbow, tab_k_elbow, tab_silhouette, tab_clusters = st.tabs(["Elbow Method", "KElbowVisualizer", "Silhouette Coefficient", "Clusters"])
