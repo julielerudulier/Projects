@@ -39,7 +39,7 @@ top15genres = pd.read_csv('top15genres.csv', index_col = 0)
 
 # Menu latéral 
 st.sidebar.image("logo_mines.png", output_format = "PNG", width = 200)
-st.sidebar.header("[NAME OF CERTIFICATE] - Research projet")
+st.sidebar.header("[NAME OF CERTIFICATE] - Research project")
 st.sidebar.header("Menu")
 pages = ["Home Page", "Introduction", "Datasets", "Data Visualizations", "Data Modeling", "Conclusion", "Recommendation System"]
 page = st.sidebar.radio("Select a page", options = pages)
@@ -83,7 +83,7 @@ if page == pages[1]:
         st.markdown("##### Approach")
         st.write("There are mainly four recommendation methods that are commonly used in music recommender systems: \n- Content-based filtering; \n- Context-based filtering; \n- Collaborative filtering; \n- And hybrid methods, which combine the other filtering methods and minimize the issues a single method can have.")
         st.write("The former method was preferred to conduct this project. Indeed, most streaming platforms generally use collaborative filtering systems, sometimes combined with other algorithms. It thus seemed more interesting to design a system that is not based on ratings and reactions by similar users, but rather that is based on the similarity of the songs' technical features.")
-        st.write("Also, recommender systems do not always provide the most accurate recommendations. To help improve users' satisfactione we chose to build our system based on two different algorithms : \n - A clustering algorithm; \n - A similarity matrix.")
+        st.write("Also, recommender systems do not always provide the most accurate recommendations. To help improve users' satisfaction we chose to build our system based on two different algorithms : \n - A clustering algorithm; \n - A similarity matrix.")
         st.write("The two algorithms should return songs based on similar attributes that they share with a seed track, through two different methods and distance metrics. Both systems will operate simultaneously and each will recommend one song so that users can pick the song they like the most.")
     with tab3:   
         st.markdown("##### Research Objectives") 
