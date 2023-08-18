@@ -76,7 +76,7 @@ if page == pages[1]:
     tab1, tab2, tab3 = st.tabs(['Project Context', 'Approach', 'Research Objectives'])
     with tab1:
         st.markdown("##### Project Context")
-        st.write("The aim of this project is to recommend songs accurately to users, based on data retrieved from Spotify and Twitter.")
+        st.write("The aim of this project was to recommend songs accurately to users, based on data retrieved from Spotify and Twitter.")
         st.write("This project started in January 2023. A paper on data cleansing and exploration was handed in to Faculty members in March. This paper also included data visualizations and a primary analysis of trends in data. A second paper on data modeling was handed in in May.")
         st.write("The final essay was handed in to Faculty members in June, while the outcomes of this project as well as the recommendation system were presented to a jury on June 26th, 2023.")
     with tab2:    
@@ -84,12 +84,12 @@ if page == pages[1]:
         st.write("There are mainly four recommendation methods that are commonly used in music recommender systems: \n- Content-based filtering; \n- Context-based filtering; \n- Collaborative filtering; \n- And hybrid methods, which combine the other filtering methods and minimize the issues a single method can have.")
         st.write("The former method was preferred to conduct this project. Indeed, most streaming platforms generally use collaborative filtering systems, sometimes combined with other algorithms. It thus seemed more interesting to design a system that is not based on ratings and reactions by similar users, but rather that is based on the similarity of the songs' technical features.")
         st.write("Also, recommender systems do not always provide the most accurate recommendations. To help improve users' satisfaction we chose to build our system based on two different algorithms : \n - A clustering algorithm; \n - A similarity matrix.")
-        st.write("The two algorithms should return songs based on similar attributes that they share with a seed track, through two different methods and distance metrics. Both systems will operate simultaneously and each will recommend one song so that users can pick the song they like the most.")
+        st.write("The two algorithms return songs based on similar attributes that they share with a seed track, through two different methods and distance metrics. Both systems operate simultaneously and each recommend one song so that users can pick the song they like the most.")
     with tab3:   
         st.markdown("##### Research Objectives") 
         st.write("In the music domain, content-based filtering ranks songs based on how similar they are to a seed song according to some similarity measure, which focuses on an objective distance between items and does not include any subjective factors. This makes it possible to recommend new items that do not have any user ratings associated with them.")    
-        st.write("As a result one of the initial objectives of this project will be to determine which attributes are essential to provide effective similarity between tracks, through the degree of linearity or correlation of the songs' features for instance, or through automatic feature selection.")
-        st.write("Once key features will be identified, the main objective will be to design a system with very specific instructions so that it provides users with the most accurate recommendations possible, considering the number of songs contained in the datasets of this project is rather small.") 
+        st.write("As a result one of the initial objectives of this project was to determine which attributes were essential to provide effective similarity between tracks, through the degree of linearity or correlation of the songs' features for instance, or through automatic feature selection.")
+        st.write("Once key features were identified, the main objective was to design a system with very specific instructions so that it provides users with the most accurate recommendations possible, considering the number of songs contained in the datasets of this project was rather small.") 
         st.write("It should be noted that allowing users to rate the recommendations and save their ratings in a database was not in the scope of this project.")
             
 # Page 2 - Datasets
