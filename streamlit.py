@@ -427,7 +427,7 @@ if page == pages[4]:
                 st.write("")
                 st.image("cumsumwith.png", output_format = "PNG")
                 st.write("")
-                st.write("Let's see if we can have an even higher reduction rate when the 'track_genre's' variable is completely removed from the dataset.")
+                st.write("We removed completely the 'track_genre' variable and performed PCA to this new version of the dataset to see if we could obtain an even higher reduction rate.")
         with tab_no:
             tab_var, tab_sum = st.tabs(["Explained Variance Ratio", "Cumulative Explained Variance"])
             with tab_var:
