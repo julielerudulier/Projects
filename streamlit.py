@@ -164,8 +164,8 @@ if page == pages[3]:
                 fig_top15artists.update_xaxes(showgrid = False)
                 fig_top15artists.update_yaxes(showgrid = False)
                 st.plotly_chart(fig_top15artists, theme = "streamlit")
-                st.write("Our recommendations will be based on similary between tracks, but popularity could be a secondary factor in our final ranking of similar songs. For that matter, it is important that we have a clear understanding of the observations' distribution.")
-                st.write("If popular artists only have two tracks on average in our dataset, a close look at the artists with the most songs in the dataset will help confirm the idea that popular artists are underrepresent.")
+                st.write("Our recommendations will be based on similarity between tracks, but popularity could be a secondary factor in our final ranking of similar songs. For that matter, it is important that we have a clear understanding of the observations' distribution.")
+                st.write("If popular artists only have two tracks on average in our dataset, a closer look at the artists with the most songs in the dataset will help confirm the idea that popular artists are underrepresented.")
                 st.write("")
                 with st.expander("View Source Code", expanded = False):
                     code = '''
@@ -245,7 +245,7 @@ if page == pages[3]:
                 fig_top15genres.update_yaxes(showgrid = False)
                 st.plotly_chart(fig_top15genres, theme = "streamlit")
                 st.write("This finding brings out a discrepancy between popularity values of songs and artists, and their associated genres.")
-                st.markdown("**Consequently, our algorithm should be designed in such a manner that the songs recommended to users are the result of a balanced system that is built on content similarity but that also takes into account popularity values of songs, leaving out the notion of music genres.**")
+                st.markdown("**Consequently, our algorithm should be designed in such a manner that the songs recommended to users are the result of a balanced system that is built on content similarity, but that also takes into account popularity values of songs, leaving out the notion of music genres.**")
                 st.write("")
                 with st.expander("View Source Code", expanded = False):
                     code = '''
@@ -365,7 +365,7 @@ if page == pages[3]:
         st.write("")
         st.image("correlationEN.png", output_format = "PNG")
         st.write("")
-        st.write("This indicates that **we will probably have to perform feature selection to reduce the number of input variables by eliminating all redundant or irrelevant features and narrowing down the set of features to those most relevant to our machine learning model.**")
+        st.write("This indicates that **we will have to perform feature selection to reduce the number of input variables by eliminating all redundant or irrelevant features** and narrowing down the set of features to those most relevant to our machine learning model.")
         st.write("")
         with st.expander("View Source Code", expanded = False):
             code = '''cor = dataset.corr()
@@ -380,7 +380,7 @@ if page == pages[3]:
         st.write("")
         st.image("linearite.png", output_format = "PNG")
         st.write("")
-        st.write("**It finding confirms the need to perform feature selection to identify automatically the most relevant features.** Our model and our results may not be accurate otherwise.")
+        st.write("**It confirms the need to perform feature selection to identify automatically the most relevant features.** Our model and our results may not be accurate otherwise.")
         st.write("")
         with st.expander("View Source Code", expanded = False):
             code = '''plt.figure(figsize = (12,12))
@@ -390,15 +390,15 @@ if page == pages[3]:
 # Page 4 - Data Modeling
 if page == pages[4]: 
     st.header("Data Modeling")
-    st.markdown("In this project we do not have a specific outcome variable that we are trying to predict. Instead we have a set of numeric features that we want to use to find collections of observations that share similar characteristics. As a result, our problem is an unsupervised learning problem, and our goal is to group automatically data points according to the similarities between them. In addition, there seems to be no particular correlation between the dataset's variables.")
-    st.write("We thus chose an unsupervised learning clustering algorithm to process our data and find natural clusters if they exist in the data: **K-means clustering.** Once objects will be divided into clusters, we will sort them by popularity so that the chance that users enjoy the songs recommended to them is the highest.")
+    st.markdown("In this project we did not have a specific outcome variable that we were trying to predict. Instead we had a set of numeric features that we wanted to use to find collections of observations that shared similar characteristics. As a result, our problem was an unsupervised learning problem, and our goal was to group automatically data points according to the similarities between them. In addition, there seemed to be no particular correlation between the dataset's variables.")
+    st.write("We thus chose an unsupervised learning clustering algorithm to process our data and find natural clusters if they exist in the data: **K-means clustering.** Once objects were divided into clusters, we sorted them by popularity so that the chance that users enjoy the songs recommended to them was the highest.")
     st.markdown("###")
     
     tab1, tab2, tab3 = st.tabs(["Dimensionality Reduction", "Implementation of K-means Clustering", "Algorithm Configuration"])
     with tab1:
         st.markdown("#### Dimensionality Reduction")
         st.write("We chose a popular unsupervised learning technique for reducing the dimensionality of data: The Principal Component Analysis.") 
-        st.write("PCA usually increases interpretability yet, at the same time, minimizes information loss. It also helps to find the most significant features in a dataset and it should help in finding a sequence of linear combinations of variables. This will be particularly useful in our situation since our variables do not seem to have any type of relationship.")
+        st.write("PCA usually increases interpretability yet, at the same time, minimizes information loss. It also helps to find the most significant features in a dataset and it should help in finding a sequence of linear combinations of variables. This should have been particularly useful in our situation since our variables did not seem to have any type of relationship.")
         st.markdown("We performed PCA to three different versions of our dataset: \n- one that includes all 125 music subgenres; \n- one that includes 24 groups of music genres; \n- one that does not contain any genre at all.")
         st.markdown("###")
         tab_complet, tab_avec, tab_no = st.tabs(["PCA to Entire Dataset", "PCA to Dataset With 24 Groups of Music Genres", "PCA to Dataset Without Any Genre"])
