@@ -153,7 +153,7 @@ if page == pages[3]:
             tab111, tab222 = st.tabs(["Most Popular Artists In Dataset", "Artists With Most Songs In Dataset"])
             with tab111:
                 st.markdown("#### Top 15 Most Popular Artists")
-                st.write("The visualization below shows that the most popular artists come from all around the world: Spain, Argentina, Scotland, England, Chile, the United States... However it appears that these artists only have two songs on average in the dataset.")
+                st.write("The visualization below shows that the most popular artists are in various music genres: Pop, Latino, Hip-Hop, Electro... However when hovering over the starting point of each line on the graph, we can see that these artists only have two songs on average in the dataset.")
                 st.markdown("**The most popular artists seem to be underrepresented in our dataset.**")
                 fig_top15artists = px.area(top15artists, 
                                            x = "Popularity (mean)", 
@@ -183,7 +183,7 @@ if page == pages[3]:
 
             with tab222:
                 st.markdown("#### Top 10 Artists With Most Songs In Dataset")
-                st.write("The treemap below indicates that artists with the most songs in the dataset, such as The Beatles with a total of 279 tracks for instance, have very low popularity values: 0.5 on average for Ella Fitzgerald, 1 for Stevie Wonder...")
+                st.write("The treemap below indicates a lot of artists with the most songs in the dataset have very low popularity values: 0.5 on average for Ella Fitzgerald, 1 for Stevie Wonder...")
                 fig_top10artists = px.treemap(top10artists,
                                             path = [px.Constant("Top 10 artists with most songs"), 'Artists', "Number of songs in dataset", "Genres"], values = 'Number of songs in dataset',
                                             color = "Popularity (mean)", hover_data = ["Popularity (mean)"], 
@@ -361,7 +361,7 @@ if page == pages[3]:
             
     with tab_correlations:
         st.markdown("#### Correlation of Songs' Attributes")
-        st.write("The heatmap below shows that there is no particular relationship between the dataset's variables, except for the 'loudness' and 'energy' features for which the correlation value is 0.76.")
+        st.write("According to the heatmap below, there does not seem to be any particular relationship between the dataset's variables, except for the 'loudness' and 'energy' features for which the correlation value is 0.76.")
         st.write("")
         st.image("correlationEN.png", output_format = "PNG")
         st.write("")
