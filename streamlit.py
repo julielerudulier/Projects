@@ -39,7 +39,7 @@ top15genres = pd.read_csv('top15genres.csv', index_col = 0)
 
 # Menu latéral 
 st.sidebar.image("logo_mines.png", output_format = "PNG", width = 200)
-st.sidebar.header("[NAME OF CERTIFICATE] - Research project")
+st.sidebar.header("DATA ANALYST CERTIFICATE - Research project")
 st.sidebar.header("Menu")
 pages = ["Home Page", "Introduction", "Datasets", "Data Visualizations", "Data Modeling", "Conclusion", "Recommendation System"]
 page = st.sidebar.radio("Select a page", options = pages)
@@ -66,7 +66,7 @@ if page == pages[0]:
     with col11:
         st.write("")
     with col22:
-        st.write("Research project conducted as part of the [NOM DE LA FORMATION], June 2023.")
+        st.write("Research project conducted as part of the Data Analyst Certificate program, June 2023.")
     with col33:
         st.write("")
 
