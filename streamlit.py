@@ -39,7 +39,7 @@ top15genres = pd.read_csv('top15genres.csv', index_col = 0)
 
 # Side navigation menu
 st.sidebar.image("logoPSL.png", output_format = "PNG", width = 200)
-st.sidebar.header("DATA ANALYST CERTIFICATE - Final project")
+st.sidebar.header("Data Analyst Certificate - Final Project")
 st.sidebar.header("Menu")
 pages = ["Home Page", "Introduction", "Datasets", "Data Visualizations", "Data Modeling", "Conclusion", "Recommendation System"]
 page = st.sidebar.radio("Select a page", options = pages)
