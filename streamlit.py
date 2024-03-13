@@ -746,7 +746,7 @@ if page == pages[6]:
         return components.html(f'<iframe title="deezer-widget" src={link} width="100%" height="150" frameborder="0" allowtransparency="true" allow="encrypted-media; clipboard-write"></iframe>')
 
     # Seed track:
-    OG = "Nirvana - Smells like teen spirit"
+    OG = "Taylor Swift - Lover"
     OG_index = int(dfm2[dfm2['artist_track'] == OG].index.values)
     options = dfm2['artist_track']
     search_bar = st.selectbox("", options, index = OG_index, label_visibility = "collapsed", key = "search")
