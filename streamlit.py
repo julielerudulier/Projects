@@ -12,7 +12,7 @@ from scipy.spatial.distance import pdist, squareform
 import graphviz 
 import plotly.express as px
 
-# Masquage du footer 
+# Hide footer
 hide_default_format = """
        <style>
        #MainMenu {visibility: hidden; }
@@ -21,7 +21,7 @@ hide_default_format = """
        """
 st.markdown(hide_default_format, unsafe_allow_html=True)
 
-# Gestion des images et des datasets
+# Import images and datasets
 image = Image.open('target.png')
 flimage = ImageOps.mirror(image)
 JLR = Image.open("JLR_circle.png")
@@ -37,9 +37,9 @@ top15artists = pd.read_csv('top15artists.csv', index_col = 0)
 top15titres = pd.read_csv('top15titres.csv', index_col = 0)
 top15genres = pd.read_csv('top15genres.csv', index_col = 0)
 
-# Menu latéral 
+# Side navigation menu
 st.sidebar.image("logo_mines.png", output_format = "PNG", width = 200)
-st.sidebar.header("DATA ANALYST CERTIFICATE - Research project")
+st.sidebar.header("DATA ANALYST CERTIFICATE - Final project")
 st.sidebar.header("Menu")
 pages = ["Home Page", "Introduction", "Datasets", "Data Visualizations", "Data Modeling", "Conclusion", "Recommendation System"]
 page = st.sidebar.radio("Select a page", options = pages)
@@ -49,7 +49,7 @@ Julie Le Rudulier - [LinkedIn](https://www.linkedin.com/in/julielerudulier/)
 """) 
 st.sidebar.image(fliJLR, width = 100, output_format = "PNG")
 
-# Page d'accueil 
+# Home page
 if page == pages[0]: 
     st.markdown("### Music Recommendations: Recommending Songs Through Two Different Machine Learning Algorithms")
     st.markdown("##")
@@ -66,7 +66,7 @@ if page == pages[0]:
     with col11:
         st.write("")
     with col22:
-        st.write("Research project conducted as part of the Data Analyst Certificate program, June 2023.")
+        st.write("Final project conducted as part of the Data Analyst Certificate program, June 2023.")
     with col33:
         st.write("")
 
@@ -759,7 +759,7 @@ if page == pages[6]:
     def callback2():
         st.session_state.search = options[index_reco2]
 
-    # Display of recommendation:
+    # Display of recommendations:
     if search_bar != OG:
         st.markdown('#')
         st.write(f"You selected the song **{search_bar}**, here are the tracks we recommend:")
