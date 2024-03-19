@@ -12,5 +12,6 @@ I chose to group similar tracks automatically by running a k-means algorithm on 
 
   - The second part of the algorithm was based on a similarity matrix. Using the Mahalanobis metric allowed my function to return the best recommendations possible, given the limited number of songs avaible in our dataset.
 
+I created a Streamlit App for this project, avaible [here](https://julielerudulier.streamlit.app/).
 
 I started working on this project in January 2023. A paper on data cleansing and exploration was first handed in to Faculty members in March. This paper also included data visualizations and a primary analysis of trends in data. A second paper on data modeling was handed in in May. The final essay was handed in to Faculty members in June, while the outcomes of this project as well as the recommendation system were presented to a jury on June 26th, 2023.
