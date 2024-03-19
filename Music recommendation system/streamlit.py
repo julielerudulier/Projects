@@ -83,7 +83,7 @@ if page == pages[1]:
         st.markdown("##### Approach")
         st.write("There are mainly four recommendation methods that are commonly used in music recommender systems: \n- Content-based filtering; \n- Context-based filtering; \n- Collaborative filtering; \n- And hybrid methods, which combine the other filtering methods and minimize the issues a single method can have.")
         st.write("The former method was preferred to conduct this project. Indeed, most streaming platforms generally use collaborative filtering systems, sometimes combined with other algorithms. It thus seemed more interesting to design a system that is not based on ratings and reactions by similar users, but rather that is based on the similarity of the songs' technical features.")
-        st.write("Also, recommender systems do not always provide the most accurate recommendations. To help improve users' satisfaction we chose to build our system based on two different algorithms : \n - A clustering algorithm; \n - A similarity matrix.")
+        st.write("Also, recommender systems do not always provide the most accurate recommendations. To help improve users' satisfaction I chose to build my system based on two different algorithms : \n - A clustering algorithm; \n - A similarity matrix.")
         st.write("The two algorithms return songs based on similar attributes that they share with a seed track, through two different methods and distance metrics. Both systems operate simultaneously and each recommends one song so that users can pick the song they like the most.")
     with tab3:   
         st.markdown("##### Research Objectives") 
@@ -96,13 +96,13 @@ if page == pages[1]:
 if page == pages[2]: 
     st.header("Datasets")
     st.write("Five datasets were made available to carry out this project with data such as: \n- Information and attributes of songs played on Spotify; \n- Hashtags published on Twitter by users who were listening to music; \n- The hashtags' aggregate sentiment values, assessed through multiple sentiment dictionaries.") 
-    st.write("After several unsuccessful attempts at creating relevant algorithms with the multiple datasets available, we established that our key variables were all contained in one dataset and we decided to focus our work on this one dataset only: the dataset #1")
+    st.write("After several unsuccessful attempts at creating relevant algorithms with the multiple datasets available, I established that the key variables were all contained in one dataset and I decided to focus my work on this one dataset only: the dataset #1")
     st.markdown("###")
 
     tabDS1, tabDS2, tabDS3, tabDS4, tabDS5 = st.tabs(['Dataset #1', 'Dataset #2', 'Dataset #3', 'Dataset #4', 'Dataset #5'])
     with tabDS1:   
         st.markdown("##### Dataset #1: 'Dataset'")
-        st.write("The first dataset is titled 'Dataset'. It is a dataset of Spotify tracks over a range of 125 different music genres, associated with multiple audio features such as the tracks' tempo, their mode, valence, danceability, liveness... While we have no information regarding the release date of the songs in this dataset, it contains tracks from past and present time.") 
+        st.write("The first dataset is titled 'Dataset'. It is a dataset of Spotify tracks over a range of 125 different music genres, associated with multiple audio features such as the tracks' tempo, their mode, valence, danceability, liveness... While I have no information regarding the release date of the songs in this dataset, it contains tracks from past and present time.") 
         st.write("There are 20 original columns in this dataset - 14 numeric variables, 5 categorial variables and 1 Boolean variable - and 114 000 rows. Its size is 20.12Mo. This dataset is available on [Kaggle](https://www.kaggle.com/datasets/maharshipandya/-spotify-tracks-dataset).")
         st.write("First 5 rows of the dataset:")
         dataset_5 = pd.read_csv("datasets/dataset_5.csv", index_col = 0)
@@ -135,7 +135,7 @@ if page == pages[2]:
     with tabDS5:
         st.markdown("##### Dataset #5: 'Module4 Cleaned'")
         st.write("The fifth and last dataset is titled 'Module4 Cleaned'. It is a combination of the following datasets: 'Sentiment Values', 'User Track Hashtag Timestamp' and 'Context Content Features'. Data for each of these datasets were previously cleansed.") 
-        st.write("During the data exploration phase of this project, we were not entirely sure how we were going to process data in order to design our recommendation system. For that reason we decided to let this dataset aside and do the data cleansing process ourselves. As a result, this dataset was not used at all in this project.")
+        st.write("During the data exploration phase of this project, I was not entirely sure how I was going to process data in order to design my recommendation system. For that reason I decided to let this dataset aside and do the data cleansing process myself. As a result, this dataset was not used at all in this project.")
         st.write("This dataset is available on [Kaggle](https://www.kaggle.com/code/chelseapower/module4-project/output).")
         st.write("First 5 rows of the dataset:")
         module4_5 = pd.read_csv("datasets/module4_cleaned_5.csv", index_col = 0)
@@ -144,8 +144,8 @@ if page == pages[2]:
 # Page 3 - Data Visualizations
 if page == pages[3]:
     st.header("Data Visualizations")
-    st.write("Using visual elements like charts and graphs provided us with an accessible way to see and understand trends, outliers, and patterns in our data. Furthermore, capturing the distribution of key variables allowed us to understand critical statistical properties of the data we were about to work with, and it helped us make educated data-driven decisions on key outcomes when designing our recommendation system.")
-    st.write("In this section is a brief overview of our key findings while analyzing data visualizations.")
+    st.write("Using visual elements like charts and graphs provided us with an accessible way to see and understand trends, outliers, and patterns in the data. Furthermore, capturing the distribution of key variables allowed us to understand critical statistical properties of the data I was about to work with, and it helped us make educated data-driven decisions on key outcomes when designing my recommendation system.")
+    st.write("In this section is a brief overview of my key findings while analyzing data visualizations.")
     tab_top, tab_correlations, tab_linearite = st.tabs(["Trends in Data", "Correlation", "Linearity"])
     with tab_top:
         tab1, tab2, tab3 = st.tabs(["Artists", "Songs", "Music Genres"])
@@ -154,7 +154,7 @@ if page == pages[3]:
             with tab111:
                 st.markdown("#### Top 15 Most Popular Artists")
                 st.write("The visualization below shows that the most popular artists are in various music genres: Pop, Latino, Hip-Hop, Electro... However when hovering over the starting point of each line on the graph, we can see that these artists only have two songs on average in the dataset.")
-                st.markdown("**The most popular artists seem to be underrepresented in our dataset.**")
+                st.markdown("**The most popular artists seem to be underrepresented in the dataset.**")
                 fig_top15artists = px.area(top15artists, 
                                            x = "Popularity (mean)", 
                                            y = "Artists", 
@@ -164,8 +164,8 @@ if page == pages[3]:
                 fig_top15artists.update_xaxes(showgrid = False)
                 fig_top15artists.update_yaxes(showgrid = False)
                 st.plotly_chart(fig_top15artists, theme = "streamlit")
-                st.write("Our recommendations will be based on similarity between tracks, but popularity could be a secondary factor in our final ranking of similar songs. For that matter, it is important that we have a clear understanding of the observations' distribution.")
-                st.write("If popular artists only have two tracks on average in our dataset, a closer look at the artists with the most songs in the dataset will help confirm the idea that popular artists are underrepresented.")
+                st.write("My recommendations will be based on similarity between tracks, but popularity could be a secondary factor in the final ranking of similar songs. For that matter, it is important that I have a clear understanding of the observations' distribution.")
+                st.write("If popular artists only have two tracks on average in the dataset, a closer look at the artists with the most songs in the dataset will help confirm the idea that popular artists are underrepresented.")
                 st.write("")
                 with st.expander("View Source Code", expanded = False):
                     code = '''
@@ -191,8 +191,8 @@ if page == pages[3]:
                                             color_continuous_midpoint = np.average(top10artists["Popularity (mean)"], 
                                                                                     weights = top10artists["Popularity (mean)"]))
                 st.plotly_chart(fig_top10artists, theme = "streamlit")
-                st.markdown("We do not know how this dataset was constructed but this visualization seems to support our primary analysis: **artists with the highest values of popularity are underrepresented in the dataset to the detriment of artists with low ratings.**")
-                st.write("This could limit our results if our system was partly based on popularity.")
+                st.markdown("I do not know how this dataset was constructed but this visualization seems to support my primary analysis: **artists with the highest values of popularity are underrepresented in the dataset to the detriment of artists with low ratings.**")
+                st.write("This could limit my results if my system was partly based on popularity.")
                 st.write("")
                 with st.expander("View Source Code", expanded = False):
                     code = '''fig_top10artists = px.treemap(top10artists,
@@ -215,7 +215,7 @@ if page == pages[3]:
             fig_top15titres.update_xaxes(showgrid = False)
             fig_top15titres.update_yaxes(showgrid = False)
             st.plotly_chart(fig_top15titres, theme = "streamlit")
-            st.markdown("**Track genre values in our dataset could be misleading and should probably not be taken into account as a primary feature as a consequence.**")
+            st.markdown("**Track genre values in the dataset could be misleading and should probably not be taken into account as a primary feature as a consequence.**")
             st.write("A closer look at the music genres listed in the dataset will help us know more about the reliability of the 'track_genre' variable.")
             st.write("")
             with st.expander("View Source Code", expanded = False):
@@ -245,7 +245,7 @@ if page == pages[3]:
                 fig_top15genres.update_yaxes(showgrid = False)
                 st.plotly_chart(fig_top15genres, theme = "streamlit")
                 st.write("This finding brings out a discrepancy between popularity values of songs and artists, and their associated genres.")
-                st.markdown("**Consequently, our algorithm should be designed in such a manner that the songs recommended to users are the result of a balanced system that is built on content similarity, but that also takes into account popularity values of songs, leaving out the notion of music genres.**")
+                st.markdown("**Consequently, my algorithm should be designed in such a manner that the songs recommended to users are the result of a balanced system that is built on content similarity, but that also takes into account popularity values of songs, leaving out the notion of music genres.**")
                 st.write("")
                 with st.expander("View Source Code", expanded = False):
                     code = '''
@@ -261,7 +261,7 @@ if page == pages[3]:
                 
             with tab22:
                 st.markdown("#### Popularity of Genres and Number of Songs per Genre")
-                st.write("The visualization below supports our first findings: the music genres to which belong the most popular songs (Hip-Hop, Electro, Reggaeton, Dance...) tend to have fewer tracks in the dataset than most other genres, while a lot of subgenres with very low popularity values (Grindcore, Black metal, Bluegrass...) have the most songs in the dataset.")
+                st.write("The visualization below supports my first findings: the music genres to which belong the most popular songs (Hip-Hop, Electro, Reggaeton, Dance...) tend to have fewer tracks in the dataset than most other genres, while a lot of subgenres with very low popularity values (Grindcore, Black metal, Bluegrass...) have the most songs in the dataset.")
                 ratio = pd.DataFrame(dataset_sample.groupby('track_genre')['track_name'].nunique())
                 ratio = ratio.reset_index()
                 ratio = ratio.rename(columns = ({'track_genre' : 'Music genres', 'track_name' : 'Number of songs'}))
@@ -280,7 +280,7 @@ if page == pages[3]:
                 fig_pop_genre.update_xaxes(showgrid = False)
                 fig_pop_genre.update_yaxes(showgrid = False)
                 st.plotly_chart(fig_pop_genre, theme = "streamlit", use_container_width = True)
-                st.write("**It thus confirms the idea that popularity should be used in our system as a leverage variable to balance our results.**")
+                st.write("**It thus confirms the idea that popularity should be used in my system as a leverage variable to balance my results.**")
                 st.write("")
                 with st.expander("View Source Code", expanded = False):
                     code = '''
@@ -365,7 +365,7 @@ if page == pages[3]:
         st.write("")
         st.image("images/correlationEN.png", output_format = "PNG")
         st.write("")
-        st.write("This indicates that **we will have to perform feature selection to reduce the number of input variables by eliminating all redundant or irrelevant features** and narrowing down the set of features to those most relevant to our machine learning model.")
+        st.write("This indicates that **I will have to perform feature selection to reduce the number of input variables by eliminating all redundant or irrelevant features** and narrowing down the set of features to those most relevant to my machine learning model.")
         st.write("")
         with st.expander("View Source Code", expanded = False):
             code = '''cor = dataset.corr()
@@ -380,7 +380,7 @@ if page == pages[3]:
         st.write("")
         st.image("images/linearite.png", output_format = "PNG")
         st.write("")
-        st.write("**It confirms the need to perform feature selection to identify automatically the most relevant features.** Our model and our results may not be accurate otherwise.")
+        st.write("**It confirms the need to perform feature selection to identify automatically the most relevant features.** The model and the results may not be accurate otherwise.")
         st.write("")
         with st.expander("View Source Code", expanded = False):
             code = '''plt.figure(figsize = (12,12))
@@ -390,16 +390,16 @@ if page == pages[3]:
 # Page 4 - Data Modeling
 if page == pages[4]: 
     st.header("Data Modeling")
-    st.markdown("In this project we did not have a specific outcome variable that we were trying to predict. Instead we had a set of numeric features that we wanted to use to find collections of observations that shared similar characteristics. As a result, our problem was an unsupervised learning problem, and our goal was to group automatically data points according to the similarities between them. In addition, there seemed to be no particular correlation between the dataset's variables.")
-    st.write("We thus chose an unsupervised learning clustering algorithm to process our data and find natural clusters if they exist in the data: **K-means clustering.** Once objects were divided into clusters, we sorted them by popularity so that the chance that users enjoy the songs recommended to them was the highest.")
+    st.markdown("In this project I did not have a specific outcome variable that I was trying to predict. Instead I had a set of numeric features that I wanted to use to find collections of observations that shared similar characteristics. As a result, my problem was an unsupervised learning problem, and my goal was to group automatically data points according to the similarities between them. In addition, there seemed to be no particular correlation between the dataset's variables.")
+    st.write("I thus chose an unsupervised learning clustering algorithm to process the data and find natural clusters if they exist in the data: **K-means clustering.** Once objects were divided into clusters, I sorted them by popularity so that the chance that users enjoy the songs recommended to them was the highest.")
     st.markdown("###")
     
     tab1, tab2, tab3 = st.tabs(["Dimensionality Reduction", "Implementation of K-means Clustering", "Algorithm Configuration"])
     with tab1:
         st.markdown("#### Dimensionality Reduction")
-        st.write("We chose a popular unsupervised learning technique for reducing the dimensionality of data: The Principal Component Analysis.") 
-        st.write("PCA usually increases interpretability yet, at the same time, minimizes information loss. It also helps to find the most significant features in a dataset and it should help in finding a sequence of linear combinations of variables. This should have been particularly useful in our situation since our variables did not seem to have any type of relationship.")
-        st.markdown("We performed PCA to three different versions of our dataset: \n- one that includes all 125 music subgenres; \n- one that includes 24 groups of music genres; \n- one that does not contain any genre at all.")
+        st.write("I chose a popular unsupervised learning technique for reducing the dimensionality of data: The Principal Component Analysis.") 
+        st.write("PCA usually increases interpretability yet, at the same time, minimizes information loss. It also helps to find the most significant features in a dataset and it should help in finding a sequence of linear combinations of variables. This should have been particularly useful in this situation since the variables did not seem to have any type of relationship.")
+        st.markdown("I performed PCA to three different versions of the dataset: \n- one that includes all 125 music subgenres; \n- one that includes 24 groups of music genres; \n- one that does not contain any genre at all.")
         st.markdown("###")
         tab_complet, tab_avec, tab_no = st.tabs(["PCA to Entire Dataset", "PCA to Dataset With 24 Groups of Music Genres", "PCA to Dataset Without Any Genre"])
         with tab_complet:
@@ -414,49 +414,49 @@ if page == pages[4]:
                 st.write("")
                 st.image("images/cumsumfull.png", output_format = "PNG")
                 st.write("")
-                st.write("After performing ACP to the entire dataset, we found that **109 components were required to explain at least 90% of the information in the dataset from the cumulative explained variance.** Since only 15% of the components were reduced, we considered such results to be below our expectations and decided in consequence to perform ACP to another version of the dataset: a version where all subgenres were regrouped into 24 larger music genres.")
+                st.write("After performing ACP to the entire dataset, I found that **109 components were required to explain at least 90% of the information in the dataset from the cumulative explained variance.** Since only 15% of the components were reduced, I considered such results to be below my expectations and decided in consequence to perform ACP to another version of the dataset: a version where all subgenres were regrouped into 24 larger music genres.")
         with tab_avec:
             tab_var, tab_sum = st.tabs(["Explained Variance Ratio", "Cumulative Explained Variance"])
             with tab_var:
                 st.markdown("#### Selecting the Number of Dimensions")
-                st.write("On this second attempt, we replaced the 114 original subgenres with only 24 distinct values instead, and performed ACP to this new version of the dataset. The visualization below illustrates the variance of each principal component.")
+                st.write("On this second attempt, I replaced the 114 original subgenres with only 24 distinct values instead, and performed ACP to this new version of the dataset. The visualization below illustrates the variance of each principal component.")
                 st.write("")
                 st.image("images/varexpwith.png", output_format = "PNG")
             with tab_sum:
-                st.write("After plotting the cumulative explained variance, we can see that where our line is drawn for 90%, **the total explained variance is approximately at 35 components.** We managed here to reduce 28% of the components.")
+                st.write("After plotting the cumulative explained variance, we can see that where the line is drawn for 90%, **the total explained variance is approximately at 35 components.** I managed here to reduce 28% of the components.")
                 st.write("")
                 st.image("images/cumsumwith.png", output_format = "PNG")
                 st.write("")
-                st.write("Still, we decided to remove completely the 'track_genre' variable and performed PCA to this new and third version of the dataset to see if we could obtain an even higher reduction rate.")
+                st.write("Still, I decided to remove completely the 'track_genre' variable and performed PCA to this new and third version of the dataset to see if I could obtain an even higher reduction rate.")
         with tab_no:
             tab_var, tab_sum = st.tabs(["Explained Variance Ratio", "Cumulative Explained Variance"])
             with tab_var:
                 st.markdown("#### Selecting the Number of Dimensions")
-                st.write("On this third attempt, we deleted the 'track_genre' variable from the dataset to perform PCA to the songs' features only. The visualization below illustrates the variance of each principal component for this third version of the dataset.")
+                st.write("On this third attempt, I deleted the 'track_genre' variable from the dataset to perform PCA to the songs' features only. The visualization below illustrates the variance of each principal component for this third version of the dataset.")
                 st.write("")
                 st.image("images/varexpwo.png", output_format = "PNG")
             with tab_sum:
-                st.write("After performing PCA to this third version of the dataset, we found that **12 components out of 14 were required to explain at least 90% of the information in the dataset from the cumulative explained variance.** Only 14% of the components were reduced here, which we considered was far below our expectations once again.")
+                st.write("After performing PCA to this third version of the dataset, I found that **12 components out of 14 were required to explain at least 90% of the information in the dataset from the cumulative explained variance.** Only 14% of the components were reduced here, which we considered was far below my expectations once again.")
                 st.write("")
                 st.image("images/cumsumwo.png")
                 st.write("")
-                st.write("After three attemps with three different versions of the dataset, we were not able to reduce effectively the dimensionality of our dataset. We went on and proceeded with the clustering.")
+                st.write("After three attemps with three different versions of the dataset, I was not able to reduce effectively the dimensionality of the dataset. I went on and proceeded with the clustering.")
                 
     with tab2:
         st.markdown("#### Implementation of K-means Clustering")
         st.write("K-means clustering seemed to be the most appropriate type of algorithm for this project, for it usually helps maximise the similarity of data points within clusters. Also k-means clustering is a comparatively fast algorithm which performance, unlike most other clustering algorithms, scales linearly with the number of data points in the dataset.")
-        st.write("K-means clustering has disadvantages of course, such as sensitivity to outliers or scale. But we believed that it still was the most appropriate, reliable and well-studied unsupervised clustering algorithm for our project.")
+        st.write("K-means clustering has disadvantages of course, such as sensitivity to outliers or scale. But I believed that it still was the most appropriate, reliable and well-studied unsupervised clustering algorithm for this project.")
         st.write("")
         st.markdown("#### Determining the Optimal Number of Clusters")
         st.write("Like many other clustering algorithms, k-means clustering requires the number of clusters that will be created to be specified ahead of time. For that reason, determining the optimal number of clusters is a fundamental part in generating the clusters.")
-        st.write("There are two main methods to find the optimal number of clusters: The elbow curve method and the Silhouette analysis. We will use the elbow method first and only refer to the Silhouette analysis if needed.")
-        st.write("As we did not succeed in reducing effectively the number of features in our dataset, we performed k-means clustering to two different versions of our dataset: the version with 24 groups of music genres and the version with no genre at all. We were then able to compare both clusterings and evaluate their relevance according to what we were trying to achieve.")
+        st.write("There are two main methods to find the optimal number of clusters: The elbow curve method and the Silhouette analysis. I will use the elbow method first and only refer to the Silhouette analysis if needed.")
+        st.write("As we did not succeed in reducing effectively the number of features in the dataset, I performed k-means clustering to two different versions of the dataset: the version with 24 groups of music genres and the version with no genre at all. I was then able to compare both clusterings and evaluate their relevance according to what I was trying to achieve.")
         
         tab11, tab22 = st.tabs(["K-means on Dataset With 24 Groups of Genres", "K-means on Dataset Without Any Genre"])
         with tab11:
             st.markdown("##### The Elbow Method")
             st.write("The elbow method is probably the most well-known method for determining the optimal number of clusters. It is based on calculating the Within-Cluster-Sum of Squared Errors (WSS) for different number of clusters (k) and selecting the k for which change in WSS first starts to diminish. In the plot of WSS-versus-k, this is visible as an elbow.")
-            st.write("We obtained the following plot for WSS-vs-k for our dataset with 24 groups of genres.")
+            st.write("I obtained the following plot for WSS-vs-k for the dataset with 24 groups of genres.")
             st.image("images/kmeansEN.png", output_format = "PNG")
             st.write("")
             st.write("**We can see here a clear elbow at k = 31.**")
@@ -464,8 +464,8 @@ if page == pages[4]:
             st.write("")
             st.image("images/heatmapK1EN.png", output_format = "PNG")
             st.write("")
-            st.write("A closer look at this visualization let us see that each music genre was assigned to one cluster, as it seems the algorithm created clusters based on the genres more than any other variables. Such results were not what we were looking for as our goal was to find collections of observations that shared similar characteristics that we were not already aware of.")
-            st.write("As a consequence, we decided to run a k-means algorithm on the dataset after removing the 'track_genre' variable.")
+            st.write("A closer look at this visualization let us see that each music genre was assigned to one cluster, as it seems the algorithm created clusters based on the genres more than any other variables. Such results were not what I was looking for as my goal was to find collections of observations that shared similar characteristics that I was not already aware of.")
+            st.write("As a consequence, I decided to run a k-means algorithm on the dataset after removing the 'track_genre' variable.")
             st.write("")
             st.image("images/heatmapK11EN.png", output_format = "PNG")
             
@@ -477,23 +477,23 @@ if page == pages[4]:
                 st.write("")
                 st.image("images/elbowEN.png", output_format = "PNG")
                 st.write("")
-                st.write("In order to determine more precisely the value of k, we used the YellowBrick library as it can implement the elbow method with a distortion metric which computes the sum of squared distances from each point to its assigned center.")
+                st.write("In order to determine more precisely the value of k, I used the YellowBrick library as it can implement the elbow method with a distortion metric which computes the sum of squared distances from each point to its assigned center.")
             with tab_k_elbow:
                 st.markdown("##### KElbowVisualizer")
                 st.write("The KElbowVisualizer function fit the k-means model for a range of clusters values between 2 to 17. As shown in the figure below, the black vertical line indicates that the elbow point is achieved with 8 clusters.")
                 st.write("")
                 st.image("images/kelbow.png", output_format = "PNG")
                 st.write("")
-                st.write("In order to validate that result, we decided to use the Silhouette Method to have an additional way of determining the optimal number of clusters.")
+                st.write("In order to validate that result, I decided to use the Silhouette Method to have an additional way of determining the optimal number of clusters.")
             with tab_silhouette:
                 st.markdown("##### The Silhouette Coefficient")                
                 st.write("The silhouette value measures how similar a point is to its own cluster (cohesion) compared to other clusters (separation). The Silhouette Score reaches its global maximum at the optimal k. This should ideally appear as a peak in the Silhouette Value-versus-k plot.")
-                st.write("Here is the plot for our own dataset (no genre):")
+                st.write("Here is the plot for my own dataset (no genre):")
                 st.write("")
                 st.image("images/silhouetteEN.png", output_format = "PNG")
                 st.write("")
                 st.write("The range of the Silhouette value is between +1 and -1. A high value is desirable and indicates that the point is placed in the correct cluster. If many points have a negative Silhouette value, it may indicate that we have created too many or too few clusters.")
-                st.write("In our case, the Silhouette scores were close to 0 which indicates that our algorithm was not very efficient. The visualization also reveals that the highest Silhouette value was 7.")
+                st.write("In my case, the Silhouette scores were close to 0 which indicates that my algorithm was not very efficient. The visualization also reveals that the highest Silhouette value was 7.")
                 st.write("To decide between the two values (8 as obtained with the KElbowVisualizer and 7 as obtained with the Silhouette score plot) we decided to display a Silhouette Plot for every value of k ranging from 6 to 10.")
                 st.write("")
                 tab_6, tab_7, tab_8, tab_9, tab_10 = st.tabs(["6 Clusters", "7 Clusters", "8 Clusters", "9 Clusters", "10 Clusters"])
@@ -508,24 +508,24 @@ if page == pages[4]:
                 with tab_10:
                     st.image("images/10EN.png", output_format = "PNG")
                 st.write("")
-                st.write("We already knew that the values of the silhouette coefficient were low which was an indicator of low efficiency.")
+                st.write("I already knew that the values of the silhouette coefficient were low which was an indicator of low efficiency.")
                 st.write("Consequently we had to look at the distribution between clusters. Clustered areas should have similar sizes or well-distributed points. **The value of n_clusters = 7 seemed to be the most optimal value even though all 7 clusters did not have similar sizes.**")
-                st.write("We then looked at the median values for each variable per cluster to see if this clustering seemed to be more accurate than previously.")
+                st.write("I then looked at the median values for each variable per cluster to see if this clustering seemed to be more accurate than previously.")
             with tab_clusters:
                 st.markdown("##### Clusters") 
                 st.write("The heatmap below shows all median values for each variable per cluster, after instantiating the k-means estimator class with n_clusters = 7.")
                 st.write("")
                 st.image("images/heatmapclustersEN.png", output_format = "PNG")   
                 st.write("")
-                st.write("Median values of variables such as the duration, loudness or tempo indicate that each cluster seemed to contain a different type of tracks, which was our goal. We aimed at grouping songs with similar characteristics.") 
-                st.write("We had to keep in mind nonetheless that our recommendation system should not be based exclusively on this clustering algorithm, as Silhouette Scores were really low and recommendations might be inaccurate.")
-                st.write("Next we explain in detail how we configured our algorithm to make it relevant and to ensure it returns the best recommendations possible.")
+                st.write("Median values of variables such as the duration, loudness or tempo indicate that each cluster seemed to contain a different type of tracks, which was my goal. I aimed at grouping songs with similar characteristics.") 
+                st.write("I had to keep in mind nonetheless that my recommendation system should not be based exclusively on this clustering algorithm, as Silhouette Scores were really low and recommendations might be inaccurate.")
+                st.write("Next we explain in detail how we configured my algorithm to make it relevant and to ensure it returns the best recommendations possible.")
 
     with tab3:
         st.markdown("#### Algorithm Configuration")
-        st.write("We did not really succeed in reducing the dimensionality of our dataset and we knew that our clusters did not have good Silhouette Scores. The former issue could be linked to the preprocessing of the data while the latter could be the result of the algorithm's sensitivity to the dataset's outliers, although in this case the notion of outlier is a very subjective notion as our data represent audio tracks in a lot of different and specific genres. It is also possible that we did not choose the right machine learning algorithm for our dataset.")
-        st.write("As a result we decided to build the first part of our recommendation system using the clusters created with the k-means algorithm, and add manual steps in order to present users with the best recommendations possible.")
-        st.write("We also decided to base our system on another approach and create a similarity matrix. The elements of the similarity matrix measure pairwise similarities of objects and we were be able to achieve the best results possible by selecting what we considered to be the most appropriate metric value.")
+        st.write("I did not really succeed in reducing the dimensionality of the dataset and I knew that the clusters did not have good Silhouette Scores. The former issue could be linked to the preprocessing of the data while the latter could be the result of the algorithm's sensitivity to the dataset's outliers, although in this case the notion of outlier is a very subjective notion as the data represent audio tracks in a lot of different and specific genres. It is also possible that we did not choose the right machine learning algorithm for the dataset.")
+        st.write("As a result I decided to build the first part of the recommendation system using the clusters created with the k-means algorithm, and add manual steps in order to present users with the best recommendations possible.")
+        st.write("I also decided to base my system on another approach and create a similarity matrix. The elements of the similarity matrix measure pairwise similarities of objects and we were be able to achieve the best results possible by selecting what we considered to be the most appropriate metric value.")
         st.write("")
         
         tabAlgo1, tabAlgo2 = st.tabs(["First Algorithm", "Second Algorithm: Similarity Matrix"])
@@ -629,9 +629,9 @@ if page == pages[4]:
         with tabAlgo2:
             st.write("**Creating the Similarity Matrix**")
             st.write("")
-            st.write("We created the matrix using the scipy.spatial.distance module and 'pdist' function. This function computes pairwise distances between points using Euclidean distance as the default distance metric. The main advantage of this method is the wide range of metrics available.")
-            st.write("After trying out all metrics, we found that the Mahalanobis metric was the one which returned the best results. The Mahalanobis distance is scale-invariant, yet it takes into account the correlations of the dataset. It is also widely used in cluster analysis.")
-            st.write("We chose to use the matrix's results without adding any human intervention.")
+            st.write("I created the matrix using the scipy.spatial.distance module and 'pdist' function. This function computes pairwise distances between points using Euclidean distance as the default distance metric. The main advantage of this method is the wide range of metrics available.")
+            st.write("After trying out all metrics, I found that the Mahalanobis metric was the one which returned the best results. The Mahalanobis distance is scale-invariant, yet it takes into account the correlations of the dataset. It is also widely used in cluster analysis.")
+            st.write("I chose to use the matrix's results without adding any human intervention.")
             st.write("Below is a preview of the matrix:")
             st.write("")
             st.image("images/matrice.png",  output_format = 'PNG')
@@ -644,14 +644,14 @@ if page == pages[5]:
 
     with tab1:
         st.markdown("#### Research Objectives")
-        st.write("In this project, our goal was to create a music recommendation system based on content similarity, using a dataset which contained thousands of songs in various music genres.") 
-        st.write("We chose to group similar tracks automatically by running a k-means algorithm on our dataset, but we were not very successful in creating self-sufficient clusters. We were still able to use the clusters by adding manual steps and fine-tuning our function to create the first part of our recommendation system.") 
+        st.write("In this project, my goal was to create a music recommendation system based on content similarity, using a dataset which contained thousands of songs in various music genres.") 
+        st.write("I chose to group similar tracks automatically by running a k-means algorithm on our dataset, but I was not very successful in creating self-sufficient clusters. I was still able to use the clusters by adding manual steps and fine-tuning our function to create the first part of our recommendation system.") 
         st.write("The second part was based on a similarity matrix. Using the Mahalanobis metric allowed our function to return the best recommendations possible, given the limited number of songs avaible in our dataset.")
-        st.write("We can thus say that we achieved our goal as we were able to build a music recommendation system allowing users to choose between two songs similar to a seed song of their liking. Although the relevancy of the recommendations is subjective, our system was designed and adjusted so that the songs suggested to users can be considered the most interesting suggestions possible.")
+        st.write("I can thus say that I achieved my goal as I was able to build a music recommendation system allowing users to choose between two songs similar to a seed song of their liking. Although the relevancy of the recommendations is subjective, my system was designed and adjusted so that the songs suggested to users can be considered the most interesting suggestions possible.")
     
     with tab2:
         st.markdown("#### Ways of Improvement")
-        st.markdown("With more time, we could have: \n- Designed a review system and store ratings of recommendations in a database;")
+        st.markdown("With more time, I could have: \n- Designed a review system and store ratings of recommendations in a database;")
         st.markdown("- Searched for additional resources and add songs to the dataset to have a broader selection of tracks to recommend;")
         st.markdown("- Run alternative dimensionality reduction and unsupervised algorithms to get better results than the clusters created in this project.")
 
@@ -762,7 +762,7 @@ if page == pages[6]:
     # Display of recommendations:
     if search_bar != OG:
         st.markdown('#')
-        st.write(f"You selected the song **{search_bar}**, here are the tracks we recommend:")
+        st.write(f"You selected the song **{search_bar}**, here are the tracks the system recommends:")
         track = str(search_bar) 
         reco1 = reco(track)[0]
         reco2 = recom(track)[0]
