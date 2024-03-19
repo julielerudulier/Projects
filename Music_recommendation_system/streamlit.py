@@ -22,8 +22,8 @@ hide_default_format = """
 st.markdown(hide_default_format, unsafe_allow_html=True)
 
 # Import images and datasets
-JLR = Image.open("images/JLR_circle.png")
-fliJLR = JLR.rotate(270)
+#JLR = Image.open("images/JLR_circle.png")
+#fliJLR = JLR.rotate(270)
 dataset = pd.read_csv("datasets/final_red.csv", index_col = 0)
 dfm = pd.read_csv("datasets/df_matrix.csv", index_col = 'artist_track')
 dfm2 = pd.read_csv("datasets/df_matrix.csv")
@@ -45,7 +45,7 @@ st.sidebar.header("Author")
 st.sidebar.markdown("""
 Julie Le Rudulier - [LinkedIn](https://www.linkedin.com/in/julielerudulier/)  
 """) 
-st.sidebar.image(fliJLR, width = 100, output_format = "PNG")
+#st.sidebar.image(fliJLR, width = 100, output_format = "PNG")
 
 # Home page
 if page == pages[0]: 
