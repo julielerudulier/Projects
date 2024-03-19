@@ -4,6 +4,8 @@ This was my final project for the **Data Analyst Certificate** I obtained from L
 
 Although the substance of the project deals more with Machine Learning and unsupervised learning algorithms, a large part of the project had to do with data analysis and cleansing.
 
+#### About the project:
+
   - The aim of this project was to build a music recommendation system based on data retrieved from Spotify and Twitter.
 I chose to group similar tracks automatically by running a k-means algorithm on the dataset, but I was not very successful in creating self-sufficient clusters. I was still able to use the clusters by adding manual steps and fine-tuning my function to create the first part of the recommendation system."
 
