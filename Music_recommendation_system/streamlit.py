@@ -22,8 +22,6 @@ hide_default_format = """
 st.markdown(hide_default_format, unsafe_allow_html=True)
 
 # Import images and datasets
-image = Image.open('target.png')
-flimage = ImageOps.mirror(image)
 JLR = Image.open("images/JLR_circle.png")
 fliJLR = JLR.rotate(270)
 dataset = pd.read_csv("datasets/final_red.csv", index_col = 0)
