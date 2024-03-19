@@ -22,21 +22,21 @@ hide_default_format = """
 st.markdown(hide_default_format, unsafe_allow_html=True)
 
 # Import images and datasets
-JLR = Image.open("JLR_circle.png")
+JLR = Image.open("images/JLR_circle.png")
 fliJLR = JLR.rotate(270)
-dataset = pd.read_csv("final_red.csv", index_col = 0)
-dfm = pd.read_csv("df_matrix.csv", index_col = 'artist_track')
-dfm2 = pd.read_csv("df_matrix.csv")
-dataset_sample = pd.read_csv("dataset.csv", index_col = 0)
-pop_genre = pd.read_csv("pop_genre.csv", index_col = 0)
-numgenres = pd.read_csv("numgenres.csv", index_col = 0)
-top10artists = pd.read_csv("top10artists.csv", index_col = 0)
-top15artists = pd.read_csv("top15artists.csv", index_col = 0)
-top15titres = pd.read_csv("top15titres.csv", index_col = 0)
-top15genres = pd.read_csv("top15genres.csv", index_col = 0)
+dataset = pd.read_csv("datasets/final_red.csv", index_col = 0)
+dfm = pd.read_csv("datasets/df_matrix.csv", index_col = 'artist_track')
+dfm2 = pd.read_csv("datasets/df_matrix.csv")
+dataset_sample = pd.read_csv("datasets/dataset.csv", index_col = 0)
+pop_genre = pd.read_csv("datasets/pop_genre.csv", index_col = 0)
+numgenres = pd.read_csv("datasets/numgenres.csv", index_col = 0)
+top10artists = pd.read_csv("datasets/top10artists.csv", index_col = 0)
+top15artists = pd.read_csv("datasets/top15artists.csv", index_col = 0)
+top15titres = pd.read_csv("datasets/top15titres.csv", index_col = 0)
+top15genres = pd.read_csv("datasets/top15genres.csv", index_col = 0)
 
 # Side navigation menu
-st.sidebar.image("logoPSL.png", output_format = "PNG", width = 200)
+st.sidebar.image("images/logoPSL.png", output_format = "PNG", width = 200)
 st.sidebar.header("Data Analyst Certificate - Final Project")
 st.sidebar.header("Menu")
 pages = ["Home Page", "Introduction", "Datasets", "Data Visualizations", "Data Modeling", "Conclusion", "Recommendation System"]
@@ -103,7 +103,7 @@ if page == pages[2]:
         st.write("The first dataset is titled 'Dataset'. It is a dataset of Spotify tracks over a range of 125 different music genres, associated with multiple audio features such as the tracks' tempo, their mode, valence, danceability, liveness... While I have no information regarding the release date of the songs in this dataset, it contains tracks from past and present time.") 
         st.write("There are 20 original columns in this dataset - 14 numeric variables, 5 categorial variables and 1 Boolean variable - and 114 000 rows. Its size is 20.12Mo. This dataset is available on [Kaggle](https://www.kaggle.com/datasets/maharshipandya/-spotify-tracks-dataset).")
         st.write("First 5 rows of the dataset:")
-        dataset_5 = pd.read_csv("dataset_5.csv", index_col = 0)
+        dataset_5 = pd.read_csv("datasets/dataset_5.csv", index_col = 0)
         st.dataframe(dataset_5)
 
     with tabDS2:
@@ -111,7 +111,7 @@ if page == pages[2]:
         st.write("The second dataset is titled 'User Track Hashtag Timestamp'. It contains basic information on 11.6 million music listening events of 139K users and 346K tracks collected from Twitter.") 
         st.write("There are 4 original columns and 17,560,113 rows in this dataset. Its size is 1.31Go. This dataset is available on [Kaggle](https://www.kaggle.com/datasets/chelseapower/nowplayingrs?select=user_track_hashtag_timestamp.csv).")
         st.write("First 5 rows of the dataset:")
-        utht_5 = pd.read_csv("user_track_hashtag_timestamp_5.csv", index_col = 0)
+        utht_5 = pd.read_csv("datasets/user_track_hashtag_timestamp_5.csv", index_col = 0)
         st.dataframe(utht_5)
         
     with tabDS3:
@@ -119,7 +119,7 @@ if page == pages[2]:
         st.write("The third dataset is titled 'Sentiment Values'. It is linked to the 11.6 million music listening events listed in dataset #2 and contains hashtags and their associated sentiment values gathered via four different sentiment dictionaries: AFINN, Opinion Lexicon, Sentistrength Lexicon and Vader. For each of these dictionaries, the minimum, maximum, sum and average of all sentiments of the tokens of the hashtag were listed if available.") 
         st.write("There are 21 original columns and 5,290 rows in this dataset. Its size is 382Ko. This dataset is available on [Kaggle](https://www.kaggle.com/datasets/chelseapower/nowplayingrs?select=user_track_hashtag_timestamp.csv).")
         st.write("First 5 rows of the dataset:")
-        sentiment_5 = pd.read_csv("sentiment_values_5.csv", index_col = 0)
+        sentiment_5 = pd.read_csv("datasets/sentiment_values_5.csv", index_col = 0)
         st.dataframe(sentiment_5)
 
     with tabDS4:
@@ -127,7 +127,7 @@ if page == pages[2]:
         st.write("The fourth dataset is titled 'Context Content Features'. It contains all context and content features of the 11.6 million Twitter music listening events. For each event, content features regarding the track mentioned in the tweet were listed, such as instrumentalness, liveness, speechiness... Context features regarding the listening event such as the language of the tweet were also listed in this dataset.") 
         st.write("There are 22 original columns and 11,614,671 rows in this dataset. Its size is 2.21Go. This dataset is available on [Kaggle](https://www.kaggle.com/datasets/chelseapower/nowplayingrs?select=user_track_hashtag_timestamp.csv).")
         st.write("First 5 rows of the dataset:")
-        ccf_5 = pd.read_csv("ccf_reduit_5.csv", index_col = 0)
+        ccf_5 = pd.read_csv("datasets/ccf_reduit_5.csv", index_col = 0)
         st.dataframe(ccf_5)
 
     with tabDS5:
@@ -136,7 +136,7 @@ if page == pages[2]:
         st.write("During the data exploration phase of this project, I was not entirely sure how I was going to process data in order to design my recommendation system. For that reason I decided to let this dataset aside and do the data cleansing process myself. As a result, this dataset was not used at all in this project.")
         st.write("This dataset is available on [Kaggle](https://www.kaggle.com/code/chelseapower/module4-project/output).")
         st.write("First 5 rows of the dataset:")
-        module4_5 = pd.read_csv("module4_cleaned_5.csv", index_col = 0)
+        module4_5 = pd.read_csv("datasets/module4_cleaned_5.csv", index_col = 0)
         st.dataframe(module4_5)
        
 # Page 3 - Data Visualizations
@@ -319,7 +319,7 @@ if page == pages[3]:
                 st.write("If we combine similar subgenres, the distribution of popularity values for each genre seems to be much more homogeneous.")
                 st.write("The top 4 most popular genres are then Pop, Dance, Hip-Hop and Reggaeton, which correlates the genres of the most popular songs in the dataset.")
                 st.write("")
-                st.image("repart_genresEN.png", output_format = "PNG")
+                st.image("images/repart_genresEN.png", output_format = "PNG")
                 st.write("")
                 with st.expander("View Source Code", expanded = False):
                     code = '''
@@ -361,7 +361,7 @@ if page == pages[3]:
         st.markdown("#### Correlation of Songs' Attributes")
         st.write("According to the heatmap below, there does not seem to be any particular relationship between the dataset's variables, except for the 'loudness' and 'energy' features for which the correlation value is 0.76.")
         st.write("")
-        st.image("correlationEN.png", output_format = "PNG")
+        st.image("images/correlationEN.png", output_format = "PNG")
         st.write("")
         st.write("This indicates that **I will have to perform feature selection to reduce the number of input variables by eliminating all redundant or irrelevant features** and narrowing down the set of features to those most relevant to my machine learning model.")
         st.write("")
@@ -376,7 +376,7 @@ if page == pages[3]:
         st.markdown("#### Linearity of Songs' Attributes")
         st.write("This visualization also highlights the lack of correlation between the variables as it shows how disseminated the data are.")
         st.write("")
-        st.image("linearite.png", output_format = "PNG")
+        st.image("images/linearite.png", output_format = "PNG")
         st.write("")
         st.write("**It confirms the need to perform feature selection to identify automatically the most relevant features.** The model and the results may not be accurate otherwise.")
         st.write("")
@@ -406,11 +406,11 @@ if page == pages[4]:
                 st.markdown("#### Selecting the Number of Dimensions")
                 st.write("The explained variance ratio is calculated to select the optimal number of dimensions in the PCA. The visualization below shows a PCA scree plot of the dataset, with the blue line representing the explained variance ratio. The ratio represents the variance explained by each of the principal components, starting with the first component, which is the principal component that explains most of the variance.")     
                 st.write("")
-                st.image("varexpfull.png", output_format = "PNG")
+                st.image("images/varexpfull.png", output_format = "PNG")
             with tab_sum:
                 st.write("When the ratios are summed, the total value is equal to 1, indicating that the 129 components together explain 100% of the variance of the dataset. More usefully, the variance ratio explained is used as a cumulative sum, such as indicated by the blue curve in the visualization below.") 
                 st.write("")
-                st.image("cumsumfull.png", output_format = "PNG")
+                st.image("images/cumsumfull.png", output_format = "PNG")
                 st.write("")
                 st.write("After performing ACP to the entire dataset, I found that **109 components were required to explain at least 90% of the information in the dataset from the cumulative explained variance.** Since only 15% of the components were reduced, I considered such results to be below my expectations and decided in consequence to perform ACP to another version of the dataset: a version where all subgenres were regrouped into 24 larger music genres.")
         with tab_avec:
@@ -419,11 +419,11 @@ if page == pages[4]:
                 st.markdown("#### Selecting the Number of Dimensions")
                 st.write("On this second attempt, I replaced the 114 original subgenres with only 24 distinct values instead, and performed ACP to this new version of the dataset. The visualization below illustrates the variance of each principal component.")
                 st.write("")
-                st.image("varexpwith.png", output_format = "PNG")
+                st.image("images/varexpwith.png", output_format = "PNG")
             with tab_sum:
                 st.write("After plotting the cumulative explained variance, we can see that where the line is drawn for 90%, **the total explained variance is approximately at 35 components.** I managed here to reduce 28% of the components.")
                 st.write("")
-                st.image("cumsumwith.png", output_format = "PNG")
+                st.image("images/cumsumwith.png", output_format = "PNG")
                 st.write("")
                 st.write("Still, I decided to remove completely the 'track_genre' variable and performed PCA to this new and third version of the dataset to see if I could obtain an even higher reduction rate.")
         with tab_no:
@@ -432,11 +432,11 @@ if page == pages[4]:
                 st.markdown("#### Selecting the Number of Dimensions")
                 st.write("On this third attempt, I deleted the 'track_genre' variable from the dataset to perform PCA to the songs' features only. The visualization below illustrates the variance of each principal component for this third version of the dataset.")
                 st.write("")
-                st.image("varexpwo.png", output_format = "PNG")
+                st.image("images/varexpwo.png", output_format = "PNG")
             with tab_sum:
                 st.write("After performing PCA to this third version of the dataset, I found that **12 components out of 14 were required to explain at least 90% of the information in the dataset from the cumulative explained variance.** Only 14% of the components were reduced here, which we considered was far below my expectations once again.")
                 st.write("")
-                st.image("cumsumwo.png")
+                st.image("images/cumsumwo.png")
                 st.write("")
                 st.write("After three attemps with three different versions of the dataset, I was not able to reduce effectively the dimensionality of the dataset. I went on and proceeded with the clustering.")
                 
@@ -455,17 +455,17 @@ if page == pages[4]:
             st.markdown("##### The Elbow Method")
             st.write("The elbow method is probably the most well-known method for determining the optimal number of clusters. It is based on calculating the Within-Cluster-Sum of Squared Errors (WSS) for different number of clusters (k) and selecting the k for which change in WSS first starts to diminish. In the plot of WSS-versus-k, this is visible as an elbow.")
             st.write("I obtained the following plot for WSS-vs-k for the dataset with 24 groups of genres.")
-            st.image("kmeansEN.png", output_format = "PNG")
+            st.image("images/kmeansEN.png", output_format = "PNG")
             st.write("")
             st.write("**We can see here a clear elbow at k = 31.**")
             st.write("The heatmap below shows all median values for each variable per cluster, after instantiating the k-means estimator class with n_clusters = 31.")
             st.write("")
-            st.image("heatmapK1EN.png", output_format = "PNG")
+            st.image("images/heatmapK1EN.png", output_format = "PNG")
             st.write("")
             st.write("A closer look at this visualization let us see that each music genre was assigned to one cluster, as it seems the algorithm created clusters based on the genres more than any other variables. Such results were not what I was looking for as my goal was to find collections of observations that shared similar characteristics that I was not already aware of.")
             st.write("As a consequence, I decided to run a k-means algorithm on the dataset after removing the 'track_genre' variable.")
             st.write("")
-            st.image("heatmapK11EN.png", output_format = "PNG")
+            st.image("images/heatmapK11EN.png", output_format = "PNG")
             
         with tab22:
             tab_elbow, tab_k_elbow, tab_silhouette, tab_clusters = st.tabs(["Elbow Method", "KElbowVisualizer", "Silhouette Coefficient", "Clusters"])
@@ -473,14 +473,14 @@ if page == pages[4]:
                 st.markdown("##### The Elbow Method")
                 st.write("The 'track_genre' variable was deleted and k-means clustering was run on this other version of the dataset. The plot below did not allow us to determine the exact point where the rate of decrease shifts as the elbow was not as clear and sharp as previously. This indicates that data was not clearly clustered.")
                 st.write("")
-                st.image("elbowEN.png", output_format = "PNG")
+                st.image("images/elbowEN.png", output_format = "PNG")
                 st.write("")
                 st.write("In order to determine more precisely the value of k, I used the YellowBrick library as it can implement the elbow method with a distortion metric which computes the sum of squared distances from each point to its assigned center.")
             with tab_k_elbow:
                 st.markdown("##### KElbowVisualizer")
                 st.write("The KElbowVisualizer function fit the k-means model for a range of clusters values between 2 to 17. As shown in the figure below, the black vertical line indicates that the elbow point is achieved with 8 clusters.")
                 st.write("")
-                st.image("kelbow.png", output_format = "PNG")
+                st.image("images/kelbow.png", output_format = "PNG")
                 st.write("")
                 st.write("In order to validate that result, I decided to use the Silhouette Method to have an additional way of determining the optimal number of clusters.")
             with tab_silhouette:
@@ -488,7 +488,7 @@ if page == pages[4]:
                 st.write("The silhouette value measures how similar a point is to its own cluster (cohesion) compared to other clusters (separation). The Silhouette Score reaches its global maximum at the optimal k. This should ideally appear as a peak in the Silhouette Value-versus-k plot.")
                 st.write("Here is the plot for my own dataset (no genre):")
                 st.write("")
-                st.image("silhouetteEN.png", output_format = "PNG")
+                st.image("images/silhouetteEN.png", output_format = "PNG")
                 st.write("")
                 st.write("The range of the Silhouette value is between +1 and -1. A high value is desirable and indicates that the point is placed in the correct cluster. If many points have a negative Silhouette value, it may indicate that we have created too many or too few clusters.")
                 st.write("In my case, the Silhouette scores were close to 0 which indicates that my algorithm was not very efficient. The visualization also reveals that the highest Silhouette value was 7.")
@@ -496,15 +496,15 @@ if page == pages[4]:
                 st.write("")
                 tab_6, tab_7, tab_8, tab_9, tab_10 = st.tabs(["6 Clusters", "7 Clusters", "8 Clusters", "9 Clusters", "10 Clusters"])
                 with tab_6:
-                    st.image("6EN.png", output_format = "PNG")
+                    st.image("images/6EN.png", output_format = "PNG")
                 with tab_7:
-                    st.image("7EN.png", output_format = "PNG")
+                    st.image("images/7EN.png", output_format = "PNG")
                 with tab_8:
-                    st.image("8EN.png", output_format = "PNG")
+                    st.image("images/8EN.png", output_format = "PNG")
                 with tab_9:
-                    st.image("9EN.png", output_format = "PNG")
+                    st.image("images/9EN.png", output_format = "PNG")
                 with tab_10:
-                    st.image("10EN.png", output_format = "PNG")
+                    st.image("images/10EN.png", output_format = "PNG")
                 st.write("")
                 st.write("I already knew that the values of the silhouette coefficient were low which was an indicator of low efficiency.")
                 st.write("Consequently we had to look at the distribution between clusters. Clustered areas should have similar sizes or well-distributed points. **The value of n_clusters = 7 seemed to be the most optimal value even though all 7 clusters did not have similar sizes.**")
@@ -513,7 +513,7 @@ if page == pages[4]:
                 st.markdown("##### Clusters") 
                 st.write("The heatmap below shows all median values for each variable per cluster, after instantiating the k-means estimator class with n_clusters = 7.")
                 st.write("")
-                st.image("heatmapclustersEN.png", output_format = "PNG")   
+                st.image("images/heatmapclustersEN.png", output_format = "PNG")   
                 st.write("")
                 st.write("Median values of variables such as the duration, loudness or tempo indicate that each cluster seemed to contain a different type of tracks, which was my goal. I aimed at grouping songs with similar characteristics.") 
                 st.write("I had to keep in mind nonetheless that my recommendation system should not be based exclusively on this clustering algorithm, as Silhouette Scores were really low and recommendations might be inaccurate.")
@@ -632,7 +632,7 @@ if page == pages[4]:
             st.write("I chose to use the matrix's results without adding any human intervention.")
             st.write("Below is a preview of the matrix:")
             st.write("")
-            st.image("matrice.png",  output_format = 'PNG')
+            st.image("images/matrice.png",  output_format = 'PNG')
 
 # Page 5 - Conclusion
 if page == pages[5]: 
