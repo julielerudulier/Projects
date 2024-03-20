@@ -18,9 +18,9 @@ I achieved my goal as I was able to build a music recommendation system allowing
 
 
 With more time, I could have:
-  - Designed a review system that would allow me to store ratings of recommendations in a database;
   - Searched for additional resources and add songs to the dataset to have a broader selection of tracks to recommend;
-  - Run alternative unsupervised algorithms to try and get better results than the clusters created in this project.
+  - Run alternative unsupervised algorithms to try and get better results than the clusters created in this project;
+  - Designed a review system that would allow me to store ratings of recommendations in a database.
 
 ---
 
