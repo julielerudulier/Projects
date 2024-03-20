@@ -1,6 +1,5 @@
-### CS50 Final Project
-The climax of CS50 is its final project. The final project is an opportunity for students to take their newfound savvy with programming out for a spin and develop their very own piece of software. So long as the project draws upon this course’s lessons, the nature of the project is entirely up to the student(s).  Students may implement their project in any language(s).
-More information on the requirements can be found [here](https://cs50.harvard.edu/x/2023/project/).
+### Harvard's CS50 Final Project
+This was my final project to complete Harvard's CS50 program.
 
 #### Video Demo:  
 https://www.youtube.com/watch?v=etunUsVZNxM
@@ -8,7 +7,7 @@ https://www.youtube.com/watch?v=etunUsVZNxM
 #### Description:
 My final project for CS50 is called **'CS50 Music Battles'**. It’s a web application where music artists compete with each other on a musical level. It’s meant to be fun and it’s a great way to discover new artists and new music.
 
-In July 2023, I was awarded a 'Data Analyst' certification by l'Ecole des Mines de Paris - PSL, and my final project was about building a music recommendation system based on three different machine learning algorithms.
+In July 2023, I was obtained a 'Data Analyst' certificate by l'Ecole des Mines de Paris - PSL, and my final project was about building a music recommendation system based on three different machine learning algorithms.
 
 For my CS50 final project, I wanted to continue working with music datasets, as I've worked my whole professional career in music, but I also wanted to have a new approach to the project. This is why I decided to have a gaming approach to this app.
 
