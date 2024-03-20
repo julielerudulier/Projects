@@ -2,7 +2,9 @@
 
 This project was my final project for the Data Analyst Certificate I obtained from L'école des **Mines Paris PSL** in August 2023. It was **my FIRST coding project ever!!**
 
-The substance of the project relies on Machine Learning and unsupervised learning algorithms, but the first half of the project was really based on data analysis and cleansing.
+This project relies on Machine Learning and unsupervised learning algorithms, but the first half of the project was really based on data analysis and cleansing.
+
+---
 
 #### About the project:
 
