@@ -1,10 +1,12 @@
 ## Music Recommendation System
 
-This project was my final project for the Data Analyst Certificate I obtained from L'école des **Mines Paris PSL** in August 2023. It was **my FIRST coding project ever!!**
+This project was my final project for the Data Analyst Certificate I obtained from L'école des **Mines Paris PSL** in August 2023. It was **my FIRST coding project ever!**
 
 This project relies on Machine Learning and unsupervised learning algorithms, but the first half of the project was really based on data analysis and cleansing.
 
+
 ---
+
 
 #### About the project:
 
@@ -22,21 +24,24 @@ With more time, I could have:
   - Run alternative unsupervised algorithms to try and get better results than the clusters created in this project;
   - Designed a review system that would allow me to store ratings of recommendations in a database.
 
+
+#### Project Timeline
+I started working on this project in January 2023. A paper on data cleansing and exploration was first handed in to Faculty members in March. This paper also included data visualizations and a primary analysis of trends in data. A second paper on data modeling was handed in in May. The final essay was handed in to Faculty members in June, while the outcomes of this project as well as the recommendation system were presented to a jury on June 26th, 2023.
+
+
+#### Streamlit App
+If you want to take a closer look at the project and see exactly how I built the recommendation system step by step, I created a Streamlit App that is accessible [here](https://julielerudulier.streamlit.app/).
+
 ---
-
-If you want to take a closer look at the project and how exactly I built the recommendation system step by step, I created a Streamlit App that is accessible [here](https://julielerudulier.streamlit.app/).
-
-For reference, I started working on this project in January 2023. A paper on data cleansing and exploration was first handed in to Faculty members in March. This paper also included data visualizations and a primary analysis of trends in data. A second paper on data modeling was handed in in May. The final essay was handed in to Faculty members in June, while the outcomes of this project as well as the recommendation system were presented to a jury on June 26th, 2023.
 
 #### Bibliography
 
-Liste des articles et ressources nous ayant été utiles durant le projet :
-● Zhang, Z. “Text Mining for Social and Behavioral Research Using R - Chapter 8 Sentiment Analysis”, 2018 [En ligne], https://books.psychstat.org/textmining/sentiment-analysis.html, (Consulté le 18 janvier 2023).
-● Calderon, P. “VADER Sentiment Analysis Explained”, 2017 [En ligne], https://medium.com/@piocalderon/vader-sentiment-analysis-explained-f1c 4f9101cd9, (Consulté le 19 janvier 2023).
-● Beri, A. “Sentimental Analysis Using Vader”, 2020 [En ligne], https://towardsdatascience.com/sentimental-analysis-using-vader-a3415fef7 664, (Consulté le 18 janvier 2023).
-● Al-Shabi, M.A. “Evaluating the performance of the most important Lexicons used to Sentiment analysis and opinions Mining”, 2020 [En ligne], https://osf.io/exqr9/download, Consulté le 20 janvier 2023).
-● Sree, S. “Spotify - Song Prediction and Recommendation System”, 2021 [En ligne],
-https://medium.com/swlh/spotify-song-prediction-and-recommendation-sy stem-b3bbc71398ad, (Consulté le 22 mars 2023).
-● Jones, M. “Making a pairwise distance matrix in pan”, 2021 [En ligne], https://drawingfromdata.com/pandas/clustering/making-a-pairwise-distanc e-matrix-in-pandas.html, (Consulté le 9 mai 2023).
-● Shukla, S., Khanna P., Kant Agrawal K. “Review on sentiment analysis on music”, 2017 [En ligne], https://ieeexplore.ieee.org/document/8286111 (Consulté le 20 janvier 2023).
-● Gunawan, A. A. S., Suhartono, D. “Music Recommender System Based on Genre using Convolutional Recurrent Neural Networks”, 2019 [En ligne], https://doi.org/10.1016/j.procs.2019.08.146, (Consulté le 20 janvier 2023).
+Here are the articles and ressources used for the project:
+  - Zhang, Z. “Text Mining for Social and Behavioral Research Using R - Chapter 8 Sentiment Analysis”, 2018 [Online], https://books.psychstat.org/textmining/sentiment-analysis.html, (Consulted on January 18th, 2023);
+  - Calderon, P. “VADER Sentiment Analysis Explained”, 2017 [Online], https://medium.com/@piocalderon/vader-sentiment-analysis-explained-f1c 4f9101cd9, (Consulted on January 19th, 2023);
+  - Beri, A. “Sentimental Analysis Using Vader”, 2020 [Online], https://towardsdatascience.com/sentimental-analysis-using-vader-a3415fef7 664, (Consulted on January 18th, 2023);
+  - Al-Shabi, M.A. “Evaluating the performance of the most important Lexicons used to Sentiment analysis and opinions Mining”, 2020 [Online], https://osf.io/exqr9/download, Consulted on January 20th, 2023);
+  - Sree, S. “Spotify - Song Prediction and Recommendation System”, 2021 [Online], https://medium.com/swlh/spotify-song-prediction-and-recommendation-sy stem-b3bbc71398ad, (Consulted on March 22nd, 2023);
+  - Jones, M. “Making a pairwise distance matrix in pan”, 2021 [Online], https://drawingfromdata.com/pandas/clustering/making-a-pairwise-distanc e-matrix-in-pandas.html, (Consulted on May 9th, 2023);
+  - Shukla, S., Khanna P., Kant Agrawal K. “Review on sentiment analysis on music”, 2017 [Online], https://ieeexplore.ieee.org/document/8286111 (Consulted on January 20th, 2023);
+  - Gunawan, A. A. S., Suhartono, D. “Music Recommender System Based on Genre using Convolutional Recurrent Neural Networks”, 2019 [Online], https://doi.org/10.1016/j.procs.2019.08.146, (Consulted on January 20th, 2023).
