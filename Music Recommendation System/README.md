@@ -14,7 +14,7 @@ I chose to group similar tracks automatically by running a k-means algorithm on 
 
   - The second part was based on a similarity matrix. Using the Mahalanobis metric allowed my algorithm to return the best recommendations possible, given the limited number of songs avaible in my dataset.
 
-I achieved my goal as I was able to build a music recommendation system allowing users to choose between two songs similar to a seed song of their liking. Although the relevancy of the recommendations is subjective, my system was designed and adjusted so that the songs suggested to users could be considered the most interesting suggestions possible.
+I achieved my goal as I was able to build a music recommendation system allowing users to choose between two songs similar to a seed song of their liking. Although the relevancy of the recommendations can always be discussed, my system was designed and adjusted so that the songs suggested to users could be considered the most interesting suggestions possible.
 
 
 With more time, I could have:
