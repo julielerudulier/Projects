@@ -1,8 +1,12 @@
-### Harvard's CS50 Final Project
+## Harvard's CS50 Final Project: Music Battles
+
 This was my final project to complete Harvard's CS50 program.
 
 #### Video Demo:  
 https://www.youtube.com/watch?v=etunUsVZNxM
+
+---
+
 
 #### Description:
 My final project for CS50 is called **'CS50 Music Battles'**. It’s a web application where music artists compete with each other on a musical level. It’s meant to be fun and it’s a great way to discover new artists and new music.
