@@ -2,7 +2,7 @@
 
 This was my final project to complete Harvard's CS50 program.
 
-#### Video Demo:  
+#### Demo Video:  
 https://www.youtube.com/watch?v=etunUsVZNxM
 
 ---
