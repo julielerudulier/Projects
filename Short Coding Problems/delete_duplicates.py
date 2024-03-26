@@ -8,7 +8,7 @@ def delete_duplicates(lst):
     return new_lst
 
 lst = [1, 77, 38, 29, 77, 4, 62, 29, 56, 32, 1]
-new_lst = delete_duplicates(lst)
+new_lst = delete_duplicates(lst)    # Or in one line of code: new_lst = list(set(lst))
 reverse_lst = sorted(delete_duplicates(lst), reverse = True)
 
 print(f"The initial list is: {lst}")
