@@ -11,6 +11,10 @@ Here is the list of projects presented in this folder:
   - Language: Python
   - Librairies: Sklearn, XGBoost, Optuna
  
+- **Classify Customer Support Tickets:** In this project, I built a model to classify support tickets using Natural Language Processing and a Multinomial Naive Bayes model.
+  - Language: Python
+  - Librairies: Pandas, Numpy, Sklearn
+
 - **Music Battles:** This is my final project for Harvard's CS50 program. It’s a web application where music artists compete with each other on a musical level.
   - Languages: Python, JavaScript, HTML, CSS
   - Framework and engine: Flask, Jinja
