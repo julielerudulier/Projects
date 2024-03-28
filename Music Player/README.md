@@ -2,6 +2,13 @@
 
 In this project, I created a music player using Pygame and Tkinter.
 
+#### Language used in this project:
+- Python
+
+#### Librairies:
+- Pygame
+- Tkinter
+
 ---
 
 
