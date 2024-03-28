@@ -1,6 +1,6 @@
 ## Music Player
 
-In this project, I created a music player using PyGame and Tkinter.
+In this project, I created a music player using Pygame and Tkinter.
 
 ---
 
