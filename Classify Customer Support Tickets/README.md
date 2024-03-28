@@ -8,7 +8,7 @@ In this project I built a model to classify support tickets using Natural Langua
 #### Librairies used in this project:
 - Pandas
 - Numpy
-- sklearn
+- Sklearn
 
 #### Data:
 For this project I used Microsoft's anonymised support ticket dataset, available for download [here](https://github.com/vat3300/SSMA-Smart-Service-Management-Assistent-/blob/main/all_tickets.csv).
