@@ -12,7 +12,7 @@ In this project I analysed machine maintenance data to understand the underlying
 - Seaborn
 - Plotly
 - Smotenc
-- Sklearn
+- Scikit-learn
 - Pipeline
 
 #### Data:
