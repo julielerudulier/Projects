@@ -7,7 +7,7 @@ In this project I built a customer retention model for a contractual setting and
 
 #### Librairies used in this project:
 - Pandas
-- Sklearn
+- Scikit-learn
 - XGBoost
 - Optuna
 
