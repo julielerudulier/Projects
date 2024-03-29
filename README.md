@@ -18,26 +18,30 @@ Here is the list of projects presented in this folder:
     - Librairies: Pandas, Numpy, Scikit-learn
     - Model: Multinomial Naive Bayes <br /> <br />
 
-  - **4 - Machine Predictive Maintenance with multiple classifiers:** In this project, I analysed machine maintenance data to understand the underlying causes and patterns of equipment failures. Based on the data and my observations, I was able to build an effective maintenance prediction model.
+  - **4 - Infer the effects of marketing with CausalImpact:** In this project I used Google's CausalImpact to try identify whether a marketing campaign/action had a statistically significant impact on a chosen metric.
+    - Language: Python
+    - Librairies: Pandas, Causalimpact  <br /> <br />
+  
+  - **5 - Machine Predictive Maintenance with multiple classifiers:** In this project, I analysed machine maintenance data to understand the underlying causes and patterns of equipment failures. Based on the data and my observations, I was able to build an effective maintenance prediction model.
     - Language: Python
     - Librairies: Pandas, Numpy, Matplotlib, Seaborn, Plotly Express, Imblearn (SMOTENC, Pipeline), Scikit-learn
     - Models: PCA + RandomForest, Gradient Boosting, SMOTENC <br /> <br />
 
-  - **5 - Music Battles, a web application:** This is my final project for Harvard's CS50 program. It’s a web application where music artists compete with each other on a musical level.
+  - **6 - Music Battles, a web application:** This is my final project for Harvard's CS50 program. It’s a web application where music artists compete with each other on a musical level.
     - Languages: Python, JavaScript, HTML, CSS
     - Framework and engine: Flask, Jinja
     - Librairies: Pandas, Numpy <br /> <br />
 
-  - **6 - Music Player with Pygame and Tkinter:** In this project, I created a music player using PyGame and Tkinter.
+  - **7 - Music Player with Pygame and Tkinter:** In this project, I created a music player using PyGame and Tkinter.
     - Language: Python
     - Librairies: Pygame, Tkinter <br /> <br />
  
-  - **7 - Music Recommendation System with Kmeans:** This is my final project for the Data Analyst Certificate I obtained from L'école des Mines Paris PSL in August 2023. It was my FIRST coding project ever!
+  - **8 - Music Recommendation System with Kmeans:** This is my final project for the Data Analyst Certificate I obtained from L'école des Mines Paris PSL in August 2023. It was my FIRST coding project ever!
     - Language: Python
     - Framework: Streamlit
     - Librairies: Scikit-learn, Yellowbrick, Pandas, Numpy, Requests, Json, Seaborn, Matplotlib, SciPy, Graphviz, Plotly Express
     - Model: PCA, Kmeans, Similarity Matrix<br /> <br />
  
-  - **8 - Short Coding Problems:** In this folder are short basic-level coding problems that I solved with Python and SQL. I often use them to practice my programming skills and analytical aptitude, and make sure I know how to solve these problems quickly but efficiently.
+  - **9 - Short Coding Problems:** In this folder are short basic-level coding problems that I solved with Python and SQL. I often use them to practice my programming skills and analytical aptitude, and make sure I know how to solve these problems quickly but efficiently.
 
 
