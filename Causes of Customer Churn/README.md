@@ -9,7 +9,7 @@ In this project I used Cox’s Proportional Hazards model to examine a contractu
 - Pandas
 - Numpy
 - CoxPHFitter
-- Matplotlib.pyplot
+- Matplotlib
 
 #### Data:
 For this project I used Kaggle's Customer Churn 2020 dataset, which is based on a telecoms provider and includes details on the location of the customers, the telephone plan they have, how they use it, how much they’re being charged, and how many times they’ve had to call the customer service department. The dataset is available for download [here](https://www.kaggle.com/competitions/customer-churn-prediction-2020/data).
