@@ -42,7 +42,7 @@ Here is the list of projects presented in this folder:
     - Librairies: Scikit-learn, Yellowbrick, Pandas, Numpy, Requests, Json, Seaborn, Matplotlib, SciPy, Graphviz, Plotly Express
     - Model: PCA, Kmeans, Similarity Matrix <br /> <br />
  
-  - **9 - Short Coding Problems:** In this folder are short basic-level coding problems that I solved with Python and SQL. I often use them to practice my programming skills and analytical aptitude, and make sure I know how to solve these problems quickly but efficiently.
+  - **9 - Short Coding Problems:** In this folder are short basic-level coding problems that I solved with Python and SQL. I often use them to practice my programming skills and analytical aptitude, and make sure I know how to solve these problems quickly but efficiently. <br /> <br />
 
   - **10 - Spaceship Titanic:** In this project, I built a model to predict whether a passenger was transported to an alternate dimension during the Spaceship Titanic's collision with the spacetime anomaly.
     - Language: Python
