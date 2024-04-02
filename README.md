@@ -20,7 +20,7 @@ Here is the list of projects presented in this folder:
 
   - **4 - Infer the effects of marketing with CausalImpact:** In this project I used Google's CausalImpact to try identify whether a marketing campaign/action had a statistically significant impact on a chosen metric.
     - Language: Python
-    - Librairies: Pandas, Causalimpact  <br /> <br />
+    - Librairies: Pandas, Causalimpact <br /> <br />
   
   - **5 - Machine Predictive Maintenance with multiple classifiers:** In this project, I analysed machine maintenance data to understand the underlying causes and patterns of equipment failures. Based on the data and my observations, I was able to build an effective maintenance prediction model.
     - Language: Python
@@ -40,8 +40,11 @@ Here is the list of projects presented in this folder:
     - Language: Python
     - Framework: Streamlit
     - Librairies: Scikit-learn, Yellowbrick, Pandas, Numpy, Requests, Json, Seaborn, Matplotlib, SciPy, Graphviz, Plotly Express
-    - Model: PCA, Kmeans, Similarity Matrix<br /> <br />
+    - Model: PCA, Kmeans, Similarity Matrix <br /> <br />
  
   - **9 - Short Coding Problems:** In this folder are short basic-level coding problems that I solved with Python and SQL. I often use them to practice my programming skills and analytical aptitude, and make sure I know how to solve these problems quickly but efficiently.
 
-
+  - **10 - Spaceship Titanic:** In this project, I built a model to predict which passengers would be transported to an alternate dimension.
+    - Language: Python
+    - Librairies: Pandas, Numpy, Scikit-learn, SciPy Stats
+    - Model: Decision Tree, Random Forest, Logistic Regression, GridSearch CV, Random Forest, Randomized Search CV <br /> <br />
