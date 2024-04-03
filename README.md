@@ -56,3 +56,7 @@ Here is the list of projects presented in this folder:
     - Language: Python
     - Librairies: Pandas, Numpy, Scikit-learn, SciPy Stats
     - Model: Decision Tree, Random Forest, Logistic Regression, GridSearch CV, Random Forest, Randomized Search CV <br /> <br />
+    
+  - **13 - Stock Price Forecast:** In this project, I built two stock price forecast models: a KNN model and a Random Forest model.
+    - Language: Python
+    - Librairies: Numpy, Yfinance, Scikit-learn, Plotly, Keras (Sequential, Dense)
