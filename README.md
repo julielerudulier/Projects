@@ -18,45 +18,50 @@ Here is the list of projects presented in this folder:
     - Librairies: Pandas, Numpy, Scikit-learn
     - Model: Multinomial Naive Bayes <br /> <br />
 
-  - **4 - Infer the effects of marketing with CausalImpact:** In this project, I used Google's CausalImpact to try identify whether a marketing campaign/action had a statistically significant impact on a chosen metric.
+  - **4 - Credit Fraud Detection using SMOTE:** In this project, I built various predictive models to see how accurate they are in detecting whether a transaction is a normal payment or a fraud.
+    - Language: Python
+    - Librairies: Pandas, Numpy, Tensorflow, Keras, Imbalanced-learn, Scikit-learn, SciPy Stats, Matplotlib, Seaborn, Itertools, Time, Collections
+    - Models: Logistic Regression, KNears Neighbors, Support Vector Classifier, SMOTE
+  
+  -  **5 - Infer the effects of marketing with CausalImpact:** In this project, I used Google's CausalImpact to try identify whether a marketing campaign/action had a statistically significant impact on a chosen metric.
     - Language: Python
     - Librairies: Pandas, Causalimpact <br /> <br />
   
-  - **5 - House Prices Prediction using TensorFlow Decision Forests:** In this project, I trained a baseline Random Forest model using TensorFlow Decision Forests to predict House Prices.
+  - **6 - House Prices Prediction using TensorFlow Decision Forests:** In this project, I trained a baseline Random Forest model using TensorFlow Decision Forests to predict House Prices.
     - Language: Python
     - Librairies: Pandas, Numpy, Tensorflow, Tensorflow Decision Forests, Seaborn, Matplotlib <br /> <br />
 
-  - **6 - Machine Predictive Maintenance with multiple classifiers:** In this project, I analysed machine maintenance data to understand the underlying causes and patterns of equipment failures. Based on the data and my observations, I was able to build an effective maintenance prediction model.
+  - **7 - Machine Predictive Maintenance with multiple classifiers:** In this project, I analysed machine maintenance data to understand the underlying causes and patterns of equipment failures. Based on the data and my observations, I was able to build an effective maintenance prediction model.
     - Language: Python
     - Librairies: Pandas, Numpy, Matplotlib, Seaborn, Plotly Express, Imblearn (SMOTENC, Pipeline), Scikit-learn
     - Models: PCA + RandomForest, Gradient Boosting, SMOTENC <br /> <br />
 
-  - **7 - Music Battles, a web application:** This is my final project for Harvard's CS50 program. It’s a web application where music artists compete with each other on a musical level.
+  - **8 - Music Battles, a web application:** This is my final project for Harvard's CS50 program. It’s a web application where music artists compete with each other on a musical level.
     - Languages: Python, JavaScript, HTML, CSS
     - Framework and engine: Flask, Jinja
     - Librairies: Pandas, Numpy <br /> <br />
 
-  - **8 - Music Player with Pygame and Tkinter:** In this project, I created a music player using PyGame and Tkinter.
+  - **9 - Music Player with Pygame and Tkinter:** In this project, I created a music player using PyGame and Tkinter.
     - Language: Python
     - Librairies: Pygame, Tkinter <br /> <br />
  
-  - **9 - Music Recommendation System with Kmeans:** This is my final project for the Data Analyst Certificate I obtained from L'école des Mines Paris PSL in August 2023. It was my FIRST coding project ever!
+  - **10 - Music Recommendation System with Kmeans:** This is my final project for the Data Analyst Certificate I obtained from L'école des Mines Paris PSL in August 2023. It was my FIRST coding project ever!
     - Language: Python
     - Framework: Streamlit
     - Librairies: Scikit-learn, Yellowbrick, Pandas, Numpy, Requests, Json, Seaborn, Matplotlib, SciPy, Graphviz, Plotly Express
     - Model: PCA, Kmeans, Similarity Matrix <br /> <br />
 
- - **10 - Sentiment Analysis:** In this project, I built a Long-Short Term Memory Recurrent Neural Network model using Keras and TensorFlow to perform a sentiment analysis on an IMDB's dataset.
+ - **11 - Sentiment Analysis:** In this project, I built a Long-Short Term Memory Recurrent Neural Network model using Keras and TensorFlow to perform a sentiment analysis on an IMDB's dataset.
    - Langugage: Python
    - Librairy: Keras <br /> <br />
   
-  - **11 - Short Coding Problems:** In this folder are short basic-level coding problems that I solved with Python and SQL. I often use them to practice my programming skills and analytical aptitude, and make sure I know how to solve these problems quickly but efficiently. <br /> <br />
+  - **12 - Short Coding Problems:** In this folder are short basic-level coding problems that I solved with Python and SQL. I often use them to practice my programming skills and analytical aptitude, and make sure I know how to solve these problems quickly but efficiently. <br /> <br />
 
-  - **12 - Spaceship Titanic:** In this project, I built a model to predict whether a passenger was transported to an alternate dimension during the Spaceship Titanic's collision with the spacetime anomaly.
+  - **13 - Spaceship Titanic:** In this project, I built a model to predict whether a passenger was transported to an alternate dimension during the Spaceship Titanic's collision with the spacetime anomaly.
     - Language: Python
     - Librairies: Pandas, Numpy, Scikit-learn, SciPy Stats
     - Model: Decision Tree, Random Forest, Logistic Regression, GridSearch CV, Random Forest, Randomized Search CV <br /> <br />
     
-  - **13 - Stock Price Forecast:** In this project, I built two stock price forecast models: a KNN model and a Random Forest model.
+  - **14 - Stock Price Forecast:** In this project, I built two stock price forecast models: a KNN model and a Random Forest model.
     - Language: Python
     - Librairies: Numpy, Yfinance, Scikit-learn, Plotly, Keras (Sequential, Dense)
