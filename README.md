@@ -57,11 +57,15 @@ Here is the list of projects presented in this folder:
   
   - **12 - Short Coding Problems:** In this folder are short basic-level coding problems that I solved with Python and SQL. I often use them to practice my programming skills and analytical aptitude, and make sure I know how to solve these problems quickly but efficiently. <br /> <br />
 
-  - **13 - Spaceship Titanic:** In this project, I built a model to predict whether a passenger was transported to an alternate dimension during the Spaceship Titanic's collision with the spacetime anomaly.
+  - **13 - Smartphone Data Exploration:** In this project, I conducted a data exploration to discover meaningful patterns, insights, and relationships between features of smartphones.
+    - Language: Python
+    - Librairies: Pandas, Numpy, Matplotlib Pyplot, Seaborn, Wordcloud, Datetime, SciPy, IPython Display, Collect <br /> <br />
+
+  - **14 - Spaceship Titanic:** In this project, I built a model to predict whether a passenger was transported to an alternate dimension during the Spaceship Titanic's collision with the spacetime anomaly.
     - Language: Python
     - Librairies: Pandas, Numpy, Scikit-learn, SciPy Stats
     - Model: Decision Tree, Random Forest, Logistic Regression, GridSearch CV, Random Forest, Randomized Search CV <br /> <br />
     
-  - **14 - Stock Price Forecast:** In this project, I built two stock price forecast models: a KNN model and a Random Forest model.
+  - **15 - Stock Price Forecast:** In this project, I built two stock price forecast models: a KNN model and a Random Forest model.
     - Language: Python
     - Librairies: Numpy, Yfinance, Scikit-learn, Plotly, Keras (Sequential, Dense)
