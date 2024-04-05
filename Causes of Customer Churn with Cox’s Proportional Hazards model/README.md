@@ -1,6 +1,6 @@
 ## Causes of Customer Churn
 
-In this project I used Cox’s Proportional Hazards model to examine a contractual churn dataset to quickly identify the factors associated with the loss of customers. 
+In this project, I used Cox’s Proportional Hazards model to examine a contractual churn dataset to quickly identify the factors associated with the loss of customers. 
 
 #### Language:
 - Python
