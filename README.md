@@ -57,7 +57,7 @@ Here is the list of projects presented in this folder:
   
   - **12 - Short Coding Problems:** In this folder are short basic-level coding problems that I solved with Python and SQL. I often use them to practice my programming skills and analytical aptitude, and make sure I know how to solve these problems quickly but efficiently. <br /> <br />
 
-  - **13 - Smartphone Data Exploration:** In this project, I conducted a data exploration to discover meaningful patterns, insights, and relationships between features of smartphones.
+  - **13 - Smartphones Data Exploration:** In this project, I conducted a data exploration to discover meaningful patterns, insights, and relationships between features of smartphones.
     - Language: Python
     - Librairies: Pandas, Numpy, Matplotlib Pyplot, Seaborn, Wordcloud, Datetime, SciPy, IPython Display, Collect <br /> <br />
 
