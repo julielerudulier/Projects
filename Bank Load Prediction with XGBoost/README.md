@@ -1,4 +1,20 @@
-Performance of the base learners were already very high, with the Decision Tree model getting an accuracy score of 0.9880. But if we look at the precision scores for instance, the meta learner still has a positive effect with an overall precision of 0.9890 for the customers without a loan, and 0.9773 for those who do have a loan.
+## Bank Loan Demand Prediction
 
-We can thus conclude that even though one of the base learners had exceptional results, we were able to get even better scores with the meta learner.
+In this project, I used meta learner XGBoost to enhance the performance of two basic learners (Linear Regression and Decision Tree) to predict which customers would be most like to get a bank loan. 
 
+#### Language:
+- Python
+
+#### Librairies used in this project:
+- Numpy
+- Pandas
+- Matplotlib Pyplot
+- Seaborn
+- Scikit-learn
+- XGBoost
+  
+#### Data:
+For this project I used a dataset which contains data on 5,000 customers of a bank. The data include customer demographic information (age, income, etc.), the customer's relationship with the bank (mortgage, securities account, etc.), and the customer response to the last personal loan campaign (Personal Loan). The dataset is available for download [here](https://www.kaggle.com/datasets/itsmesunil/bank-loan-modelling).
+
+#### Outcome:
+I was able to get very high scores with the base learners only, the Decision Tree model especially, with an accuracy score of 0.9880. But the meta learner still had a positive effect on our model, with an overall precision of 0.9890 for the customers without a loan, and 0.9773 for those with a loan. 
