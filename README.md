@@ -3,7 +3,7 @@ This repository contains some of the projects I've worked on throughout the past
 
 Here is the list of projects presented in this folder:
 
-  - **1 - Bank Loan Demande Prediction with XGBoost:** In this project, I used meta learner XGBoost to enhance the performance of two basic learners (Linear Regression and Decision Tree) to predict which customers would be most like to get a bank loan.
+  - **1 - Bank Loan Demand Prediction with XGBoost:** In this project, I used meta learner XGBoost to enhance the performance of two basic learners (Linear Regression and Decision Tree) to predict which customers would be most like to get a bank loan.
     - Language: Python
     - Librairies: Pandas, Numpy, Matplotlib, Seaborn, Scikit-learn, XGBoost <br /> <br />
 
