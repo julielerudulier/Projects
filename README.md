@@ -22,7 +22,7 @@ Here is the list of projects presented in this folder:
     - Librairies: Pandas, Numpy, Scikit-learn
     - Model: Multinomial Naive Bayes <br /> <br />
 
-  - **5 - Credit Fraud Detection using SMOTE:** In this project, I built various predictive models to see how accurate they are in detecting whether a transaction is a normal payment or a fraud.
+  - **5 - Credit Card Fraud Detection using SMOTE:** In this project, I built various predictive models to see how accurate they are in detecting whether a transaction is a normal payment or a fraud.
     - Language: Python
     - Librairies: Pandas, Numpy, Tensorflow, Keras, Imbalanced-learn, Scikit-learn, SciPy Stats, Matplotlib, Seaborn, Itertools, Time, Collections
     - Models: Logistic Regression, KNears Neighbors, Support Vector Classifier, SMOTE
