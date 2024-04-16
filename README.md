@@ -49,7 +49,7 @@ Here is the list of projects presented in this folder:
     - Language: Python
     - Librairies: Pygame, Tkinter <br /> <br />
  
-  - **11 - [Music Recommendation System with Kmeans:](https://github.com/julielerudulier/Projects/tree/main/Music%20Recommendation%20System%20with%20K-means%20clustering)** This is my final project for the Data Analyst Certificate I obtained from L'école des Mines Paris PSL in August 2023. It was my FIRST coding project ever!
+  - **11 - [Music Recommendation System with Kmeans:](https://github.com/julielerudulier/Projects/tree/main/Music%20Recommendation%20System%20with%20K-means%20clustering)** This is my capstone project for the Data Analyst Certificate I obtained from L'école des Mines Paris PSL in August 2023. It was my FIRST coding project ever!
     - Language: Python
     - Framework: Streamlit
     - Librairies: Scikit-learn, Yellowbrick, Pandas, Numpy, Requests, Json, Seaborn, Matplotlib, SciPy, Graphviz, Plotly Express
