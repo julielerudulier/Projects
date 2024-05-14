@@ -1,4 +1,5 @@
-### Publications on medium.com
+## Publications on medium.com
+
 This repository contains the Jupyter notebooks I create to back up my publications on medium.com
 
 Here is a list of my latest publications:
