@@ -1,0 +1,23 @@
+# Symbolic music analysis
+music21>=8.0
+
+# Topological Data Analysis
+scikit-tda>=1.0.0
+ripser>=0.6.1
+persim>=0.3.1
+
+# Core scientific stack
+numpy>=1.25
+scipy>=1.11
+pandas>=2.1
+
+# Visualization
+matplotlib>=3.8
+plotly>=5.18
+
+# Jupyter environment
+jupyterlab>=4.1
+ipython>=8.20
+
+# Python 3.12 compatibility
+packaging>=23.2
