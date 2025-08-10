@@ -1,4 +1,6 @@
-#!/Users/julielerude/Documents/GitHub/tda_music_project/venv310/bin/python3.10
+#!/bin/sh
+'''exec' "/Users/julielerude/Documents/GitHub/Projects/TDA Applied to Symbolic Music/venv310/bin/python" "$0" "$@"
+' '''
 # -*- coding: utf-8 -*-
 import re
 import sys

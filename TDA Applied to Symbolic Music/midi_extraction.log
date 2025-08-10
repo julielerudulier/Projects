@@ -1,0 +1,114 @@
+2025-08-08 19:20:34,619 - INFO - === MIDI Feature Extraction Pipeline ===
+2025-08-08 19:20:34,622 - INFO - Root path: MIDI_files
+2025-08-08 19:20:34,622 - INFO - Method: threaded
+2025-08-08 19:20:34,624 - INFO - Found 3 MIDI files in genre: pop
+2025-08-08 19:20:34,625 - INFO - Found 3 MIDI files in genre: heavy_metal
+2025-08-08 19:20:34,626 - INFO - Found 3 MIDI files in genre: disco
+2025-08-08 19:20:34,627 - INFO - Found 3 MIDI files in genre: blues
+2025-08-08 19:20:34,627 - INFO - Found 3 MIDI files in genre: alternative_rock
+2025-08-08 19:20:34,628 - INFO - Found 3 MIDI files in genre: rnb
+2025-08-08 19:20:34,629 - INFO - Found 3 MIDI files in genre: reggae
+2025-08-08 19:20:34,630 - INFO - Found 3 MIDI files in genre: classical
+2025-08-08 19:20:34,630 - INFO - Found 3 MIDI files in genre: rock
+2025-08-08 19:20:34,631 - INFO - Found 3 MIDI files in genre: new_age
+2025-08-08 19:20:34,632 - INFO - Found 3 MIDI files in genre: dance
+2025-08-08 19:20:34,633 - INFO - Found 3 MIDI files in genre: soul
+2025-08-08 19:20:34,633 - INFO - Found 3 MIDI files in genre: country
+2025-08-08 19:20:34,634 - INFO - Found 3 MIDI files in genre: rap
+2025-08-08 19:20:34,635 - INFO - Found 3 MIDI files in genre: jazz
+2025-08-08 19:20:34,635 - INFO - Total MIDI files found: 45
+2025-08-08 19:20:34,636 - INFO - Total size: 2.1MB
+2025-08-08 19:20:34,636 - INFO - Using 8 parallel threads for feature extraction
+2025-08-08 19:20:34,637 - INFO - Processing batch 1/1
+2025-08-08 19:21:41,787 - INFO - Successfully processed Planet Caravan.mid (heavy_metal): 2142 features extracted
+2025-08-08 19:22:28,083 - INFO - Successfully processed Breaking the Law.mid (heavy_metal): 4098 features extracted
+2025-08-08 19:23:05,768 - INFO - === MIDI Feature Extraction Pipeline ===
+2025-08-08 19:23:05,769 - INFO - Root path: MIDI_files
+2025-08-08 19:23:05,771 - INFO - Method: sequential
+2025-08-08 19:23:05,771 - INFO - === Sequential MIDI Feature Extraction ===
+2025-08-08 19:23:05,772 - INFO - Root path: MIDI_files
+2025-08-08 19:23:05,775 - INFO - Found 45 MIDI files to process
+2025-08-08 19:24:11,661 - INFO - Processed 3 files from genre: pop
+2025-08-08 19:24:45,955 - INFO - Processed 3 files from genre: heavy_metal
+2025-08-08 19:25:42,062 - INFO - Processed 3 files from genre: disco
+2025-08-08 19:26:30,308 - INFO - Processed 3 files from genre: blues
+2025-08-08 19:27:00,338 - INFO - Processed 3 files from genre: alternative_rock
+2025-08-08 19:27:56,522 - INFO - Processed 3 files from genre: rnb
+2025-08-08 19:29:43,082 - INFO - Processed 3 files from genre: reggae
+2025-08-08 19:30:17,646 - INFO - Processed 3 files from genre: classical
+2025-08-08 19:30:50,394 - INFO - Processed 3 files from genre: rock
+2025-08-08 19:33:31,572 - INFO - Processed 3 files from genre: new_age
+2025-08-08 19:34:35,204 - INFO - Processed 3 files from genre: dance
+2025-08-08 19:35:44,992 - INFO - Processed 3 files from genre: soul
+2025-08-08 19:37:11,274 - INFO - Processed 3 files from genre: country
+2025-08-08 19:38:19,122 - INFO - Processed 3 files from genre: rap
+2025-08-08 19:39:50,121 - INFO - Processed 3 files from genre: jazz
+2025-08-08 19:39:50,891 - INFO - Successfully created DataFrame with 223830 feature rows
+2025-08-08 19:39:50,892 - INFO - Files processed: 45/45 (Failed: 0)
+2025-08-08 19:39:50,892 - INFO - === DataFrame Validation ===
+2025-08-08 19:39:50,892 - INFO - Shape: (223830, 24)
+2025-08-08 19:39:51,122 - INFO - Memory usage: 126.7 MB
+2025-08-08 19:39:51,144 - INFO - Genres: 15 unique (['alternative_rock', 'blues', 'classical', 'country', 'dance', 'disco', 'heavy_metal', 'jazz', 'new_age', 'pop', 'rap', 'reggae', 'rnb', 'rock', 'soul'])
+2025-08-08 19:39:51,157 - INFO - Files processed: 45
+2025-08-08 19:39:51,203 - INFO - Pitch range (excluding rests): (np.int64(21), np.int64(108))
+2025-08-08 19:39:51,209 - INFO - Duration range: (np.float64(0.08333333333333333), np.float64(28.25))
+2025-08-08 19:39:51,210 - INFO - Onset range: (np.float64(0.0), np.float64(755.8333333333334))
+2025-08-08 19:39:51,328 - INFO - Processing completed in 1005.6 seconds
+2025-08-08 19:39:51,329 - INFO - === Enhanced Summary Statistics ===
+2025-08-08 19:43:28,880 - INFO - === MIDI Feature Extraction Pipeline ===
+2025-08-08 19:43:28,882 - INFO - Root path: MIDI_files
+2025-08-08 19:43:28,883 - INFO - Method: sequential
+2025-08-08 19:43:28,884 - INFO - === Sequential MIDI Feature Extraction ===
+2025-08-08 19:43:28,885 - INFO - Root path: MIDI_files
+2025-08-08 19:43:28,889 - INFO - Found 45 MIDI files to process
+2025-08-08 19:44:34,528 - INFO - Processed 3 files from genre: pop
+2025-08-08 19:45:09,385 - INFO - Processed 3 files from genre: heavy_metal
+2025-08-08 19:46:06,173 - INFO - Processed 3 files from genre: disco
+2025-08-08 19:46:50,438 - INFO - Processed 3 files from genre: blues
+2025-08-08 19:47:15,939 - INFO - Processed 3 files from genre: alternative_rock
+2025-08-08 19:48:05,644 - INFO - Processed 3 files from genre: rnb
+2025-08-08 19:49:44,292 - INFO - Processed 3 files from genre: reggae
+2025-08-08 19:50:15,732 - INFO - Processed 3 files from genre: classical
+2025-08-08 19:50:44,395 - INFO - Processed 3 files from genre: rock
+2025-08-08 19:53:15,949 - INFO - Processed 3 files from genre: new_age
+2025-08-08 20:58:12,317 - INFO - Processed 3 files from genre: dance
+2025-08-08 21:17:27,040 - INFO - === MIDI Feature Extraction Pipeline ===
+2025-08-08 21:17:27,042 - INFO - Root path: MIDI_files
+2025-08-08 21:17:27,043 - INFO - Method: sequential
+2025-08-08 21:17:27,044 - INFO - === Sequential MIDI Feature Extraction ===
+2025-08-08 21:17:27,045 - INFO - Root path: MIDI_files
+2025-08-08 21:17:27,049 - INFO - Found 45 MIDI files to process
+2025-08-09 11:29:44,427 - INFO - === MIDI Feature Extraction Pipeline ===
+2025-08-09 11:29:44,429 - INFO - Root path: MIDI_files
+2025-08-09 11:29:44,430 - INFO - Method: sequential
+2025-08-09 11:29:44,431 - INFO - === Sequential MIDI Feature Extraction ===
+2025-08-09 11:29:44,432 - INFO - Root path: MIDI_files
+2025-08-09 11:29:44,435 - INFO - Found 45 MIDI files to process
+2025-08-09 11:30:48,391 - INFO - Processed 3 files from genre: pop
+2025-08-09 11:31:22,873 - INFO - Processed 3 files from genre: heavy_metal
+2025-08-09 11:32:18,946 - INFO - Processed 3 files from genre: disco
+2025-08-09 11:33:03,155 - INFO - Processed 3 files from genre: blues
+2025-08-09 11:33:28,511 - INFO - Processed 3 files from genre: alternative_rock
+2025-08-09 11:34:18,030 - INFO - Processed 3 files from genre: rnb
+2025-08-09 11:35:56,630 - INFO - Processed 3 files from genre: reggae
+2025-08-09 11:36:27,953 - INFO - Processed 3 files from genre: classical
+2025-08-09 11:36:56,474 - INFO - Processed 3 files from genre: rock
+2025-08-09 11:39:29,212 - INFO - Processed 3 files from genre: new_age
+2025-08-09 11:40:25,862 - INFO - Processed 3 files from genre: dance
+2025-08-09 11:41:29,509 - INFO - Processed 3 files from genre: soul
+2025-08-09 11:42:47,531 - INFO - Processed 3 files from genre: country
+2025-08-09 11:43:48,426 - INFO - Processed 3 files from genre: rap
+2025-08-09 11:45:13,554 - INFO - Processed 3 files from genre: jazz
+2025-08-09 11:45:14,306 - INFO - Successfully created DataFrame with 223830 feature rows
+2025-08-09 11:45:14,307 - INFO - Files processed: 45/45 (Failed: 0)
+2025-08-09 11:45:14,307 - INFO - === DataFrame Validation ===
+2025-08-09 11:45:14,308 - INFO - Shape: (223830, 24)
+2025-08-09 11:45:14,548 - INFO - Memory usage: 126.7 MB
+2025-08-09 11:45:14,573 - INFO - Genres: 15 unique (['alternative_rock', 'blues', 'classical', 'country', 'dance', 'disco', 'heavy_metal', 'jazz', 'new_age', 'pop', 'rap', 'reggae', 'rnb', 'rock', 'soul'])
+2025-08-09 11:45:14,588 - INFO - Files processed: 45
+2025-08-09 11:45:14,626 - INFO - Pitch range (excluding rests): (np.int64(21), np.int64(108))
+2025-08-09 11:45:14,632 - INFO - Duration range: (np.float64(0.08333333333333333), np.float64(28.25))
+2025-08-09 11:45:14,633 - INFO - Onset range: (np.float64(0.0), np.float64(755.8333333333334))
+2025-08-09 11:45:14,738 - INFO - Processing completed in 930.3 seconds
+2025-08-09 11:45:14,739 - INFO - === Enhanced Summary Statistics ===
+2025-08-09 11:46:36,754 - INFO - DataFrame saved to datasets/midi_features_optimized.xlsx (17.9MB)
