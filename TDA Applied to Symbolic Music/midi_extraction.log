@@ -363,3 +363,138 @@
 2025-08-15 00:09:48,589 - INFO - Processing completed in 5070.4 seconds
 2025-08-15 00:09:48,590 - INFO - Enhanced Summary Statistics
 2025-08-15 00:09:49,594 - INFO - DataFrame saved to datasets/midi_features.parquet (3.7MB, compressed)
+2025-08-16 10:28:40,007 - INFO - MIDI Feature Extraction Pipeline
+2025-08-16 10:28:40,010 - INFO - Root path: MIDI_files
+2025-08-16 10:28:40,010 - INFO - Method: sequential
+2025-08-16 10:28:40,012 - INFO - Sequential MIDI Feature Extraction
+2025-08-16 10:28:40,013 - INFO - Root path: MIDI_files
+2025-08-16 10:28:40,027 - INFO - Found 120 MIDI files to process
+2025-08-16 10:33:18,266 - INFO - Processed 8 files from genre: pop
+2025-08-16 10:39:29,989 - INFO - Processed 8 files from genre: heavy_metal
+2025-08-16 10:47:36,182 - INFO - Processed 8 files from genre: disco
+2025-08-16 10:55:58,471 - INFO - Processed 8 files from genre: blues
+2025-08-16 10:59:26,160 - INFO - Processed 8 files from genre: alternative_rock
+2025-08-16 11:04:18,433 - INFO - Processed 8 files from genre: rnb
+2025-08-16 11:10:47,360 - INFO - Processed 8 files from genre: reggae
+2025-08-16 11:16:41,928 - INFO - Processed 8 files from genre: classical
+2025-08-16 11:22:09,200 - INFO - Processed 8 files from genre: rock
+2025-08-16 11:29:16,299 - INFO - Processed 8 files from genre: new_age
+2025-08-16 11:38:55,282 - INFO - Processed 8 files from genre: dance
+2025-08-16 11:44:30,666 - INFO - Processed 8 files from genre: soul
+2025-08-16 11:51:57,444 - INFO - Processed 8 files from genre: country
+2025-08-16 11:55:30,405 - INFO - Processed 8 files from genre: rap
+2025-08-16 12:00:13,802 - INFO - Processed 8 files from genre: jazz
+2025-08-16 12:00:18,038 - INFO - Successfully created DataFrame with 638779 feature rows
+2025-08-16 12:00:18,046 - INFO - Files processed: 120/120 (Failed: 0)
+2025-08-16 12:00:18,047 - INFO - DataFrame Validation
+2025-08-16 12:00:18,048 - INFO - Shape: (638779, 24)
+2025-08-16 12:00:18,601 - INFO - Memory usage: 360.7 MB
+2025-08-16 12:00:18,658 - INFO - Genres: 15 unique (['alternative_rock', 'blues', 'classical', 'country', 'dance', 'disco', 'heavy_metal', 'jazz', 'new_age', 'pop', 'rap', 'reggae', 'rnb', 'rock', 'soul'])
+2025-08-16 12:00:18,692 - INFO - Files processed: 120
+2025-08-16 12:00:18,835 - INFO - Pitch range (excluding rests): (np.int64(0), np.int64(108))
+2025-08-16 12:00:18,836 - WARNING - Pitches outside typical piano range detected
+2025-08-16 12:00:18,848 - WARNING - Found 10 non-positive durations
+2025-08-16 12:00:18,853 - INFO - Duration range: (np.float64(0.0), np.float64(55.0))
+2025-08-16 12:00:18,854 - WARNING - Found 1 extremely long notes (>32 quarter notes)
+2025-08-16 12:00:18,857 - INFO - Onset range: (np.float64(0.0), np.float64(1330.5833333333333))
+2025-08-16 12:00:20,114 - INFO - Processing completed in 5500.1 seconds
+2025-08-16 12:00:20,125 - INFO - Enhanced Summary Statistics
+2025-08-16 12:24:53,314 - INFO - MIDI Feature Extraction Pipeline
+2025-08-16 12:24:53,317 - INFO - Root path: MIDI_files
+2025-08-16 12:24:53,317 - INFO - Method: sequential
+2025-08-16 12:24:53,318 - INFO - Sequential MIDI Feature Extraction
+2025-08-16 12:24:53,319 - INFO - Root path: MIDI_files
+2025-08-16 12:24:53,323 - INFO - Found 120 MIDI files to process
+2025-08-16 12:24:59,253 - WARNING - No features extracted from Come On Over (All I Want Is You).mid
+2025-08-16 12:25:00,787 - WARNING - No features extracted from Oops!... I Did It Again.mid
+2025-08-16 12:25:04,364 - WARNING - No features extracted from Be My Baby.mid
+2025-08-16 12:27:03,041 - INFO - MIDI Feature Extraction Pipeline
+2025-08-16 12:27:03,042 - INFO - Root path: MIDI_files
+2025-08-16 12:27:03,042 - INFO - Method: sequential
+2025-08-16 12:27:03,043 - INFO - Sequential MIDI Feature Extraction
+2025-08-16 12:27:03,044 - INFO - Root path: MIDI_files
+2025-08-16 12:27:03,048 - INFO - Found 120 MIDI files to process
+2025-08-16 12:41:43,698 - INFO - MIDI Feature Extraction Pipeline
+2025-08-16 12:41:43,702 - INFO - Root path: MIDI_files
+2025-08-16 12:41:43,702 - INFO - Method: sequential
+2025-08-16 12:41:43,703 - INFO - Sequential MIDI Feature Extraction
+2025-08-16 12:41:43,703 - INFO - Root path: MIDI_files
+2025-08-16 12:41:43,707 - INFO - Found 120 MIDI files to process
+2025-08-16 12:53:19,661 - INFO - MIDI Feature Extraction Pipeline
+2025-08-16 12:53:19,665 - INFO - Root path: MIDI_files
+2025-08-16 12:53:19,666 - INFO - Method: sequential
+2025-08-16 12:53:19,667 - INFO - Sequential MIDI Feature Extraction
+2025-08-16 12:53:19,667 - INFO - Root path: MIDI_files
+2025-08-16 12:53:19,672 - INFO - Found 120 MIDI files to process
+2025-08-16 12:54:36,096 - INFO - MIDI Feature Extraction Pipeline
+2025-08-16 12:54:36,098 - INFO - Root path: MIDI_files
+2025-08-16 12:54:36,100 - INFO - Method: sequential
+2025-08-16 12:54:36,101 - INFO - Sequential MIDI Feature Extraction
+2025-08-16 12:54:36,101 - INFO - Root path: MIDI_files
+2025-08-16 12:54:36,133 - INFO - Found 120 MIDI files to process
+2025-08-16 12:54:42,278 - WARNING - No features extracted from Come On Over (All I Want Is You).mid
+2025-08-16 12:54:43,961 - WARNING - No features extracted from Oops!... I Did It Again.mid
+2025-08-16 12:55:18,748 - INFO - MIDI Feature Extraction Pipeline
+2025-08-16 12:55:18,749 - INFO - Root path: MIDI_files
+2025-08-16 12:55:18,750 - INFO - Method: sequential
+2025-08-16 12:55:18,750 - INFO - Sequential MIDI Feature Extraction
+2025-08-16 12:55:18,750 - INFO - Root path: MIDI_files
+2025-08-16 12:55:18,752 - INFO - Found 120 MIDI files to process
+2025-08-16 12:57:21,147 - INFO - MIDI Feature Extraction Pipeline
+2025-08-16 12:57:21,148 - INFO - Root path: MIDI_files
+2025-08-16 12:57:21,148 - INFO - Method: sequential
+2025-08-16 12:57:21,149 - INFO - Sequential MIDI Feature Extraction
+2025-08-16 12:57:21,149 - INFO - Root path: MIDI_files
+2025-08-16 12:57:21,151 - INFO - Found 120 MIDI files to process
+2025-08-16 13:40:55,773 - INFO - MIDI Feature Extraction Pipeline
+2025-08-16 13:40:55,774 - INFO - Root path: MIDI_files
+2025-08-16 13:40:55,775 - INFO - Method: sequential
+2025-08-16 13:40:55,775 - INFO - Sequential MIDI Feature Extraction
+2025-08-16 13:40:55,775 - INFO - Root path: MIDI_files
+2025-08-16 13:40:55,781 - INFO - Found 120 MIDI files to process
+2025-08-16 13:41:00,336 - WARNING - No features extracted from Come On Over (All I Want Is You).mid
+2025-08-16 13:41:01,826 - WARNING - No features extracted from Oops!... I Did It Again.mid
+2025-08-16 13:41:04,163 - WARNING - No features extracted from Be My Baby.mid
+2025-08-16 14:04:34,578 - INFO - MIDI Feature Extraction Pipeline
+2025-08-16 14:04:34,580 - INFO - Root path: MIDI_files
+2025-08-16 14:04:34,581 - INFO - Method: sequential
+2025-08-16 14:04:34,582 - INFO - Sequential MIDI Feature Extraction
+2025-08-16 14:04:34,582 - INFO - Root path: MIDI_files
+2025-08-16 14:04:34,588 - INFO - Found 120 MIDI files to process
+2025-08-16 14:09:14,698 - INFO - MIDI Feature Extraction Pipeline
+2025-08-16 14:09:14,706 - INFO - Root path: MIDI_files
+2025-08-16 14:09:14,710 - INFO - Method: sequential
+2025-08-16 14:09:14,713 - INFO - Sequential MIDI Feature Extraction
+2025-08-16 14:09:14,718 - INFO - Root path: MIDI_files
+2025-08-16 14:09:14,765 - INFO - Found 120 MIDI files to process
+2025-08-16 14:13:30,785 - INFO - Processed 8 files from genre: pop
+2025-08-16 14:19:21,850 - INFO - Processed 8 files from genre: heavy_metal
+2025-08-16 14:27:09,533 - INFO - Processed 8 files from genre: disco
+2025-08-16 14:35:00,151 - INFO - Processed 8 files from genre: blues
+2025-08-16 14:38:06,950 - INFO - Processed 8 files from genre: alternative_rock
+2025-08-16 14:42:16,406 - INFO - Processed 8 files from genre: rnb
+2025-08-16 14:48:03,795 - INFO - Processed 8 files from genre: reggae
+2025-08-16 14:53:40,118 - INFO - Processed 8 files from genre: classical
+2025-08-16 14:58:17,665 - INFO - Processed 8 files from genre: rock
+2025-08-16 15:04:27,601 - INFO - Processed 8 files from genre: new_age
+2025-08-16 15:13:18,754 - INFO - Processed 8 files from genre: dance
+2025-08-16 15:18:27,447 - INFO - Processed 8 files from genre: soul
+2025-08-16 15:24:49,693 - INFO - Processed 8 files from genre: country
+2025-08-16 15:28:34,041 - INFO - Processed 8 files from genre: rap
+2025-08-16 15:32:59,074 - INFO - Processed 8 files from genre: jazz
+2025-08-16 15:33:01,946 - INFO - Successfully created DataFrame with 638779 feature rows
+2025-08-16 15:33:01,951 - INFO - Files processed: 120/120 (Failed: 0)
+2025-08-16 15:33:01,952 - INFO - DataFrame Validation
+2025-08-16 15:33:01,952 - INFO - Shape: (638779, 24)
+2025-08-16 15:33:02,463 - INFO - Memory usage: 331.4 MB
+2025-08-16 15:33:02,520 - INFO - Genres: 15 unique (['alternative_rock', 'blues', 'classical', 'country', 'dance', 'disco', 'heavy_metal', 'jazz', 'new_age', 'pop', 'rap', 'reggae', 'rnb', 'rock', 'soul'])
+2025-08-16 15:33:02,558 - INFO - Files processed: 120
+2025-08-16 15:33:02,719 - INFO - Pitch range (excluding rests): (np.int64(0), np.int64(108))
+2025-08-16 15:33:02,720 - WARNING - Pitches outside typical piano range detected
+2025-08-16 15:33:02,729 - WARNING - Found 10 non-positive durations
+2025-08-16 15:33:02,732 - INFO - Duration range: (np.float64(0.0), np.float64(55.0))
+2025-08-16 15:33:02,733 - WARNING - Found 1 extremely long notes (>32 quarter notes)
+2025-08-16 15:33:02,736 - INFO - Onset range: (np.float64(0.0), np.float64(1330.5833333333333))
+2025-08-16 15:33:03,520 - INFO - Processing completed in 5028.8 seconds
+2025-08-16 15:33:03,522 - INFO - Enhanced Summary Statistics
+2025-08-16 15:33:04,605 - INFO - DataFrame saved to datasets/midi_features.parquet (3.7MB, compressed)
