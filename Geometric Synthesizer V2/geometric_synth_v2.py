@@ -36,6 +36,13 @@ class AudioEngine:
         self.synth.start(driver="alsa" if sys.platform.startswith("linux") else "coreaudio")
         
         self.sfid = self.synth.sfload(soundfont_path)
+        try:
+            # Bank 128 = percussion kits, Program 0 = Standard Kit
+            self.synth.program_select(9, self.sfid, 128, 0)
+            print("Percussion channel initialized with Standard Kit")
+        except Exception as e:
+            print("Could not init drum channel:", e)
+            
         self.parent_synth = parent_synth  # Reference to main synth for preset access
         
         # Active notes tracking
@@ -44,36 +51,56 @@ class AudioEngine:
         
         # Current instrument override (None = use shape mapping)
         self.current_instrument = None
+        # Current drum MIDI key (when using drum mode) — e.g. 35 = Acoustic Bass Drum
+        self.current_drum_note = None
         
         print("Audio Engine ready (FluidSynth active)")
         
-    def set_instrument(self, program_id=None):
+    def set_instrument(self, program_id=None, drum_note=None):
         """
-        Set current instrument program (int).
+        Set current instrument program (int) for melodic channels.
+        If drum_note is provided, it will be stored in current_drum_note.
         None = fallback to first instrument of current preset.
         """
         self.current_instrument = program_id
-        
-    def play_note(self, midi_note, velocity, duration, pan=0.5, instrument=None):
-        """Play a note with given parameters and return note_id."""
-        # Choose program
-        if instrument is not None:
-            program = instrument
-        elif self.current_instrument is not None:
-            program = self.current_instrument
+        if drum_note is not None:
+            self.current_drum_note = drum_note
+
+    def play_note(self, midi_note, velocity, duration, pan=0.5, instrument=None, is_drum=False):
+        """Play a note (melodic or drum) with given parameters and return note_id."""
+        # Choose channel
+        if is_drum:
+            channel = 9  # percussion channel (0-based index)
         else:
-            # fallback (parent_synth may provide quick_instruments)
-            program = self.parent_synth.quick_instruments[0][1] if self.parent_synth else 0
+            channel = 0
 
-        # Use channel 0 (you can extend to multiple channels later)
-        channel = 0
+        # If this is a drum hit, decide which MIDI key to trigger (drum key numbers)
+        if is_drum:
+            # instrument argument may be used to pass a specific drum MIDI key
+            if instrument is not None:
+                midi_to_play = int(instrument)
+            elif getattr(self, "current_drum_note", None) is not None:
+                midi_to_play = int(self.current_drum_note)
+            else:
+                # fallback to provided midi_note (not ideal, but safe)
+                midi_to_play = int(midi_note) # fallback
+        else:
+            # melodic path: decide program to select
+            if instrument is not None:
+                program = instrument
+            elif self.current_instrument is not None:
+                program = self.current_instrument
+            else:
+                # fallback (parent_synth may provide quick_instruments)
+                program = self.parent_synth.quick_instruments[0][1] if self.parent_synth else 0
 
-        # Select program
-        try:
-            self.synth.program_select(channel, self.sfid, 0, program)
-        except Exception:
-            # defensive
-            pass
+            # Select program for melodic channel only
+            try:
+                self.synth.program_select(channel, self.sfid, 0, program)
+            except Exception:
+                pass
+
+            midi_to_play = int(midi_note)
 
         # Pan (control change) on same channel
         pan_value = int(max(0, min(127, pan * 127)))
@@ -83,17 +110,18 @@ class AudioEngine:
             pass
 
         # Note on
-        self.synth.noteon(channel, midi_note, velocity)
+        self.synth.noteon(channel, midi_to_play, velocity)
 
         # Track active note
         note_id = self.note_id_counter
         self.note_id_counter += 1
 
         self.active_notes[note_id] = {
-            'midi': midi_note,
+            'midi': midi_to_play,
             'start_time': time.time(),
             'duration': duration,
-            'channel': channel
+            'channel': channel,
+            'is_drum': is_drum
         }
 
         return note_id
@@ -249,6 +277,7 @@ class GeometricSynth:
         self.SAGE_GREEN = (129, 178, 154)      # Muted sage green #81B29A
         self.WARM_BROWN = (140, 95, 74)        # Warm brown
         self.DEEP_TEAL = (52, 108, 117)        # Deep teal
+        self.PURPLISH = (150, 80, 150)         # Purplish (#965096)
         self.BURNT_ORANGE = (200, 90, 60)      # Burnt orange (darker)
         self.OLIVE_GREEN = (105, 123, 92)      # Olive green
         self.GOLDEN_OCHRE = (222, 193, 121)    # Golden ochre (light) #DEC179
@@ -284,7 +313,7 @@ class GeometricSynth:
                 ("Piano", 0, self.DEEP_TEAL),
                 ("Violin", 40, self.GOLDEN_OCHRE), 
                 ("Cello", 42, self.WARM_BROWN), 
-                ("Oboe", 68, (150, 80, 150)),
+                ("Oboe", 68, self.PURPLISH),
                 ("Flute", 73, self.BURNT_ORANGE),
                 ("Clarinet", 71, self.SAGE_GREEN),
                 ("Trumpet", 66, self.PLUM_VIOLET),
@@ -295,34 +324,89 @@ class GeometricSynth:
                 ("Jazz Guitar", 26, self.DEEP_TEAL),
                 ("Slap Bass", 36, self.GOLDEN_OCHRE),
                 ("Acoustic Bass", 32, self.WARM_BROWN),
-                ("Electric Piano", 4, (150, 80, 150)),
+                ("Electric Piano", 4, self.PURPLISH),
                 ("Clarinet", 71, self.BURNT_ORANGE),
                 ("Alto Sax", 65, self.SAGE_GREEN),
                 ("Trumpet", 66, self.PLUM_VIOLET),
                 ("Trombone", 57, self.OLIVE_GREEN),
-                ("Brush Kit", 0, self.TERRA_COTTA)  
+                ("Organ", 16, self.TERRA_COTTA)  
             ],
             'rock': [
                 ("Electric Guitar", 27, self.DEEP_TEAL),
                 ("Distortion Guitar", 30, self.GOLDEN_OCHRE),
+                ("Rhythmic Guitar", 28, self.WARM_BROWN),
+                ("Acoustic Guitar", 24, self.PURPLISH),
+                ("Electric Bass", 33, self.BURNT_ORANGE),
+                ("Piano", 1, self.SAGE_GREEN),
+                ("Rock Organ", 18, self.PLUM_VIOLET),
+                ("Synth Lead", 80, self.OLIVE_GREEN),
+                ("Synth Strings", 50, self.TERRA_COTTA)
+            ],
+            'electro': [
+                ("Synth Bass 1", 38, self.DEEP_TEAL),
+                ("Synth Bass 2", 39, self.GOLDEN_OCHRE),
+                ("Lead 1", 81, self.WARM_BROWN),
+                ("Lead 2", 84, self.PURPLISH),
+                ("Pad 1", 89, self.BURNT_ORANGE),
+                ("Pad 2", 90, self.SAGE_GREEN),
+                ("Keys", 5, self.PLUM_VIOLET),
+                ("FX", 97, self.OLIVE_GREEN),
+                ("Pluck", 87, self.TERRA_COTTA)
+            ],
+            'latin': [
+                ("Acoustic Guitar 1", 24, self.DEEP_TEAL),
+                ("Acoustic Guitar 2", 25, self.GOLDEN_OCHRE),
+                ("Electric Guitar", 4, self.WARM_BROWN),
+                ("Acoustic Bass", 32, self.PURPLISH),
+                ("Conga", 64, self.BURNT_ORANGE, True),
+                ("Bongo", 60, self.SAGE_GREEN, True),
+                ("Timbale", 65, self.PLUM_VIOLET, True),
+                ("Maracas", 70, self.OLIVE_GREEN, True),
+                ("Shaker", 69, self.TERRA_COTTA, True)
+            ],
+            'country': [
+                ("Acoustic Guitar", 25, self.DEEP_TEAL),
+                ("Electric Guitar", 27, self.GOLDEN_OCHRE),
+                ("Pedal Steel Guitar", 34, self.WARM_BROWN),
+                ("Fiddle", 40, self.PURPLISH),
+                ("Harmonica", 22, self.BURNT_ORANGE),
+                ("Banjo", 105, self.SAGE_GREEN),
+                ("Organ", 17, self.PLUM_VIOLET),
+                ("Electric Bass", 33, self.OLIVE_GREEN),
+                ("Honky Tonk Piano", 3, self.TERRA_COTTA)
+            ],
+            'soul': [
+                ("Piano", 4, self.DEEP_TEAL),
+                ("Organ", 16, self.GOLDEN_OCHRE),
                 ("Electric Bass", 33, self.WARM_BROWN),
-                ("Acoustic Guitar", 24, (150, 80, 150)),
-                ("Rock Organ", 18, self.BURNT_ORANGE),
-                ("Electric Piano", 4, self.SAGE_GREEN),
-                ("Synth Lead", 80, self.PLUM_VIOLET),
-                ("Synth Strings", 50, self.OLIVE_GREEN),
-                ("Choir", 52, self.TERRA_COTTA)
+                ("Electric Guitar", 27, self.PURPLISH),
+                ("Alto Sax", 65, self.BURNT_ORANGE),
+                ("Tenor Sax", 66, self.SAGE_GREEN),
+                ("Trumpet", 56, self.PLUM_VIOLET),
+                ("Choir", 52, self.OLIVE_GREEN),
+                ("Strings Ensemble", 48, self.TERRA_COTTA)
             ],
             'world': [
                 ("Sitar", 104, self.DEEP_TEAL),
                 ("Shamisen", 106, self.GOLDEN_OCHRE),
                 ("Koto", 107, self.WARM_BROWN),
-                ("Kalimba", 108, (150, 80, 150)),
+                ("Kalimba", 108, self.PURPLISH),
                 ("Bagpipe", 109, self.BURNT_ORANGE),
                 ("Pan Flute", 75, self.SAGE_GREEN),
                 ("Ocarina", 79, self.PLUM_VIOLET),
                 ("Shakuhachi", 77, self.OLIVE_GREEN),
                 ("Marimba", 12, self.TERRA_COTTA)
+            ],
+            'drum kit': [
+                ("Kick Drum", 35, self.DEEP_TEAL, True),
+                ("Snare Drum", 38, self.GOLDEN_OCHRE, True),
+                ("Closed Hi-Hat", 42, self.WARM_BROWN, True),
+                ("Open Hi-Hat", 46, self.PURPLISH, True),
+                ("Crash Cymbal", 49, self.BURNT_ORANGE, True),
+                ("Ride Cymbal", 51, self.SAGE_GREEN, True),
+                ("Low Tom", 45, self.PLUM_VIOLET, True),
+                ("High Tom", 50, self.OLIVE_GREEN, True),
+                ("Tambourine", 54, self.TERRA_COTTA, True)
             ]
         }
             
@@ -331,8 +415,20 @@ class GeometricSynth:
         self.quick_instruments = self.instrument_presets[self.current_preset]
         self.analyzer = ShapeAnalyzer(self.width, self.height, parent_synth=self)
         self.audio = AudioEngine(SOUNDFONT_PATH, parent_synth=self)
-        self.audio.set_instrument(self.quick_instruments[0][1]) # Set default instrument to first of classical preset (Piano)
+        #self.audio.set_instrument(self.quick_instruments[0][1]) # Set default instrument to first of classical preset (Piano)
         
+        # Track which instrument index is selected (0-based)
+        self.selected_instrument_index = 0
+        # initial selection (handle drum entries which have a fourth True flag)
+        name0, program0, color0, *rest0 = self.quick_instruments[0]
+        is_drum0 = rest0[0] if rest0 else False
+        self.current_instrument_is_drum = is_drum0
+        if is_drum0:
+            # program0 here is actually the drum MIDI key
+            self.audio.set_instrument(None, drum_note=program0)
+        else:
+            self.audio.set_instrument(program0)
+
         # Current key signature (for scale lock)
         self.key_signatures = {
             'C': [0, 2, 4, 5, 7, 9, 11],      # C major
@@ -433,33 +529,67 @@ class GeometricSynth:
             
                 elif event.key == pygame.K_n:
                     # Cycle through presets 
-                    preset_order = ['classical', 'jazz', 'rock', 'world']
+                    preset_order = ['classical', 'jazz', 'rock', 'electro', 'latin', 'country', 'soul', 'world', 'drum kit']
                     current_idx = preset_order.index(self.current_preset)
                     next_idx = (current_idx + 1) % len(preset_order)
                     self.current_preset = preset_order[next_idx]
                     self.quick_instruments = self.instrument_presets[self.current_preset]
-                    # Reset to first instrument of new preset
-                    self.audio.set_instrument(self.quick_instruments[0][1])
+                    # reset selected index and set instrument/drum properly
+                    self.selected_instrument_index = 0
+                    name0, program0, color0, *rest0 = self.quick_instruments[0]
+                    is_drum0 = rest0[0] if rest0 else False
+                    self.current_instrument_is_drum = is_drum0
+                    if is_drum0:
+                        self.audio.set_instrument(None, drum_note=program0)
+                    else:
+                        self.audio.set_instrument(program0)
                     print(f"Preset: {self.current_preset.upper()}")
 
                 elif event.key == pygame.K_p:
                     # Cycle through presets in reverse
-                    preset_order = ['classical', 'jazz', 'rock', 'world']
+                    preset_order = ['classical', 'jazz', 'rock', 'electro', 'latin', 'country', 'soul', 'world', 'drum kit']
                     current_idx = preset_order.index(self.current_preset)
                     prev_idx = (current_idx - 1) % len(preset_order)
                     self.current_preset = preset_order[prev_idx]
                     self.quick_instruments = self.instrument_presets[self.current_preset]
-                    # Reset to first instrument of new preset
-                    self.audio.set_instrument(self.quick_instruments[0][1])
+                    # reset selected index and set instrument/drum properly
+                    self.selected_instrument_index = 0
+                    name0, program0, color0, *rest0 = self.quick_instruments[0]
+                    is_drum0 = rest0[0] if rest0 else False
+                    self.current_instrument_is_drum = is_drum0
+                    if is_drum0:
+                        self.audio.set_instrument(None, drum_note=program0)
+                    else:
+                        self.audio.set_instrument(program0)
                     print(f"Preset: {self.current_preset.upper()}")
                                
                 # Instrument selection (1-9)
-                elif pygame.K_1 <= event.key <= pygame.K_9:
-                    idx = event.key - pygame.K_1
-                    if idx < len(self.quick_instruments):
-                        name, program, color = self.quick_instruments[idx]
-                        self.audio.set_instrument(program)
-                        print(f"Instrument: {name}")
+                idx = event.key - pygame.K_1
+                # Only accept keys 1..9 (guard against negatives)
+                if 0 <= idx < len(self.quick_instruments):
+                    entry = self.quick_instruments[idx]
+                    name, program, color, *rest = entry
+                    is_drum = rest[0] if rest else False  
+
+                    # If already selected, do nothing (no toggle)
+                    if getattr(self, "selected_instrument_index", None) == idx:
+                        # already selected — ignore
+                        pass
+                    else:
+                        # apply selection
+                        self.selected_instrument_index = idx
+                        self.current_instrument_is_drum = is_drum
+
+                        if is_drum:
+                            # program here is actually the drum MIDI key (e.g. 35)
+                            self.audio.set_instrument(None, drum_note=program)
+                        else:
+                            # melodic program id
+                            self.audio.set_instrument(program)
+                            # clear any drum note
+                            self.audio.current_drum_note = None
+
+                    print(f"Instrument: {name} {'(Drum Kit)' if is_drum else ''}")
 
                 # Undo/Redo
                 elif event.key == pygame.K_z:
@@ -531,7 +661,7 @@ class GeometricSynth:
 
     def start_live_sound(self, pos):
         """Start a continuous note when drawing begins (stop existing first)."""
-        # SAFETY: Force stop any remaining live note
+        # Safety: Force stop any remaining live note
         if self.active_live_note_id is not None:
             self.audio.stop_note_by_id(self.active_live_note_id)
             self.active_live_note_id = None
@@ -547,7 +677,18 @@ class GeometricSynth:
         duration = 10.0 # Will be stopped manually
         pan = pos[0] / self.width
 
-        note_id = self.audio.play_note(midi_note, velocity, duration, pan)
+        instrument_param = (self.audio.current_drum_note if getattr(self, "current_instrument_is_drum", False)
+                            else self.audio.current_instrument)
+
+        note_id = self.audio.play_note(
+            midi_note, 
+            velocity, 
+            duration, 
+            pan,
+            instrument=instrument_param,
+            is_drum=getattr(self, "current_instrument_is_drum", False)
+        )
+
         self.active_live_note_id = note_id
         self.last_live_pitch = midi_note
 
@@ -593,7 +734,18 @@ class GeometricSynth:
             duration = 10.0
             pan = pos[0] / self.width
             
-            note_id = self.audio.play_note(midi_note, velocity, duration, pan)
+            instrument_param = (self.audio.current_drum_note if getattr(self, "current_instrument_is_drum", False)
+                            else self.audio.current_instrument)
+
+            note_id = self.audio.play_note(
+                midi_note, 
+                velocity, 
+                duration, 
+                pan,
+                instrument=instrument_param,
+                is_drum=getattr(self, "current_instrument_is_drum", False)
+            )
+
             self.active_live_note_id = note_id
             self.last_live_pitch = midi_note
 
@@ -630,7 +782,7 @@ class GeometricSynth:
         # Use last drawing velocity if available, otherwise calculate from shape
         velocity = getattr(self, 'current_velocity', None) or self.analyzer.shape_to_velocity(shape)
 
-        duration = self.analyzer.shape_to_duration(shape)
+        duration = self.analyzer.shape_to_duration(shape) + 1
 
         # Pan based on last point X position
         if 'note_position' in shape:
@@ -642,12 +794,18 @@ class GeometricSynth:
         note_name = self.midi_to_note_name(midi_note)
         pan_str = "L" if pan < 0.4 else "R" if pan > 0.6 else "C"
 
+        instrument_param = (self.audio.current_drum_note if getattr(self, "current_instrument_is_drum", False)
+                            else self.audio.current_instrument)
+
         note_id = self.audio.play_note(
-            midi_note,
-            velocity,
-            duration,
-            pan
+            midi_note, 
+            velocity, 
+            duration, 
+            pan,
+            instrument=instrument_param,
+            is_drum=getattr(self, "current_instrument_is_drum", False)
         )
+
 
         print(f"{shape['type'].upper():10s} | {note_name:4s} | vel:{velocity:3d} | dur:{duration:.1f}s | pan:{pan_str}")
         return note_id
@@ -660,12 +818,12 @@ class GeometricSynth:
         return f"{note}{octave}"
         
     def get_shape_color(self, shape_type):
-        """Get color for shape type based on current instrument"""
-        if self.audio.current_instrument is not None:
-            for name, program, color in self.quick_instruments:
-                if program == self.audio.current_instrument:
-                    return color
+        """Get color for shape type based on current instrument selection"""
+        idx = getattr(self, "selected_instrument_index", 0)
+        if 0 <= idx < len(self.quick_instruments):
+            return self.quick_instruments[idx][2]
         return self.quick_instruments[0][2]
+
         
     def update(self):
         """Update game state"""
@@ -750,7 +908,7 @@ class GeometricSynth:
         if self.audio.current_instrument is not None:
             instrument_name = None
             inst_color = self.TEXT_DARK
-            for name, prog, color in self.quick_instruments:
+            for name, prog, color, *rest in self.quick_instruments:
                 if prog == self.audio.current_instrument:
                     instrument_name = name
                     inst_color = color
@@ -818,19 +976,20 @@ class GeometricSynth:
 
         # List instruments in 3 columns with reduced spacing
         start_y = panel_y + 32
-        for i, (name, prog, color) in enumerate(self.quick_instruments):
+        for i, (name, prog, color, *rest) in enumerate(self.quick_instruments):
             row = i // 3
             col = i % 3
             x_pos = panel_x + 15 + col * 150
             y_pos = start_y + row * 20
             
-            # Highlight if selected (colored text)
-            if self.audio.current_instrument == prog:
+            # Highlight selection by index (works for drums too)
+            if self.selected_instrument_index == i:
                 text = small_font.render(f"{i+1}: {name}", True, color)
             else:
                 text = tiny_font.render(f"{i+1}: {name}", True, self.TEXT_DARK)
                 
             self.screen.blit(text, (x_pos, y_pos))
+
         
         # ===== BOTTOM RIGHT: Controls panel (horizontal layout) =====
         if self.show_help:
