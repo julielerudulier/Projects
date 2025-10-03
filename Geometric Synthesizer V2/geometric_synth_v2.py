@@ -240,7 +240,7 @@ class ShapeAnalyzer:
         # interpolation relative à la base
         velocity = int(self.velocity_base + (127 - self.velocity_base) * raw)
         
-        return max(1, min(127, velocity))
+        return max(30, min(127, velocity))
         
     def shape_to_duration(self, shape):
         """Convert shape to note duration in seconds (optimized for responsiveness)"""
@@ -531,7 +531,7 @@ class GeometricSynth:
                     print(f"Base velocity: {self.base_velocity}")
                     
                 elif event.key == pygame.K_MINUS or event.key == pygame.K_UNDERSCORE:
-                    self.base_velocity = max(10, self.base_velocity - 10)
+                    self.base_velocity = max(30, self.base_velocity - 10)
                     print(f"Base velocity: {self.base_velocity}")
             
                 elif event.key == pygame.K_n:
@@ -683,6 +683,10 @@ class GeometricSynth:
         velocity = self.base_velocity
         duration = 10.0 # Will be stopped manually
         pan = pos[0] / self.width
+        # store the initial pan for this drawing gesture
+        self.initial_live_pan = pan
+        # also store last_pan so UI is consistent immediately
+        self.last_live_pan = pan
 
         instrument_param = (self.audio.current_drum_note if getattr(self, "current_instrument_is_drum", False)
                             else self.audio.current_instrument)
@@ -713,13 +717,13 @@ class GeometricSynth:
                 speed = distance / time_delta
 
                 if distance > 1:  
-                    velocity_offset = int((speed / 7) - 30)
+                    velocity_offset = int((speed / 12) - 30)
                     base = getattr(self, "current_velocity", self.base_velocity)
                     target_velocity = base + velocity_offset
-                    target_velocity = max(10, min(127, target_velocity))
+                    target_velocity = max(30, min(127, target_velocity))
                     
                     # Smooth velocity changes
-                    smoothing = 0.3
+                    smoothing = 0.2
                     self.current_velocity = int(
                         self.current_velocity * (1 - smoothing) + target_velocity * smoothing
                     )
@@ -742,7 +746,10 @@ class GeometricSynth:
             
             velocity = self.current_velocity
             duration = 10.0
+
             pan = pos[0] / self.width
+            # update current pan for UI
+            self.last_live_pan = pan
             
             instrument_param = (self.audio.current_drum_note if getattr(self, "current_instrument_is_drum", False)
                             else self.audio.current_instrument)
@@ -767,9 +774,14 @@ class GeometricSynth:
             
         self.active_live_note_id = None
         self.last_live_pitch = None
+
         # Reset velocity tracking
         self.last_draw_pos = None
         self.last_draw_time = 0
+
+        # Clear per-gesture pan memory so next gesture sets a new initial pan
+        self.initial_live_pan = None
+        self.last_live_pan = None
         
     def play_shape(self, shape):
         """Convert shape to sound and play it — returns note_id (or None)."""
@@ -954,15 +966,17 @@ class GeometricSynth:
         active_surface = small_font.render(f"Playing: {active_count} notes", True, self.SLATE_BLUE)
         self.screen.blit(active_surface, (10, y_offset + 44))
         
-        # ===== TOP RIGHT: Last shape info =====
-        if self.shapes:
-            last = self.shapes[-1]
-            if 'midi' in last:
-                note_name = self.midi_to_note_name(last['midi'])
-                info = f"{note_name} | vel:{last['velocity']} | {last['duration']:.1f}s"
-                info_surface = small_font.render(info, True, self.SLATE_BLUE)
-                info_width = info_surface.get_width()
-                self.screen.blit(info_surface, (self.width - info_width - 10, 10))
+       # ===== TOP RIGHT: Live note info =====
+        if self.active_live_note_id is not None and self.last_live_pitch is not None:
+            note_name = self.midi_to_note_name(self.last_live_pitch)
+            velocity = getattr(self, "current_velocity", self.base_velocity)
+            initial_pan = getattr(self, "initial_live_pan", None)
+            last_pan = getattr(self, "last_live_pan", None)
+            pan_value = initial_pan if initial_pan is not None else (last_pan if last_pan is not None else 0.5)
+            info = f"Last note:{note_name} | vel:{velocity} | pan:{pan_value:.2f}"
+            info_surface = small_font.render(info, True, self.SLATE_BLUE)
+            info_width = info_surface.get_width()
+            self.screen.blit(info_surface, (self.width - info_width - 10, 10))
         
         # ===== BOTTOM LEFT: Instruments panel =====
         panel_width = 470
