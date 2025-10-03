@@ -70,7 +70,7 @@ class AudioEngine:
         """Play a note (melodic or drum) with given parameters and return note_id."""
         # Choose channel
         if is_drum:
-            channel = 9  # percussion channel (0-based index)
+            channel = 9 # percussion channel (0-based index)
         else:
             channel = 0
 
@@ -325,7 +325,7 @@ class GeometricSynth:
                 ("Clarinet", 71, self.SAGE_GREEN),
                 ("Trumpet", 66, self.PLUM_VIOLET),
                 ("Harp", 46, self.OLIVE_GREEN),
-                ("Vibraphone", 11, self.TERRA_COTTA)
+                ("String Ensemble", 48, self.TERRA_COTTA)
             ],
             'jazz': [
                 ("Jazz Guitar", 26, self.DEEP_TEAL),
@@ -333,8 +333,8 @@ class GeometricSynth:
                 ("Acoustic Bass", 32, self.WARM_BROWN),
                 ("Electric Piano", 4, self.PURPLISH),
                 ("Clarinet", 71, self.BURNT_ORANGE),
-                ("Alto Sax", 65, self.SAGE_GREEN),
-                ("Trumpet", 66, self.PLUM_VIOLET),
+                ("Brass Section", 61, self.SAGE_GREEN),
+                ("Muted Trumpet", 59, self.PLUM_VIOLET),
                 ("Trombone", 57, self.OLIVE_GREEN),
                 ("Organ", 16, self.TERRA_COTTA)  
             ],
@@ -365,11 +365,11 @@ class GeometricSynth:
                 ("Acoustic Guitar 2", 25, self.GOLDEN_OCHRE),
                 ("Electric Guitar", 4, self.WARM_BROWN),
                 ("Acoustic Bass", 32, self.PURPLISH),
-                ("Conga", 64, self.BURNT_ORANGE, True),
-                ("Bongo", 60, self.SAGE_GREEN, True),
-                ("Timbale", 65, self.PLUM_VIOLET, True),
-                ("Maracas", 70, self.OLIVE_GREEN, True),
-                ("Shaker", 69, self.TERRA_COTTA, True)
+                ("Accordion", 22, self.BURNT_ORANGE),
+                ("Trumpet", 57, self.SAGE_GREEN, True),
+                ("Tenor Sax", 67, self.PLUM_VIOLET, True),
+                ("Flute", 74, self.OLIVE_GREEN, True),
+                ("Grand Piano", 1, self.TERRA_COTTA, True)
             ],
             'country': [
                 ("Acoustic Guitar", 25, self.DEEP_TEAL),
@@ -405,8 +405,8 @@ class GeometricSynth:
                 ("Marimba", 12, self.TERRA_COTTA)
             ],
             'drum kit': [
-                ("Kick Drum", 35, self.DEEP_TEAL, True),
-                ("Snare Drum", 38, self.GOLDEN_OCHRE, True),
+                ("Kick", 35, self.DEEP_TEAL, True),
+                ("Snare", 38, self.GOLDEN_OCHRE, True),
                 ("Closed Hi-Hat", 42, self.WARM_BROWN, True),
                 ("Open Hi-Hat", 46, self.PURPLISH, True),
                 ("Crash Cymbal", 49, self.BURNT_ORANGE, True),
@@ -414,6 +414,39 @@ class GeometricSynth:
                 ("Low Tom", 45, self.PLUM_VIOLET, True),
                 ("High Tom", 50, self.OLIVE_GREEN, True),
                 ("Tambourine", 54, self.TERRA_COTTA, True)
+            ],
+            'percussions': [
+                ("Side Stick", 37, self.DEEP_TEAL, True),
+                ("Claves", 75, self.GOLDEN_OCHRE, True),
+                ("Woodblock High", 76, self.WARM_BROWN, True),
+                ("Woodblock Low", 77, self.PURPLISH, True),
+                ("Cowbell", 56, self.BURNT_ORANGE, True),
+                ("Shaker", 82, self.SAGE_GREEN, True),
+                ("Tambourine", 54, self.PLUM_VIOLET, True),
+                ("Triangle", 81, self.OLIVE_GREEN, True),
+                ("Steel Drum", 108, self.TERRA_COTTA)
+            ],
+            'latin drums': [
+                ("High Conga", 63, self.DEEP_TEAL, True),
+                ("Low Conga", 64, self.GOLDEN_OCHRE, True),
+                ("Timbale High", 65, self.WARM_BROWN, True),
+                ("Timbale Low", 66, self.PURPLISH, True),
+                ("High Bongo", 60, self.BURNT_ORANGE, True),
+                ("Low Bongo", 61, self.SAGE_GREEN, True),
+                ("Cabasa", 69, self.PLUM_VIOLET, True),
+                ("Maracas", 70, self.OLIVE_GREEN, True),
+                ("Agogo", 67, self.TERRA_COTTA, True)
+            ],
+            'miscellaneous': [
+                ("Echoes", 102, self.DEEP_TEAL),
+                ("Helicopter", 125, self.GOLDEN_OCHRE),
+                ("Clap", 39, self.WARM_BROWN, True),
+                ("Reverse Cymbal", 119, self.PURPLISH),
+                ("Seashore", 122, self.BURNT_ORANGE),
+                ("Whistle", 71, self.SAGE_GREEN, True),
+                ("Applause", 126, self.PLUM_VIOLET),
+                ("Gunshot", 127, self.OLIVE_GREEN),
+                ("Breath Noise", 121, self.TERRA_COTTA)
             ]
         }
             
@@ -461,7 +494,7 @@ class GeometricSynth:
         print("  • Piano is the active instrument by default")
         print("\nINSTRUMENT SELECTION:")
         print("  • Keys 1-9: Select instrument from current preset")
-        print("  • Key N: Select next preset of instruments (Classical→Jazz→Rock→World)")
+        print("  • Key N: Select next preset of instruments (Classical→Jazz→Rock→Electro→Latin→Country→Soul→World→Drum Kit→Percussions→Latin Drums→Miscellaneous)")
         print("  • Key P: Select previous preset of instruments")
         print(f"  • Current preset: {self.current_preset.upper()}")
         print("\nMUSICAL CONTROLS:")
@@ -536,7 +569,7 @@ class GeometricSynth:
             
                 elif event.key == pygame.K_n:
                     # Cycle through presets 
-                    preset_order = ['classical', 'jazz', 'rock', 'electro', 'latin', 'country', 'soul', 'world', 'drum kit']
+                    preset_order = ['classical', 'jazz', 'rock', 'electro', 'latin', 'country', 'soul', 'world', 'drum kit', 'percussions', 'latin drums', 'miscellaneous']
                     current_idx = preset_order.index(self.current_preset)
                     next_idx = (current_idx + 1) % len(preset_order)
                     self.current_preset = preset_order[next_idx]
@@ -554,7 +587,7 @@ class GeometricSynth:
 
                 elif event.key == pygame.K_p:
                     # Cycle through presets in reverse
-                    preset_order = ['classical', 'jazz', 'rock', 'electro', 'latin', 'country', 'soul', 'world', 'drum kit']
+                    preset_order = ['classical', 'jazz', 'rock', 'electro', 'latin', 'country', 'soul', 'world', 'drum kit', 'percussions', 'latin drums', 'miscellaneous']
                     current_idx = preset_order.index(self.current_preset)
                     prev_idx = (current_idx - 1) % len(preset_order)
                     self.current_preset = preset_order[prev_idx]
@@ -990,12 +1023,12 @@ class GeometricSynth:
         self.screen.blit(panel_bg, (panel_x, panel_y))
         
         preset_label = small_font.render(self.current_preset.upper(), True, self.TERRA_COTTA)
-        inst_title = small_font.render("INSTRUMENTS:", True, self.TERRA_COTTA)
+        inst_title = small_font.render("PRESET:", True, self.TERRA_COTTA)
         
         x = panel_x + 10
         y = panel_y + 8
         self.screen.blit(preset_label, (x, y))
-        x_next = x + preset_label.get_width() + 8
+        x_next = x + preset_label.get_width() + 5
         self.screen.blit(inst_title, (x_next, y))
 
         # List instruments in 3 columns with reduced spacing
