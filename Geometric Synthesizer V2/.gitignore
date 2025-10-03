@@ -1,0 +1,9 @@
+# macOS
+.DS_Store
+
+# Virtual env
+venv/
+
+# Soundfonts and large binaries
+*.sf2
+
