@@ -479,9 +479,15 @@ class GeometricSynth:
             'Em': [0, 2, 3, 5, 7, 8, 10],     # E minor
         }
         self.current_key = 'C'
-
         self.analyzer.set_key_signature(self.current_key)
         
+        # Playback state
+        self.is_playing = False
+        self.is_paused = False
+        self.playback_index = 0
+        self.playback_start_time = None
+        self.shape_play_times = []  # List of timestamps for each shape
+
         # Undo/Redo stacks
         self.shapes_history = []  # Stack for undo
         self.shapes_redo = []     # Stack for redo
@@ -631,6 +637,15 @@ class GeometricSynth:
 
                     print(f"Instrument: {name} {'(Drum Kit)' if is_drum else ''}")
 
+                # Playback
+                elif event.key == pygame.K_SPACE:
+                    if not self.is_playing:
+                        self.start_playback()
+                    else:
+                        self.pause_playback()
+                elif event.key == pygame.K_BACKSPACE:
+                    self.stop_playback()
+
                 # Undo/Redo
                 elif event.key == pygame.K_z:
                     self.undo()
@@ -692,6 +707,31 @@ class GeometricSynth:
 
         last_point = self.current_points[-1]
         shape['note_position'] = last_point
+
+        shape = {
+            'type': shape_type,
+            'center': (center_x, center_y),
+            'width': width,
+            'height': height,
+            'points': self.current_points.copy(),
+            'timestamp': time.time(),
+            'color': self.get_shape_color(shape_type)
+        }
+
+        if shape_type == 'line':
+            shape['length'] = math.sqrt(width**2 + height**2)
+
+        last_point = self.current_points[-1]
+        shape['note_position'] = last_point
+
+        # Store the instrument used when drawing this shape
+        if getattr(self, "current_instrument_is_drum", False):
+            shape['instrument'] = self.audio.current_drum_note
+            shape['is_drum'] = True
+        else:
+            shape['instrument'] = self.audio.current_instrument
+            shape['is_drum'] = False
+
         self.shapes.append(shape)
 
         # Clear redo stack when new shape is added
@@ -849,8 +889,18 @@ class GeometricSynth:
         note_name = self.midi_to_note_name(midi_note)
         pan_str = "L" if pan < 0.4 else "R" if pan > 0.6 else "C"
 
-        instrument_param = (self.audio.current_drum_note if getattr(self, "current_instrument_is_drum", False)
-                            else self.audio.current_instrument)
+        # Use saved instrument if available, otherwise use current
+        saved_instrument = shape.get('instrument')
+        saved_is_drum = shape.get('is_drum', False)
+
+        if saved_instrument is not None:
+            instrument_param = saved_instrument
+            is_drum_param = saved_is_drum
+        else:
+            # Fallback to current instrument (for old shapes without saved instrument)
+            instrument_param = (self.audio.current_drum_note if getattr(self, "current_instrument_is_drum", False)
+                                else self.audio.current_instrument)
+            is_drum_param = getattr(self, "current_instrument_is_drum", False)
 
         note_id = self.audio.play_note(
             midi_note, 
@@ -858,9 +908,8 @@ class GeometricSynth:
             duration, 
             pan,
             instrument=instrument_param,
-            is_drum=getattr(self, "current_instrument_is_drum", False)
+            is_drum=is_drum_param
         )
-
 
         print(f"{shape['type'].upper():10s} | {note_name:4s} | vel:{velocity:3d} | dur:{duration:.1f}s | pan:{pan_str}")
         return note_id
@@ -879,18 +928,108 @@ class GeometricSynth:
             return self.quick_instruments[idx][2]
         return self.quick_instruments[0][2]
 
-        
     def update(self):
         """Update game state"""
         # Update audio engine (stop finished notes)
         self.audio.update()
         
+        # Playback logic
+        if self.is_playing and not self.is_paused:
+            elapsed = time.time() - self.playback_start_time
+            
+            # Play groups whose time has come
+            while self.playback_index < len(self.playback_groups):
+                if elapsed >= self.group_play_times[self.playback_index]:
+                    group = self.playback_groups[self.playback_index]
+                    # Play all shapes in group simultaneously (polyphony)
+                    for shape in group:
+                        note_id = self.play_shape(shape)
+                        shape['note_id'] = note_id
+                    self.playback_index += 1
+                else:
+                    break
+            
+            # End of playback
+            if self.playback_index >= len(self.playback_groups):
+                print("Playback finished")
+                self.is_playing = False
+                self.playback_index = 0
+
         # Safety: If live note expired naturally, reset tracking
         if self.active_live_note_id is not None:
             if self.active_live_note_id not in self.audio.active_notes:
                 self.active_live_note_id = None
                 self.last_live_pitch = None
         
+    def start_playback(self):
+        """Start playing back all drawn shapes from left to right with polyphony"""
+        if not self.shapes:
+            print("No shapes to play")
+            return
+        
+        self.is_playing = True
+        self.is_paused = False
+        self.playback_index = 0
+        self.playback_start_time = time.time()
+        
+        # Sort shapes by X position
+        sorted_shapes = sorted(self.shapes, key=lambda s: s['center'][0])
+        
+        # Group shapes by X position (tolerance for "same position")
+        x_tolerance = 50  # pixels - shapes within this range play together
+        
+        self.playback_groups = []
+        current_group = [sorted_shapes[0]]
+        current_x = sorted_shapes[0]['center'][0]
+        
+        for shape in sorted_shapes[1:]:
+            if abs(shape['center'][0] - current_x) <= x_tolerance:
+                # Add to current group (polyphony)
+                current_group.append(shape)
+            else:
+                # Start new group
+                self.playback_groups.append(current_group)
+                current_group = [shape]
+                current_x = shape['center'][0]
+        
+        # Don't forget last group
+        self.playback_groups.append(current_group)
+        
+        # Calculate play times for each group
+        total_duration = 5.0  # Total playback time in seconds
+        if len(self.playback_groups) > 1:
+            interval = total_duration / len(self.playback_groups)
+            self.group_play_times = [i * interval for i in range(len(self.playback_groups))]
+        else:
+            self.group_play_times = [0.0]
+        
+        print(f"Playing {len(self.shapes)} shapes in {len(self.playback_groups)} groups (left to right)")
+
+    def pause_playback(self):
+        """Pause/resume playback"""
+        if not self.is_playing:
+            return
+        
+        self.is_paused = not self.is_paused
+        
+        if self.is_paused:
+            # Store pause time offset
+            elapsed = time.time() - self.playback_start_time
+            self.pause_offset = elapsed
+            print("⏸ Paused")
+        else:
+            # Resume: adjust start time
+            self.playback_start_time = time.time() - self.pause_offset
+            print("Resumed")
+
+    def stop_playback(self):
+        """Stop playback completely"""
+        self.is_playing = False
+        self.is_paused = False
+        self.playback_index = 0
+        self.audio.stop_all_notes()
+        print("Stopped")
+
     def undo(self):
         """Undo last shape (Ctrl+Z)"""
         if not self.shapes:
@@ -997,6 +1136,20 @@ class GeometricSynth:
         # Active notes
         active_count = len(self.audio.active_notes)
         active_surface = small_font.render(f"Playing: {active_count} notes", True, self.SLATE_BLUE)
+        
+        # Playback status
+        if self.is_playing:
+            if self.is_paused:
+                status_text = "PAUSED"
+                status_color = self.TERRA_COTTA
+            else:
+                progress = f"{self.playback_index}/{len(self.playback_groups)}"
+                status_text = f"PLAYING ({progress})"
+                status_color = self.SAGE_GREEN
+            
+            status_surface = small_font.render(status_text, True, status_color)
+            self.screen.blit(status_surface, (10, y_offset + 66))
+
         self.screen.blit(active_surface, (10, y_offset + 44))
         
        # ===== TOP RIGHT: Live note info =====
@@ -1113,11 +1266,12 @@ class GeometricSynth:
             self.screen.blit(surface, (col3_x, y_off))
             y_off += 16
         
-        # Column 4: GENERAL
+        # Column 4: PLAYBACK
         col4_x = help_x + 15 + col_width * 3
         col4_lines = [
-            ("GENERAL:", self.SLATE_BLUE),
-            ("S: Stop sounds", self.TEXT_DARK),
+            ("PLAYBACK:", self.SLATE_BLUE),
+            ("SPACE: Play/Pause", self.TEXT_DARK),
+            ("BACKSPACE: Stop", self.TEXT_DARK),
             ("Q/ESC: Quit", self.TEXT_DARK),
         ]
         y_off = start_y
