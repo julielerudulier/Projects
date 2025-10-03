@@ -103,7 +103,7 @@ class AudioEngine:
             midi_to_play = int(midi_note)
 
         # Pan (control change) on same channel
-        pan_value = int(max(0, min(127, pan * 127)))
+        pan_value = int(max(0, min(127, (1.0 - pan) * 127)))
         try:
             self.synth.cc(channel, 10, pan_value)
         except Exception:
@@ -260,7 +260,7 @@ class ShapeAnalyzer:
     def shape_to_pan(self, shape):
         """Convert X position to stereo pan (0=left, 0.5=center, 1=right)"""
         x_pos = shape['center'][0]
-        return 1.0 - (x_pos / self.width)
+        return x_pos / self.width
 
 
 # ======================
