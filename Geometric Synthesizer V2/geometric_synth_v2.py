@@ -67,6 +67,7 @@ class AudioEngine:
 
         # Use channel 0 (you can extend to multiple channels later)
         channel = 0
+
         # Select program
         try:
             self.synth.program_select(channel, self.sfid, 0, program)
@@ -204,7 +205,7 @@ class ShapeAnalyzer:
             # Shapes: based on area
             velocity = int(50 + min(77, area / 500))
             
-        return max(20, min(127, velocity))
+        return max(10, min(127, velocity))
         
     def shape_to_duration(self, shape):
         """Convert shape to note duration in seconds (optimized for responsiveness)"""
@@ -495,10 +496,10 @@ class GeometricSynth:
                         self.update_live_sound(event.pos)
                     
     def finalize_shape(self):
-        """Analyze and play the drawn shape"""
+        """Analyze and save the drawn shape (no sound)"""
         shape_type = 'freeform'
 
-        # calculate geometry
+        # Calculate geometry
         x_coords = [p[0] for p in self.current_points]
         y_coords = [p[1] for p in self.current_points]
         center_x = sum(x_coords) / len(x_coords)
@@ -530,9 +531,10 @@ class GeometricSynth:
 
     def start_live_sound(self, pos):
         """Start a continuous note when drawing begins (stop existing first)."""
-        # ensure no live note remains
+        # SAFETY: Force stop any remaining live note
         if self.active_live_note_id is not None:
-            self.stop_live_sound()
+            self.audio.stop_note_by_id(self.active_live_note_id)
+            self.active_live_note_id = None
         
         # Initialize velocity tracking
         self.last_draw_pos = pos
@@ -542,7 +544,7 @@ class GeometricSynth:
         temp_shape = {'type': 'line', 'center': pos, 'width': 10, 'height': 10, 'length': 10}
         midi_note = self.analyzer.shape_to_midi(temp_shape)
         velocity = self.base_velocity
-        duration = 1.5 if self.live_drawing_mode else 0.8
+        duration = 10.0 # Will be stopped manually
         pan = pos[0] / self.width
 
         note_id = self.audio.play_note(midi_note, velocity, duration, pan)
@@ -561,12 +563,18 @@ class GeometricSynth:
             
             if time_delta > 0:
                 speed = distance / time_delta
-                # Map speed around base_velocity: slow = base-40, fast = base+40
-                velocity_offset = int((speed / 10) - 40)
-                velocity = self.base_velocity + velocity_offset
-                self.current_velocity = max(20, min(127, velocity))
-            else:
-                self.current_velocity = self.base_velocity
+                # Map speed around base_velocity
+                velocity_offset = int((speed / 7) - 30)
+                target_velocity = self.base_velocity + velocity_offset
+                target_velocity = max(10, min(127, target_velocity))
+                
+                # Smooth velocity changes (exponential moving average)
+                smoothing = 0.3  # 0 = no smoothing, 1 = instant change
+                self.current_velocity = int(
+                self.current_velocity * (1 - smoothing) + target_velocity * smoothing
+                )
+        else:
+            self.current_velocity = self.base_velocity
         
         # Store for next calculation
         self.last_draw_pos = pos
@@ -591,11 +599,10 @@ class GeometricSynth:
 
     def stop_live_sound(self):
         """Stop the continuous note"""
-        if self.active_live_note_id and self.active_live_note_id in self.audio.active_notes:
-            note_info = self.audio.active_notes[self.active_live_note_id]
-            self.audio.synth.noteoff(note_info['channel'], note_info['midi'])
-            del self.audio.active_notes[self.active_live_note_id]
-
+        if self.active_live_note_id is not None:
+            # Use AudioEngine's method which handles everything
+            self.audio.stop_note_by_id(self.active_live_note_id)
+            
         self.active_live_note_id = None
         self.last_live_pitch = None
         # Reset velocity tracking
@@ -623,8 +630,7 @@ class GeometricSynth:
         # Use last drawing velocity if available, otherwise calculate from shape
         velocity = getattr(self, 'current_velocity', None) or self.analyzer.shape_to_velocity(shape)
 
-        # Duration is independent of shape size
-        duration = 0.3
+        duration = self.analyzer.shape_to_duration(shape)
 
         # Pan based on last point X position
         if 'note_position' in shape:
@@ -665,6 +671,12 @@ class GeometricSynth:
         """Update game state"""
         # Update audio engine (stop finished notes)
         self.audio.update()
+        
+        # Safety: If live note expired naturally, reset tracking
+        if self.active_live_note_id is not None:
+            if self.active_live_note_id not in self.audio.active_notes:
+                self.active_live_note_id = None
+                self.last_live_pitch = None
         
     def undo(self):
         """Undo last shape (Ctrl+Z)"""
