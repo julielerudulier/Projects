@@ -42,7 +42,7 @@ class AudioEngine:
             print("Percussion channel initialized with Standard Kit")
         except Exception as e:
             print("Could not init drum channel:", e)
-            
+
         self.parent_synth = parent_synth  # Reference to main synth for preset access
         
         # Active notes tracking
@@ -221,19 +221,26 @@ class ShapeAnalyzer:
         return octave * 12 + closest
         
     def shape_to_velocity(self, shape):
-        """Convert shape properties to note velocity (volume)"""
-        # Base velocity on size
+        """Convert shape properties to note velocity (volume),
+        interpolating smoothly between velocity_base and 127."""
+        
         area = shape['width'] * shape['height']
         
         if shape['type'] == 'line':
-            # Lines: based on length
             length = shape.get('length', 100)
-            velocity = int(40 + min(87, length / 5))
+            # normalisation : long trait = proche de 1
+            raw = min(1.0, length / 500.0)  
         else:
-            # Shapes: based on area
-            velocity = int(50 + min(77, area / 500))
-            
-        return max(10, min(127, velocity))
+            raw = min(1.0, area / 20000.0)  
+        
+        # courbe de réponse pour lisser les variations
+        gamma = 0.6   # <1 = accentue les petites différences, >1 = compresse
+        raw = raw ** gamma
+        
+        # interpolation relative à la base
+        velocity = int(self.velocity_base + (127 - self.velocity_base) * raw)
+        
+        return max(1, min(127, velocity))
         
     def shape_to_duration(self, shape):
         """Convert shape to note duration in seconds (optimized for responsiveness)"""
@@ -704,23 +711,27 @@ class GeometricSynth:
             
             if time_delta > 0:
                 speed = distance / time_delta
-                # Map speed around base_velocity
-                velocity_offset = int((speed / 7) - 30)
-                target_velocity = self.base_velocity + velocity_offset
-                target_velocity = max(10, min(127, target_velocity))
-                
-                # Smooth velocity changes (exponential moving average)
-                smoothing = 0.3  # 0 = no smoothing, 1 = instant change
-                self.current_velocity = int(
-                self.current_velocity * (1 - smoothing) + target_velocity * smoothing
-                )
+
+                if distance > 1:  
+                    velocity_offset = int((speed / 7) - 30)
+                    base = getattr(self, "current_velocity", self.base_velocity)
+                    target_velocity = base + velocity_offset
+                    target_velocity = max(10, min(127, target_velocity))
+                    
+                    # Smooth velocity changes
+                    smoothing = 0.3
+                    self.current_velocity = int(
+                        self.current_velocity * (1 - smoothing) + target_velocity * smoothing
+                    )
         else:
-            self.current_velocity = self.base_velocity
+            if not hasattr(self, "current_velocity"):
+                self.current_velocity = self.base_velocity
         
         # Store for next calculation
         self.last_draw_pos = pos
         self.last_draw_time = current_time
         
+        # Pitch from position
         temp_shape = {'type': 'line', 'center': pos, 'width': 10, 'height': 10, 'length': 10}
         midi_note = self.analyzer.shape_to_midi(temp_shape)
         
@@ -729,7 +740,6 @@ class GeometricSynth:
             if self.active_live_note_id is not None:
                 self.stop_live_sound()
             
-            # Start new note with calculated velocity
             velocity = self.current_velocity
             duration = 10.0
             pan = pos[0] / self.width
