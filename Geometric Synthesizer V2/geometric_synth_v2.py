@@ -228,10 +228,10 @@ class ShapeAnalyzer:
         
         if shape['type'] == 'line':
             length = shape.get('length', 100)
-            # normalisation : long trait = proche de 1
-            raw = min(1.0, length / 500.0)  
+            # Normalization 
+            raw = min(1.0, length / 100.0)  
         else:
-            raw = min(1.0, area / 20000.0)  
+            raw = min(1.0, area / 8000.0)  
         
         # courbe de réponse pour lisser les variations
         gamma = 0.6   # <1 = accentue les petites différences, >1 = compresse
@@ -243,19 +243,25 @@ class ShapeAnalyzer:
         return max(30, min(127, velocity))
         
     def shape_to_duration(self, shape):
-        """Convert shape to note duration in seconds (optimized for responsiveness)"""
+        """Convert shape to note duration in seconds (for note length)"""
+        # Utiliser la longueur du tracé si disponible
+        if 'length' in shape:
+            length = shape['length']
+            duration = max(0.1, min(3.0, length / 100))  # Ajuster diviseur selon préférence
+            print(f"DEBUG: Trace length={length:.0f}px -> duration={duration:.2f}s")
+            return duration
+        
+        # Fallback sur aire pour vieilles formes
         if shape['type'] == 'line':
             length = shape.get('length', 100)
-            # Small lines = very short, long lines = longer (max 1.5s)
-            if length < 100:
-                return max(0.1, min(0.3, length / 400))
-            else:
-                return max(0.3, min(1.5, length / 200))
+            duration = max(0.1, min(3.0, length / 100))
+            print(f"DEBUG: Line length={length:.0f}px -> duration={duration:.2f}s")
+            return duration
         else:
-            # Shapes: based on area, capped to avoid lingering sounds
             area = shape['width'] * shape['height']
-            # Typical shapes = 0.4–2.5s
-            return max(0.4, min(2.5, area / 10000))
+            duration = max(0.2, min(3.0, area / 6000))
+            print(f"DEBUG: Shape area={area:.0f} -> duration={duration:.2f}s")
+            return duration
             
     def shape_to_pan(self, shape):
         """Convert X position to stereo pan (0=left, 0.5=center, 1=right)"""
@@ -515,8 +521,10 @@ class GeometricSynth:
         print("  • Y position → Pitch (top=high notes, bottom=low notes)")
         print("  • X position → Stereo pan (left=L speaker, right=R speaker)")
         print("  • Shape size → Duration & velocity (quicker=louder)")
+        print("\nPLAYBACK:")
+        print("  • SPACCE → Play/Pause")
+        print("  • BACKSPACE → Stop")
         print("\nOTHER CONTROLS:")
-        print("  • S: Stop all currently playing notes")
         print("  • H: Toggle help display on screen")
         print("  • ESC or Q: Quit application")
         print("="*60 + "\n")
@@ -543,10 +551,6 @@ class GeometricSynth:
                     
                 elif event.key == pygame.K_c:
                     self.clear_all()
-                    
-                elif event.key == pygame.K_s:
-                    self.audio.stop_all_notes()
-                    print("Stopped all notes")
                     
                 elif event.key == pygame.K_h:
                     self.show_help = not self.show_help
@@ -682,15 +686,33 @@ class GeometricSynth:
                     
     def finalize_shape(self):
         """Analyze and save the drawn shape (no sound)"""
-        shape_type = 'freeform'
-
-        # Calculate geometry
+        # Déterminer le type de forme
         x_coords = [p[0] for p in self.current_points]
         y_coords = [p[1] for p in self.current_points]
-        center_x = sum(x_coords) / len(x_coords)
-        center_y = sum(y_coords) / len(y_coords)
         width = max(x_coords) - min(x_coords)
         height = max(y_coords) - min(y_coords)
+        
+        # Calculer la longueur totale du tracé
+        total_length = 0
+        for i in range(len(self.current_points) - 1):
+            dx = self.current_points[i+1][0] - self.current_points[i][0]
+            dy = self.current_points[i+1][1] - self.current_points[i][1]
+            total_length += math.sqrt(dx*dx + dy*dy)
+        
+        # Détecter si c'est une ligne (tracé allongé)
+        if width > 0 and height > 0:
+            aspect_ratio = max(width, height) / min(width, height)
+            # Si ratio > 3 ou tracé assez long, c'est une ligne
+            if aspect_ratio > 2.5 or total_length > 100:
+                shape_type = 'line'
+            else:
+                shape_type = 'freeform'
+        else:
+            shape_type = 'line'
+
+        # Calculate geometry
+        center_x = sum(x_coords) / len(x_coords)
+        center_y = sum(y_coords) / len(y_coords)
 
         shape = {
             'type': shape_type,
@@ -699,27 +721,9 @@ class GeometricSynth:
             'height': height,
             'points': self.current_points.copy(),
             'timestamp': time.time(),
-            'color': self.get_shape_color(shape_type)
+            'color': self.get_shape_color(shape_type),
+            'length': total_length  # IMPORTANT : stocker la longueur réelle du tracé
         }
-
-        if shape_type == 'line':
-            shape['length'] = math.sqrt(width**2 + height**2)
-
-        last_point = self.current_points[-1]
-        shape['note_position'] = last_point
-
-        shape = {
-            'type': shape_type,
-            'center': (center_x, center_y),
-            'width': width,
-            'height': height,
-            'points': self.current_points.copy(),
-            'timestamp': time.time(),
-            'color': self.get_shape_color(shape_type)
-        }
-
-        if shape_type == 'line':
-            shape['length'] = math.sqrt(width**2 + height**2)
 
         last_point = self.current_points[-1]
         shape['note_position'] = last_point
@@ -877,7 +881,7 @@ class GeometricSynth:
         # Use last drawing velocity if available, otherwise calculate from shape
         velocity = getattr(self, 'current_velocity', None) or self.analyzer.shape_to_velocity(shape)
 
-        duration = self.analyzer.shape_to_duration(shape) + 1
+        duration = self.analyzer.shape_to_duration(shape)
 
         # Pan based on last point X position
         if 'note_position' in shape:
@@ -937,24 +941,22 @@ class GeometricSynth:
         if self.is_playing and not self.is_paused:
             elapsed = time.time() - self.playback_start_time
             
-            # Play groups whose time has come
-            while self.playback_index < len(self.playback_groups):
-                if elapsed >= self.group_play_times[self.playback_index]:
-                    group = self.playback_groups[self.playback_index]
-                    # Play all shapes in group simultaneously (polyphony)
-                    for shape in group:
-                        note_id = self.play_shape(shape)
-                        shape['note_id'] = note_id
+            # Play events whose time has come
+            while self.playback_index < len(self.playback_events):
+                event = self.playback_events[self.playback_index]
+                if elapsed >= event['time']:
+                    note_id = self.play_shape(event['shape'])
+                    event['note_id'] = note_id
                     self.playback_index += 1
                 else:
                     break
             
             # End of playback
-            if self.playback_index >= len(self.playback_groups):
+            if self.playback_index >= len(self.playback_events):
                 print("Playback finished")
                 self.is_playing = False
                 self.playback_index = 0
-
+        
         # Safety: If live note expired naturally, reset tracking
         if self.active_live_note_id is not None:
             if self.active_live_note_id not in self.audio.active_notes:
@@ -972,38 +974,69 @@ class GeometricSynth:
         self.playback_index = 0
         self.playback_start_time = time.time()
         
-        # Sort shapes by X position
-        sorted_shapes = sorted(self.shapes, key=lambda s: s['center'][0])
-        
-        # Group shapes by X position (tolerance for "same position")
-        x_tolerance = 50  # pixels - shapes within this range play together
-        
-        self.playback_groups = []
-        current_group = [sorted_shapes[0]]
-        current_x = sorted_shapes[0]['center'][0]
-        
-        for shape in sorted_shapes[1:]:
-            if abs(shape['center'][0] - current_x) <= x_tolerance:
-                # Add to current group (polyphony)
-                current_group.append(shape)
+        # Calculer les positions de début et fin pour chaque shape
+        shape_timings = []
+        for idx, shape in enumerate(self.shapes):
+            if 'points' in shape and len(shape['points']) > 0:
+                x_coords = [p[0] for p in shape['points']]
+                x_start = min(x_coords)
+                x_end = max(x_coords)
+                horizontal_length = x_end - x_start
             else:
-                # Start new group
-                self.playback_groups.append(current_group)
-                current_group = [shape]
-                current_x = shape['center'][0]
+                x_center = shape['center'][0]
+                x_start = x_center
+                x_end = x_center
+                horizontal_length = 0
+            
+            shape_timings.append({
+                'shape': shape,
+                'x_start': x_start,
+                'x_end': x_end,
+                'horizontal_length': horizontal_length,
+                'duration': self.analyzer.shape_to_duration(shape),
+                'original_index': idx
+            })
         
-        # Don't forget last group
-        self.playback_groups.append(current_group)
-        
-        # Calculate play times for each group
-        total_duration = 5.0  # Total playback time in seconds
-        if len(self.playback_groups) > 1:
-            interval = total_duration / len(self.playback_groups)
-            self.group_play_times = [i * interval for i in range(len(self.playback_groups))]
+        # Trouver l'étendue totale de l'espace dessiné
+        if shape_timings:
+            min_x = min(st['x_start'] for st in shape_timings)
+            max_x = max(st['x_end'] for st in shape_timings)
+            total_width = max_x - min_x
+            
+            print(f"Playback space: {min_x:.0f}px to {max_x:.0f}px ({total_width:.0f}px)")
         else:
-            self.group_play_times = [0.0]
+            min_x = 0
+            max_x = 0
+            total_width = 1
         
-        print(f"Playing {len(self.shapes)} shapes in {len(self.playback_groups)} groups (left to right)")
+        # NOUVEAU : Mapper l'espace horizontal en temps proportionnel
+        # Ratio : 1 pixel = X secondes (ajustable)
+        pixels_per_second = 150  # Plus ce chiffre est grand, plus c'est rapide
+        
+        # Convertir positions X en temps
+        self.playback_events = []
+        x_tolerance = 30  # pixels pour la polyphonie
+        
+        for st in shape_timings:
+            # Temps de départ basé sur position X
+            start_time = (st['x_start'] - min_x) / pixels_per_second
+            
+            # Quantizer pour polyphonie
+            time_tolerance = x_tolerance / pixels_per_second
+            quantized_time = round(start_time / time_tolerance) * time_tolerance if time_tolerance > 0 else start_time
+            
+            self.playback_events.append({
+                'time': quantized_time,
+                'shape': st['shape'],
+                'duration': st['duration'],
+                'original_index': st['original_index']
+            })
+        
+        # Trier par temps, puis par index original
+        self.playback_events.sort(key=lambda e: (e['time'], e['original_index']))
+        
+        total_duration = (total_width / pixels_per_second) if total_width > 0 else 2.0
+        print(f"Playing {len(self.shapes)} shapes over {total_duration:.1f}s (ratio: {pixels_per_second}px/s)")
 
     def pause_playback(self):
         """Pause/resume playback"""
@@ -1013,10 +1046,12 @@ class GeometricSynth:
         self.is_paused = not self.is_paused
         
         if self.is_paused:
+            # Stop all currently playing notes immediately
+            self.audio.stop_all_notes()
             # Store pause time offset
             elapsed = time.time() - self.playback_start_time
             self.pause_offset = elapsed
-            print("⏸ Paused")
+            print("Paused")
         else:
             # Resume: adjust start time
             self.playback_start_time = time.time() - self.pause_offset
@@ -1143,7 +1178,7 @@ class GeometricSynth:
                 status_text = "PAUSED"
                 status_color = self.TERRA_COTTA
             else:
-                progress = f"{self.playback_index}/{len(self.playback_groups)}"
+                progress = f"{self.playback_index}/{len(self.playback_events)}"
                 status_text = f"PLAYING ({progress})"
                 status_color = self.SAGE_GREEN
             
