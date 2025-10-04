@@ -736,6 +736,8 @@ class GeometricSynth:
             shape['instrument'] = self.audio.current_instrument
             shape['is_drum'] = False
 
+        shape['velocity'] = getattr(self, 'current_velocity', self.base_velocity)
+
         self.shapes.append(shape)
 
         # Clear redo stack when new shape is added
@@ -860,26 +862,36 @@ class GeometricSynth:
         self.initial_live_pan = None
         self.last_live_pan = None
         
-    def play_shape(self, shape):
+    def play_shape(self, shape, midi_override=None):
         """Convert shape to sound and play it — returns note_id (or None)."""
-        # Use last drawn point if available, otherwise center
-        if 'note_position' in shape:
-            note_pos_shape = {
-                'type': shape['type'],
-                'center': shape['note_position'],  # Use last point
-                'width': shape['width'],
-                'height': shape['height']
-            }
-            if 'length' in shape:
-                note_pos_shape['length'] = shape['length']
-        else:
+        
+        # Utiliser midi_override si fourni (pour glissements)
+        if midi_override is not None:
+            midi_note = midi_override
             note_pos_shape = shape
+        else:
+            # Use last drawn point if available, otherwise center
+            if 'note_position' in shape:
+                note_pos_shape = {
+                    'type': shape['type'],
+                    'center': shape['note_position'],
+                    'width': shape['width'],
+                    'height': shape['height']
+                }
+                if 'length' in shape:
+                    note_pos_shape['length'] = shape['length']
+            else:
+                note_pos_shape = shape
+            
+            midi_note = self.analyzer.shape_to_midi(note_pos_shape)
 
-        # Get audio parameters using last point position
-        midi_note = self.analyzer.shape_to_midi(note_pos_shape)
-
-        # Use last drawing velocity if available, otherwise calculate from shape
-        velocity = getattr(self, 'current_velocity', None) or self.analyzer.shape_to_velocity(shape)
+        # Utiliser la vélocité sauvegardée si disponible, sinon calculer
+        saved_velocity = shape.get('velocity')
+        if saved_velocity is not None:
+            velocity = saved_velocity
+        else:
+            # Fallback pour anciennes formes sans vélocité sauvegardée
+            velocity = self.analyzer.shape_to_velocity(shape)
 
         duration = self.analyzer.shape_to_duration(shape)
 
@@ -889,11 +901,10 @@ class GeometricSynth:
         else:
             pan = self.analyzer.shape_to_pan(shape)
 
-        # Console feedback
         note_name = self.midi_to_note_name(midi_note)
         pan_str = "L" if pan < 0.4 else "R" if pan > 0.6 else "C"
 
-        # Use saved instrument if available, otherwise use current
+        # Use saved instrument if available
         saved_instrument = shape.get('instrument')
         saved_is_drum = shape.get('is_drum', False)
 
@@ -901,7 +912,6 @@ class GeometricSynth:
             instrument_param = saved_instrument
             is_drum_param = saved_is_drum
         else:
-            # Fallback to current instrument (for old shapes without saved instrument)
             instrument_param = (self.audio.current_drum_note if getattr(self, "current_instrument_is_drum", False)
                                 else self.audio.current_instrument)
             is_drum_param = getattr(self, "current_instrument_is_drum", False)
@@ -945,18 +955,22 @@ class GeometricSynth:
             while self.playback_index < len(self.playback_events):
                 event = self.playback_events[self.playback_index]
                 if elapsed >= event['time']:
-                    note_id = self.play_shape(event['shape'])
+                    # Jouer la note
+                    note_id = self.play_shape(event['shape'], midi_override=event.get('midi_override'))
                     event['note_id'] = note_id
                     self.playback_index += 1
                 else:
                     break
             
-            # End of playback
+            # End of playback - SEULEMENT si on a fini de jouer toutes les notes
+            # ET qu'il n'y a plus de notes actives
             if self.playback_index >= len(self.playback_events):
-                print("Playback finished")
-                self.is_playing = False
-                self.playback_index = 0
-        
+                # Attendre que toutes les notes se terminent avant de finir
+                if len(self.audio.active_notes) == 0:
+                    print("Playback finished")
+                    self.is_playing = False
+                    self.playback_index = 0
+
         # Safety: If live note expired naturally, reset tracking
         if self.active_live_note_id is not None:
             if self.active_live_note_id not in self.audio.active_notes:
@@ -988,12 +1002,16 @@ class GeometricSynth:
                 x_end = x_center
                 horizontal_length = 0
             
+            # UTILISER la longueur horizontale pour calculer la durée au lieu de shape_to_duration
+            # Car on veut que la durée corresponde à l'espace horizontal occupé
+            playback_duration = max(0.2, horizontal_length / 70)  # Ajustable
+            
             shape_timings.append({
                 'shape': shape,
                 'x_start': x_start,
                 'x_end': x_end,
                 'horizontal_length': horizontal_length,
-                'duration': self.analyzer.shape_to_duration(shape),
+                'duration': playback_duration,  # Utiliser la durée basée sur l'horizontal
                 'original_index': idx
             })
         
@@ -1009,34 +1027,57 @@ class GeometricSynth:
             max_x = 0
             total_width = 1
         
-        # NOUVEAU : Mapper l'espace horizontal en temps proportionnel
-        # Ratio : 1 pixel = X secondes (ajustable)
-        pixels_per_second = 150  # Plus ce chiffre est grand, plus c'est rapide
+        # Plus l'espace est grand, plus on prend le temps de le parcourir
+        # Calculer une vitesse de lecture adaptée à l'espace total
+        if total_width > 0:
+            # Pour les petits espaces (< 400px), utiliser une vitesse fixe rapide
+            if total_width < 400:
+                pixels_per_second = 100  # Vitesse standard pour petits espaces
+                target_duration = total_width / pixels_per_second
+            else:
+                # Pour les grands espaces, adapter la durée
+                # 400px = 4s, 1200px = 10s, 3000px = 20s
+                min_duration = 4.0
+                max_duration = 28.0
+                
+                # Interpolation progressive
+                normalized = min(1.0, (total_width - 400) / 2600)  # 0 à 400px → 0, 3000px → 1
+                target_duration = min_duration + normalized * (max_duration - min_duration)
+                
+                pixels_per_second = total_width / target_duration
+        else:
+            pixels_per_second = 100
+            target_duration = 2.0
+
+        print(f"Reading speed: {pixels_per_second:.0f}px/s (total: {target_duration:.1f}s)")
         
         # Convertir positions X en temps
         self.playback_events = []
-        x_tolerance = 30  # pixels pour la polyphonie
-        
+        x_tolerance = 30
+
         for st in shape_timings:
-            # Temps de départ basé sur position X
+            shape = st['shape']
             start_time = (st['x_start'] - min_x) / pixels_per_second
             
-            # Quantizer pour polyphonie
-            time_tolerance = x_tolerance / pixels_per_second
-            quantized_time = round(start_time / time_tolerance) * time_tolerance if time_tolerance > 0 else start_time
+            # Tolérance temporelle pour polyphonie
+            time_tolerance = 0.05
+            quantized_time = round(start_time / time_tolerance) * time_tolerance
             
-            self.playback_events.append({
+            # Un seul événement par tracé
+            event = {
                 'time': quantized_time,
-                'shape': st['shape'],
+                'shape': shape,
                 'duration': st['duration'],
-                'original_index': st['original_index']
-            })
-        
+                'original_index': st['original_index'],
+                'midi_override': None  # Pas de MIDI override
+            }
+            self.playback_events.append(event)
+
         # Trier par temps, puis par index original
         self.playback_events.sort(key=lambda e: (e['time'], e['original_index']))
         
         total_duration = (total_width / pixels_per_second) if total_width > 0 else 2.0
-        print(f"Playing {len(self.shapes)} shapes over {total_duration:.1f}s (ratio: {pixels_per_second}px/s)")
+        print(f"Playing {len(self.shapes)} shapes over {total_duration:.1f}s")
 
     def pause_playback(self):
         """Pause/resume playback"""
@@ -1319,6 +1360,10 @@ class GeometricSynth:
         if self.shapes:
             # Save current state before clearing for potential undo
             self.shapes_history.append(self.shapes.copy())
+        
+        # Arrêter la lecture en cours
+        if self.is_playing:
+            self.stop_playback()
         
         self.shapes = []
         self.shapes_redo = []  # Clear redo stack when clearing canvas
