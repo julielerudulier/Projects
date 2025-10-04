@@ -103,7 +103,7 @@ class AudioEngine:
             midi_to_play = int(midi_note)
 
         # Pan (control change) on same channel
-        pan_value = int(max(0, min(127, (1.0 - pan) * 127)))
+        pan_value = int(max(0, min(127, pan * 127)))
         try:
             self.synth.cc(channel, 10, pan_value)
         except Exception:
@@ -319,6 +319,7 @@ class GeometricSynth:
         self.last_live_pitch = None
         self.base_velocity = 50 # Base velocity (30-127), adjustable with +/-
         self.current_velocity = self.base_velocity
+        self.pan_enabled = True  # Pan activé par défaut
         
         # Instrument presets by musical style
         self.instrument_presets = {
@@ -477,12 +478,12 @@ class GeometricSynth:
 
         # Current key signature (for scale lock)
         self.key_signatures = {
-            'C': [0, 2, 4, 5, 7, 9, 11],      # C major
-            'G': [0, 2, 4, 6, 7, 9, 11],      # G major
-            'D': [0, 2, 4, 6, 7, 9, 11],      # D major  
-            'F': [0, 2, 3, 5, 7, 9, 10],      # F major
+            'C': [0, 2, 4, 5, 7, 9, 11],      # C major (pas de dièses/bémols)
+            'G': [0, 2, 4, 6, 7, 9, 11],      # G major (F#)
+            'D': [1, 2, 4, 6, 7, 9, 11],      # D major (F#, C#)
+            'F': [0, 2, 3, 5, 7, 9, 10],      # F major (Bb)
             'Am': [0, 2, 3, 5, 7, 8, 10],     # A minor
-            'Em': [0, 2, 3, 5, 7, 8, 10],     # E minor
+            'Em': [0, 2, 3, 5, 7, 9, 10],     # E minor (F#)
         }
         self.current_key = 'C'
         self.analyzer.set_key_signature(self.current_key)
@@ -506,13 +507,14 @@ class GeometricSynth:
         print("  • Piano is the active instrument by default")
         print("\nINSTRUMENT SELECTION:")
         print("  • Keys 1-9: Select instrument from current preset")
-        print("  • Key N: Select next preset of instruments (Classical→Jazz→Rock→Electro→Latin→Country→Soul→World→Drum Kit→Percussions→Latin Drums→Miscellaneous)")
-        print("  • Key P: Select previous preset of instruments")
+        print("  • Key Right arrow: Select next preset of instruments (Classical→Jazz→Rock→Electro→Latin→Country→Soul→World→Drum Kit→Percussions→Latin Drums→Miscellaneous)")
+        print("  • Key Left arrow: Select previous preset of instruments")
         print(f"  • Current preset: {self.current_preset.upper()}")
         print("\nMUSICAL CONTROLS:")
         print("  • M: Toggle scale lock (quantize to scale)")
         print("  • K: Cycle key signature (C, G, D, F, Am, Em)")
         print("  • +/-: Increase/decrease velocity")
+        print("  • P: Activate/deactivate pan")
         print("\nEDITING:")
         print("  • Z: Undo last drawing")
         print("  • Y: Redo last drawing")
@@ -529,6 +531,67 @@ class GeometricSynth:
         print("  • ESC or Q: Quit application")
         print("="*60 + "\n")
         
+    def play_instrument_preview(self, program, is_drum):
+        """Play a preview note when changing instrument"""
+        # Note par défaut : C4 (MIDI 60) pour mélodique, ou la note drum définie
+        midi_note = program if is_drum else 60
+        velocity = 50
+        duration = 0.2
+        pan = 0.5  # Centre
+        
+        self.audio.play_note(
+            midi_note,
+            velocity,
+            duration,
+            pan,
+            instrument=program,
+            is_drum=is_drum
+        )
+
+    def extract_note_segments(self, shape):
+        """Extract distinct note segments from a shape based on vertical position changes"""
+        if 'points' not in shape or len(shape['points']) < 2:
+            return None
+        
+        points = shape['points']
+        segments = []
+        
+        # Seuil de changement de note (en pixels Y)
+        y_threshold = 50  # Ajustable selon préférence
+        
+        # Premier segment
+        current_start_idx = 0
+        current_y = points[0][1]
+        
+        for i in range(1, len(points)):
+            y_diff = abs(points[i][1] - current_y)
+            
+            # Si différence significative, créer un nouveau segment
+            if y_diff > y_threshold:
+                # Enregistrer le segment précédent
+                segment_points = points[current_start_idx:i+1]
+                if len(segment_points) > 0:
+                    segments.append({
+                        'points': segment_points,
+                        'start_idx': current_start_idx,
+                        'end_idx': i
+                    })
+                
+                # Commencer un nouveau segment
+                current_start_idx = i
+                current_y = points[i][1]
+        
+        # Dernier segment
+        if current_start_idx < len(points):
+            segment_points = points[current_start_idx:]
+            segments.append({
+                'points': segment_points,
+                'start_idx': current_start_idx,
+                'end_idx': len(points) - 1
+            })
+        
+        return segments if len(segments) > 1 else None
+
     def run(self):
         """Main loop"""
         while self.running:
@@ -577,7 +640,7 @@ class GeometricSynth:
                     self.base_velocity = max(30, self.base_velocity - 10)
                     print(f"Base velocity: {self.base_velocity}")
             
-                elif event.key == pygame.K_n:
+                elif event.key == pygame.K_RIGHT:
                     # Cycle through presets 
                     preset_order = ['classical', 'jazz', 'rock', 'electro', 'latin', 'country', 'soul', 'world', 'drum kit', 'percussions', 'latin drums', 'miscellaneous']
                     current_idx = preset_order.index(self.current_preset)
@@ -594,8 +657,9 @@ class GeometricSynth:
                     else:
                         self.audio.set_instrument(program0)
                     print(f"Preset: {self.current_preset.upper()}")
+                    self.play_instrument_preview(program0, is_drum0) 
 
-                elif event.key == pygame.K_p:
+                elif event.key == pygame.K_LEFT:
                     # Cycle through presets in reverse
                     preset_order = ['classical', 'jazz', 'rock', 'electro', 'latin', 'country', 'soul', 'world', 'drum kit', 'percussions', 'latin drums', 'miscellaneous']
                     current_idx = preset_order.index(self.current_preset)
@@ -612,6 +676,12 @@ class GeometricSynth:
                     else:
                         self.audio.set_instrument(program0)
                     print(f"Preset: {self.current_preset.upper()}")
+                    self.play_instrument_preview(program0, is_drum0)
+
+                elif event.key == pygame.K_p:
+                    self.pan_enabled = not self.pan_enabled
+                    status = "ON" if self.pan_enabled else "OFF"
+                    print(f"Pan (stereo): {status}")
                                
                 # Instrument selection (1-9)
                 idx = event.key - pygame.K_1
@@ -640,6 +710,7 @@ class GeometricSynth:
                             self.audio.current_drum_note = None
 
                     print(f"Instrument: {name} {'(Drum Kit)' if is_drum else ''}")
+                    self.play_instrument_preview(program, is_drum)
 
                 # Playback
                 elif event.key == pygame.K_SPACE:
@@ -737,6 +808,7 @@ class GeometricSynth:
             shape['is_drum'] = False
 
         shape['velocity'] = getattr(self, 'current_velocity', self.base_velocity)
+        shape['pan_at_creation'] = self.pan_enabled 
 
         self.shapes.append(shape)
 
@@ -826,7 +898,7 @@ class GeometricSynth:
             velocity = self.current_velocity
             duration = 10.0
 
-            pan = pos[0] / self.width
+            pan = pos[0] / self.width if self.pan_enabled else 0.5
             # update current pan for UI
             self.last_live_pan = pan
             
@@ -862,15 +934,14 @@ class GeometricSynth:
         self.initial_live_pan = None
         self.last_live_pan = None
         
-    def play_shape(self, shape, midi_override=None):
+    def play_shape(self, shape, midi_override=None, duration_override=None):
         """Convert shape to sound and play it — returns note_id (or None)."""
         
-        # Utiliser midi_override si fourni (pour glissements)
+        # Utiliser midi_override si fourni
         if midi_override is not None:
             midi_note = midi_override
             note_pos_shape = shape
         else:
-            # Use last drawn point if available, otherwise center
             if 'note_position' in shape:
                 note_pos_shape = {
                     'type': shape['type'],
@@ -885,21 +956,31 @@ class GeometricSynth:
             
             midi_note = self.analyzer.shape_to_midi(note_pos_shape)
 
-        # Utiliser la vélocité sauvegardée si disponible, sinon calculer
         saved_velocity = shape.get('velocity')
         if saved_velocity is not None:
             velocity = saved_velocity
         else:
-            # Fallback pour anciennes formes sans vélocité sauvegardée
             velocity = self.analyzer.shape_to_velocity(shape)
 
-        duration = self.analyzer.shape_to_duration(shape)
+        # UTILISER duration_override si fourni, sinon calculer
+        if duration_override is not None:
+            duration = duration_override
+        else:
+            duration = self.analyzer.shape_to_duration(shape)
+        
+        # ... reste du code inchangé
 
         # Pan based on last point X position
-        if 'note_position' in shape:
-            pan = shape['note_position'][0] / self.width
+        # Utiliser l'état du pan au moment de la création du shape
+        pan_was_enabled = shape.get('pan_at_creation', True)  # True par défaut pour anciennes formes
+
+        if pan_was_enabled and self.pan_enabled:
+            if 'note_position' in shape:
+                pan = shape['note_position'][0] / self.width
+            else:
+                pan = self.analyzer.shape_to_pan(shape)
         else:
-            pan = self.analyzer.shape_to_pan(shape)
+            pan = 0.5  # Centre si pan désactivé
 
         note_name = self.midi_to_note_name(midi_note)
         pan_str = "L" if pan < 0.4 else "R" if pan > 0.6 else "C"
@@ -950,13 +1031,18 @@ class GeometricSynth:
         # Playback logic
         if self.is_playing and not self.is_paused:
             elapsed = time.time() - self.playback_start_time
-            
+                
             # Play events whose time has come
             while self.playback_index < len(self.playback_events):
                 event = self.playback_events[self.playback_index]
-                if elapsed >= event['time']:
+                # Tolérance de 50ms pour ne pas rater les événements au tout début
+                if elapsed >= event['time'] - 0.05:
                     # Jouer la note
-                    note_id = self.play_shape(event['shape'], midi_override=event.get('midi_override'))
+                    note_id = self.play_shape(
+                        event['shape'], 
+                        midi_override=event.get('midi_override'),
+                        duration_override=event.get('duration')
+                    )
                     event['note_id'] = note_id
                     self.playback_index += 1
                 else:
@@ -1051,33 +1137,113 @@ class GeometricSynth:
 
         print(f"Reading speed: {pixels_per_second:.0f}px/s (total: {target_duration:.1f}s)")
         
-        # Convertir positions X en temps
         self.playback_events = []
-        x_tolerance = 30
 
+        # Créer les évènements
         for st in shape_timings:
             shape = st['shape']
             start_time = (st['x_start'] - min_x) / pixels_per_second
             
-            # Tolérance temporelle pour polyphonie
             time_tolerance = 0.05
             quantized_time = round(start_time / time_tolerance) * time_tolerance
             
-            # Un seul événement par tracé
-            event = {
-                'time': quantized_time,
-                'shape': shape,
-                'duration': st['duration'],
-                'original_index': st['original_index'],
-                'midi_override': None  # Pas de MIDI override
-            }
-            self.playback_events.append(event)
+            # Vérifier s'il y a des segments de notes multiples
+            segments = self.extract_note_segments(shape)
+            
+            if segments:
+                print(f"Shape with {len(segments)} segments detected")
+                
+                # Pré-calculer les temps de départ de tous les segments SANS quantization
+                segment_times = []
+                for segment in segments:
+                    seg_points = segment['points']
+                    x_coords = [p[0] for p in seg_points]
+                    seg_x_start = min(x_coords)
+                    seg_start_time = (seg_x_start - min_x) / pixels_per_second
+                    segment_times.append(seg_start_time)  # Pas de quantization
+                
+                # Quantizer seulement le premier segment pour la polyphonie
+                if len(segment_times) > 0:
+                    time_tolerance = 0.05
+                    segment_times[0] = round(segment_times[0] / time_tolerance) * time_tolerance
+                
+                # Créer les événements
+                for seg_idx, segment in enumerate(segments):
+                    # ... reste du code identique, mais utiliser segment_times[seg_idx] directement
+                    seg_points = segment['points']
+                    
+                    # Position X du segment
+                    x_coords = [p[0] for p in seg_points]
+                    seg_x_start = min(x_coords)
+                    seg_x_end = max(x_coords)
+                    seg_horizontal_length = seg_x_end - seg_x_start
+                    
+                    # Temps de ce segment
+                    seg_quantized_time = segment_times[seg_idx]
+                    
+                    # Durée = différence avec le temps du segment suivant
+                    if seg_idx < len(segments) - 1:
+                        seg_duration = segment_times[seg_idx + 1] - seg_quantized_time
+                    else:
+                        # Dernier segment : utiliser sa longueur horizontale
+                        seg_duration = seg_horizontal_length / pixels_per_second
+                    
+                    seg_duration = max(0.1, seg_duration)
+                    
+                    print(f"  Segment {seg_idx}: x={seg_x_start:.0f}-{seg_x_end:.0f}, duration={seg_duration:.2f}s, time={seg_quantized_time:.2f}s")
+                    
+                    # MIDI note basée sur Y moyen du segment
+                    y_coords = [p[1] for p in seg_points]
+                    avg_y = sum(y_coords) / len(y_coords)
+                    seg_shape = {
+                        'type': shape['type'],
+                        'center': (sum(x_coords) / len(x_coords), avg_y),
+                        'width': shape['width'],
+                        'height': shape['height']
+                    }
+                    seg_midi = self.analyzer.shape_to_midi(seg_shape)
+                    
+                    event = {
+                        'time': seg_quantized_time,
+                        'shape': shape,
+                        'duration': seg_duration,
+                        'original_index': st['original_index'],
+                        'sub_index': seg_idx,
+                        'midi_override': seg_midi
+                    }
+                    self.playback_events.append(event)
+
+            else:
+                # Tracé simple : un seul événement
+                event = {
+                    'time': quantized_time,
+                    'shape': shape,
+                    'duration': st['duration'],  
+                    'original_index': st['original_index'],
+                    'sub_index': 0,
+                    'midi_override': None
+                }
+                self.playback_events.append(event)
 
         # Trier par temps, puis par index original
         self.playback_events.sort(key=lambda e: (e['time'], e['original_index']))
         
         total_duration = (total_width / pixels_per_second) if total_width > 0 else 2.0
         print(f"Playing {len(self.shapes)} shapes over {total_duration:.1f}s")
+
+        # Forcer l'exécution immédiate des événements à time=0
+        for event in self.playback_events:
+            if event['time'] <= 0.0:
+                print(f"Playing immediate event: midi={event.get('midi_override', 'auto')}")
+                note_id = self.play_shape(
+                    event['shape'],
+                    midi_override=event.get('midi_override'),
+                    duration_override=event.get('duration')
+                )
+                event['note_id'] = note_id
+                self.playback_index += 1
+            else:
+                break  # Arrêter dès qu'on atteint un événement futur
 
     def pause_playback(self):
         """Pause/resume playback"""
@@ -1203,15 +1369,21 @@ class GeometricSynth:
             scale_color = self.TERRA_COTTA
         scale_surface = small_font.render(scale_text, True, scale_color)
         self.screen.blit(scale_surface, (10, y_offset))
+
+        pan_text = f"Pan: {'ON' if self.pan_enabled else 'OFF'}"
+        pan_color = self.DEEP_TEAL if self.pan_enabled else self.TERRA_COTTA
+        pan_surface = small_font.render(pan_text, True, pan_color)
+        self.screen.blit(pan_surface, (10, y_offset + 22)) 
         
         # Velocity
         vel_text = f"Base Velocity: {self.base_velocity}"
         vel_surface = small_font.render(vel_text, True, self.TEXT_DARK)
-        self.screen.blit(vel_surface, (10, y_offset + 22))
+        self.screen.blit(vel_surface, (10, y_offset + 44))
         
         # Active notes
         active_count = len(self.audio.active_notes)
         active_surface = small_font.render(f"Playing: {active_count} notes", True, self.SLATE_BLUE)
+        self.screen.blit(active_surface, (10, y_offset + 66))
         
         # Playback status
         if self.is_playing:
@@ -1224,9 +1396,7 @@ class GeometricSynth:
                 status_color = self.SAGE_GREEN
             
             status_surface = small_font.render(status_text, True, status_color)
-            self.screen.blit(status_surface, (10, y_offset + 66))
-
-        self.screen.blit(active_surface, (10, y_offset + 44))
+            self.screen.blit(status_surface, (10, y_offset + 88))
         
        # ===== TOP RIGHT: Live note info =====
         if self.active_live_note_id is not None and self.last_live_pitch is not None:
@@ -1282,8 +1452,8 @@ class GeometricSynth:
             self.draw_help_overlay(tiny_font, small_font, panel_height)
         
     def draw_help_overlay(self, tiny_font, small_font, instruments_height):
-        """Draw help information overlay in bottom right - horizontal 4-column layout"""
-        help_width = 700  # Augmenté pour 4 colonnes
+        """Draw help information overlay in bottom right - adaptive column layout"""
+        help_width = 700
         help_height = instruments_height
         help_x = self.width - help_width - 10   
         help_y = self.height - help_height - 10 
@@ -1296,65 +1466,60 @@ class GeometricSynth:
         help_title = small_font.render("CONTROLS (H to hide)", True, self.TERRA_COTTA)
         self.screen.blit(help_title, (help_x + 10, help_y + 8))
         
-        # Four columns
-        col_width = 170
         start_y = help_y + 32
         
-        # Column 1: INSTRUMENTS
-        col1_x = help_x + 15
-        col1_lines = [
-            ("INSTRUMENTS:", self.SLATE_BLUE),
-            ("1-9: Select", self.TEXT_DARK),
-            ("N: Next preset", self.TEXT_DARK),
-            ("P: Previous preset", self.TEXT_DARK),
+        # Définir les colonnes avec leur contenu
+        columns = [
+            [
+                ("INSTRUMENTS:", self.SLATE_BLUE),
+                ("1-9: Select instrument", self.TEXT_DARK),
+                ("Left/Right: Change preset", self.TEXT_DARK),
+                ("+/-: Change velocity", self.TEXT_DARK),
+            ],
+            [
+                ("MUSICAL:", self.SLATE_BLUE),
+                ("M: Scale lock", self.TEXT_DARK),
+                ("K: Change key", self.TEXT_DARK),
+                ("P: Pan on/off", self.TEXT_DARK),
+            ],
+            [
+                ("EDITING:", self.SLATE_BLUE),
+                ("Z: Undo", self.TEXT_DARK),
+                ("Y: Redo", self.TEXT_DARK),
+                ("C: Clear canvas", self.TEXT_DARK),
+            ],
+            [
+                ("PLAYBACK:", self.SLATE_BLUE),
+                ("SPACE: Play/Pause", self.TEXT_DARK),
+                ("BACKSPACE: Stop", self.TEXT_DARK),
+                ("Q/ESC: Quit", self.TEXT_DARK),
+            ]
         ]
-        y_off = start_y
-        for text, color in col1_lines:
-            surface = tiny_font.render(text, True, color)
-            self.screen.blit(surface, (col1_x, y_off))
-            y_off += 16
         
-        # Column 2: MUSICAL
-        col2_x = help_x + 15 + col_width
-        col2_lines = [
-            ("MUSICAL:", self.SLATE_BLUE),
-            ("M: Scale lock", self.TEXT_DARK),
-            ("K: Change key", self.TEXT_DARK),
-            ("+/-: Velocity", self.TEXT_DARK),
-        ]
-        y_off = start_y
-        for text, color in col2_lines:
-            surface = tiny_font.render(text, True, color)
-            self.screen.blit(surface, (col2_x, y_off))
-            y_off += 16
-        
-        # Column 3: EDITING
-        col3_x = help_x + 15 + col_width * 2
-        col3_lines = [
-            ("EDITING:", self.SLATE_BLUE),
-            ("Z: Undo", self.TEXT_DARK),
-            ("Y: Redo", self.TEXT_DARK),
-            ("C: Clear canvas", self.TEXT_DARK),
-        ]
-        y_off = start_y
-        for text, color in col3_lines:
-            surface = tiny_font.render(text, True, color)
-            self.screen.blit(surface, (col3_x, y_off))
-            y_off += 16
-        
-        # Column 4: PLAYBACK
-        col4_x = help_x + 15 + col_width * 3
-        col4_lines = [
-            ("PLAYBACK:", self.SLATE_BLUE),
-            ("SPACE: Play/Pause", self.TEXT_DARK),
-            ("BACKSPACE: Stop", self.TEXT_DARK),
-            ("Q/ESC: Quit", self.TEXT_DARK),
-        ]
-        y_off = start_y
-        for text, color in col4_lines:
-            surface = tiny_font.render(text, True, color)
-            self.screen.blit(surface, (col4_x, y_off))
-            y_off += 16
+        # Calculer la largeur de chaque colonne selon son contenu
+        col_widths = []
+        total_content_width = 0
+        for col_lines in columns:
+            max_width = 0
+            for text, color in col_lines:
+                surface = tiny_font.render(text, True, color)
+                max_width = max(max_width, surface.get_width())
+            col_widths.append(max_width)
+            total_content_width += max_width
+
+        # Calculer l'espace disponible et distribuer proportionnellement
+        available_width = help_width - 30  # Marges
+        spacing_unit = (available_width - total_content_width) / len(columns)
+
+        # Dessiner les colonnes avec espacement proportionnel
+        x_offset = help_x + 15
+        for col_idx, col_lines in enumerate(columns):
+            y_off = start_y
+            for text, color in col_lines:
+                surface = tiny_font.render(text, True, color)
+                self.screen.blit(surface, (x_offset, y_off))
+                y_off += 16
+            x_offset += col_widths[col_idx] + spacing_unit
                 
     def clear_all(self):
         if self.shapes:
