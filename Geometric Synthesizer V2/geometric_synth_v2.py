@@ -12,6 +12,13 @@ except ImportError:
     print("Install with: pip install pyfluidsynth")
     sys.exit(1)
 
+try:
+    from midiutil import MIDIFile
+    MIDI_EXPORT_AVAILABLE = True
+except ImportError:
+    MIDI_EXPORT_AVAILABLE = False
+    print("⚠️ MIDI export disabled. Install with: pip install midiutil")
+
 os.environ['SDL_AUDIODRIVER'] = 'coreaudio'
 
 # ======================
@@ -192,6 +199,8 @@ class ShapeAnalyzer:
         # MIDI note range mapping
         self.min_midi = 36   # C2 (low)
         self.max_midi = 96   # C7 (high)
+
+        self.velocity_base = 50
 
     def shape_to_midi(self, shape):
         """Convert shape Y position to MIDI note"""
@@ -850,7 +859,12 @@ class GeometricSynth:
                     self.show_grid = not self.show_grid
                     status = "ON" if self.show_grid else "OFF"
                     print(f"Grid display: {status}")
-                               
+
+                elif event.key == pygame.K_x:
+                    timestamp = time.strftime("%Y%m%d_%H%M%S")
+                    filename = f"export_{timestamp}.mid"
+                    self.export_to_midi(filename)
+                                            
                 # Instrument selection (1-9)
                 idx = event.key - pygame.K_1
                 # Only accept keys 1..9 (guard against negatives)
@@ -1529,6 +1543,86 @@ class GeometricSynth:
         
         print(f"✓ Redo: {shape['type']}")
 
+    def export_to_midi(self, filename="output.mid"):
+        """Export shapes as MIDI file"""
+        if not MIDI_EXPORT_AVAILABLE:
+            print("Install midiutil first: pip install midiutil")
+            return
+            
+        if not self.shapes:
+            print("No shapes to export")
+            return
+        
+        # Create MIDI file with one track per instrument
+        midi = MIDIFile(1)
+        track = 0
+        midi.addTempo(track, 0, self.bpm)
+        
+        # Calculate timings (same logic as playback)
+        shape_timings = []
+        for shape in self.shapes:
+            if 'points' in shape and len(shape['points']) > 0:
+                x_coords = [p[0] for p in shape['points']]
+                x_start = min(x_coords)
+                x_end = max(x_coords)
+            else:
+                x_start = shape['center'][0]
+                x_end = x_start
+            
+            shape_timings.append({
+                'shape': shape,
+                'x_start': x_start,
+                'x_end': x_end
+            })
+        
+        if not shape_timings:
+            return
+            
+        min_x = min(st['x_start'] for st in shape_timings)
+        max_x = max(st['x_end'] for st in shape_timings)
+        total_width = max_x - min_x
+        
+        # Use same playback speed calculation
+        if total_width < 400:
+            pixels_per_second = 100
+        else:
+            min_duration = 4.0
+            max_duration = 28.0
+            normalized = min(1.0, (total_width - 400) / 2600)
+            target_duration = min_duration + normalized * (max_duration - min_duration)
+            pixels_per_second = total_width / target_duration
+        
+        # Add notes to MIDI
+        for st in shape_timings:
+            shape = st['shape']
+            start_time = (st['x_start'] - min_x) / pixels_per_second
+            
+            # Get MIDI note
+            if 'note_position' in shape:
+                note_pos_shape = {
+                    'type': shape['type'],
+                    'center': shape['note_position'],
+                    'width': shape['width'],
+                    'height': shape['height']
+                }
+            else:
+                note_pos_shape = shape
+            
+            midi_note = self.analyzer.shape_to_midi(note_pos_shape)
+            velocity = shape.get('velocity', self.analyzer.shape_to_velocity(shape))
+            duration = self.analyzer.shape_to_duration(shape)
+            
+            # Skip drums (MIDI channel 9) for simplicity
+            is_drum = shape.get('is_drum', False)
+            if not is_drum:
+                midi.addNote(track, 0, midi_note, start_time, duration, velocity)
+        
+        # Write file
+        with open(filename, "wb") as output_file:
+            midi.writeFile(output_file)
+        
+        print(f"MIDI exported: {filename}")
+
     def draw(self):
         """Draw everything"""
         self.screen.fill(self.BACKGROUND)  # Professional cream background
@@ -1726,7 +1820,7 @@ class GeometricSynth:
         
         # ===== BOTTOM LEFT: Instruments panel =====
         panel_width = 450
-        panel_height = 120
+        panel_height = 130
         panel_x = 10
         panel_y = self.height - panel_height - 10
         
@@ -1738,7 +1832,7 @@ class GeometricSynth:
         preset_label = small_font.render(self.current_preset.upper(), True, self.TERRA_COTTA)
         inst_title = small_font.render("PRESET:", True, self.TERRA_COTTA)
         
-        x = panel_x + 10
+        x = panel_x + 15
         y = panel_y + 8
         self.screen.blit(preset_label, (x, y))
         x_next = x + preset_label.get_width() + 5
@@ -1778,9 +1872,9 @@ class GeometricSynth:
         self.screen.blit(help_bg, (help_x, help_y))
         
         help_title = small_font.render("CONTROLS (H to hide)", True, self.TERRA_COTTA)
-        self.screen.blit(help_title, (help_x + 10, help_y + 8))
+        self.screen.blit(help_title, (help_x + 15, help_y + 8))
         
-        start_y = help_y + 32
+        start_y = help_y + 30
         
         # Définir les colonnes avec leur contenu
         columns = [
@@ -1789,10 +1883,10 @@ class GeometricSynth:
                 ("1-9: Change instrument", self.TEXT_DARK),
                 ("Left/Right: Change preset", self.TEXT_DARK),
                 ("Up/Down: Change velocity", self.TEXT_DARK),
-                ("P: Pan on/off", self.TEXT_DARK),
             ],
             [
                 (" ", self.SLATE_BLUE),
+                ("P: Pan on/off", self.TEXT_DARK),
                 ("M: Scale lock", self.TEXT_DARK),
                 ("K: Change key", self.TEXT_DARK),
             ],
@@ -1815,7 +1909,8 @@ class GeometricSynth:
                 ("SPACE: Play/Pause", self.TEXT_DARK),
                 ("BACKSPACE: Stop", self.TEXT_DARK),
                 ("L: Loop on/off", self.TEXT_DARK),
-                ("Q/ESC: Quit", self.TEXT_DARK),
+                ("X: Export MIDI", self.TEXT_DARK),
+                ("ESC: Quit", self.TEXT_DARK),
             ]
         ]
         
