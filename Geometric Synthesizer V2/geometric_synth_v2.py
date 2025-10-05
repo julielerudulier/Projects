@@ -501,6 +501,12 @@ class GeometricSynth:
         self.playback_events = [] 
         self.loop_enabled = False 
 
+        # Tempo and quantization 
+        self.bpm = 80  # Beats per minute
+        self.quantize_enabled = False  # Quantization on/off
+        self.quantize_division = 16  # 16th notes (can be 2, 4, 8, 16, 32)
+        self.show_grid = False  # Grid display on/off 
+
         # Undo/Redo stacks
         self.shapes_history = []  # Stack for undo
         self.shapes_redo = []     # Stack for redo
@@ -553,6 +559,56 @@ class GeometricSynth:
             instrument=program,
             is_drum=is_drum
         )
+
+    def get_beat_duration(self):
+        """Get duration of one beat in seconds"""
+        return 60.0 / self.bpm
+
+    def get_quantize_step(self):
+        """Get quantization step in seconds based on current division"""
+        beat_duration = self.get_beat_duration()
+        return beat_duration / (self.quantize_division / 4)  # 16th = beat/4
+    
+    def draw_grid(self):
+        """Draw temporal grid lines based on quantization settings"""
+        if not self.show_grid:
+            return
+        
+        # Calculate grid spacing
+        beat_duration = self.get_beat_duration()
+        quantize_step = beat_duration / (self.quantize_division / 4)
+        
+        # Convert time to pixels
+        if hasattr(self, 'playback_pixels_per_second'):
+            pixels_per_second = self.playback_pixels_per_second
+        else:
+            pixels_per_second = 100
+        
+        grid_spacing = quantize_step * pixels_per_second
+        
+        # Draw vertical lines across the screen
+        x = 0
+        line_count = 0
+        
+        # Calculate beat interval (avoid division by zero)
+        if self.quantize_division <= 4:
+            beat_interval = 1  # Every line is a beat for half-notes and quarter-notes
+        else:
+            beat_interval = self.quantize_division // 4
+        
+        while x < self.width:
+            # Alternate line opacity: stronger on beats, lighter on subdivisions
+            is_beat = (line_count % beat_interval) == 0
+            alpha = 60 if is_beat else 30
+            
+            # Create semi-transparent line
+            line_surface = pygame.Surface((1, self.height))
+            line_surface.set_alpha(alpha)
+            line_surface.fill(self.SLATE_BLUE)
+            self.screen.blit(line_surface, (int(x), 0))
+            
+            x += grid_spacing
+            line_count += 1
 
     def extract_note_segments(self, shape):
         """Extract note segments at direction changes (up->down or down->up)"""
@@ -685,7 +741,7 @@ class GeometricSynth:
                 self.running = False
                 
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE or event.key == pygame.K_q:
+                if event.key == pygame.K_ESCAPE:
                     self.running = False
                     
                 elif event.key == pygame.K_c:
@@ -708,11 +764,11 @@ class GeometricSynth:
                     self.analyzer.set_key_signature(self.current_key)
                     print(f"Key signature: {self.current_key}")
                     
-                elif event.key == pygame.K_PLUS or event.key == pygame.K_EQUALS:
+                elif event.key == pygame.K_UP or event.key == pygame.K_EQUALS:
                     self.base_velocity = min(127, self.base_velocity + 10)
                     print(f"Base velocity: {self.base_velocity}")
                     
-                elif event.key == pygame.K_MINUS or event.key == pygame.K_UNDERSCORE:
+                elif event.key == pygame.K_DOWN or event.key == pygame.K_UNDERSCORE:
                     self.base_velocity = max(30, self.base_velocity - 10)
                     print(f"Base velocity: {self.base_velocity}")
             
@@ -768,6 +824,32 @@ class GeometricSynth:
                     self.loop_enabled = not self.loop_enabled
                     status = "ON" if self.loop_enabled else "OFF"
                     print(f"Loop mode: {status}")
+
+                elif event.key == pygame.K_q:  # Toggle quantization
+                    self.quantize_enabled = not self.quantize_enabled
+                    status = "ON" if self.quantize_enabled else "OFF"
+                    print(f"Quantization: {status} (1/{self.quantize_division} notes)")
+
+                elif event.key == pygame.K_t:  # Change tempo
+                    # Cycle through common tempos
+                    tempos = [60, 80, 100, 120, 140, 160, 180]
+                    current_idx = tempos.index(self.bpm) if self.bpm in tempos else 3
+                    next_idx = (current_idx + 1) % len(tempos)
+                    self.bpm = tempos[next_idx]
+                    print(f"Tempo: {self.bpm} BPM")
+
+                elif event.key == pygame.K_d:  # Change division
+                    # Cycle through divisions
+                    divisions = [2, 4, 8, 16, 32]  # Quarter, 8th, 16th, 32nd notes
+                    current_idx = divisions.index(self.quantize_division) if self.quantize_division in divisions else 2
+                    next_idx = (current_idx + 1) % len(divisions)
+                    self.quantize_division = divisions[next_idx]
+                    print(f"Quantization: 1/{self.quantize_division} notes")
+
+                elif event.key == pygame.K_g:  # Toggle grid display
+                    self.show_grid = not self.show_grid
+                    status = "ON" if self.show_grid else "OFF"
+                    print(f"Grid display: {status}")
                                
                 # Instrument selection (1-9)
                 idx = event.key - pygame.K_1
@@ -1152,7 +1234,7 @@ class GeometricSynth:
                     if not hasattr(self, 'playback_end_time'):
                         self.playback_end_time = time.time()
                     
-                    if time.time() - self.playback_end_time >= 0.2:
+                    if time.time() - self.playback_end_time >= 0:
                         if self.loop_enabled:  # Loop
                             print("Looping playback...")
                             self.playback_index = 0
@@ -1219,28 +1301,37 @@ class GeometricSynth:
             min_x = 0
             max_x = 0
             total_width = 1
-        
-        # Plus l'espace est grand, plus on prend le temps de le parcourir
-        # Calculer une vitesse de lecture adaptée à l'espace total
-        if total_width > 0:
-            # Pour les petits espaces (< 400px), utiliser une vitesse fixe rapide
-            if total_width < 400:
-                pixels_per_second = 100  # Vitesse standard pour petits espaces
-                target_duration = total_width / pixels_per_second
-            else:
-                # Pour les grands espaces, adapter la durée
-                # 400px = 4s, 1200px = 10s, 3000px = 20s
-                min_duration = 4.0
-                max_duration = 28.0
-                
-                # Interpolation progressive
-                normalized = min(1.0, (total_width - 400) / 2600)  # 0 à 400px → 0, 3000px → 1
-                target_duration = min_duration + normalized * (max_duration - min_duration)
-                
-                pixels_per_second = total_width / target_duration
+
+        # Calculer la vitesse de lecture
+        if self.quantize_enabled:
+            # Mode quantifié : la vitesse dépend du tempo
+            beat_duration = self.get_beat_duration()
+            # On veut qu'un beat occupe environ 200px (ajustable)
+            pixels_per_beat = 200
+            pixels_per_second = pixels_per_beat / beat_duration
+            target_duration = total_width / pixels_per_second
+            print(f"Quantized playback at {self.bpm} BPM ({pixels_per_second:.0f}px/s)")
         else:
-            pixels_per_second = 100
-            target_duration = 2.0
+            # Mode libre : vitesse adaptée à l'espace total (votre code actuel)
+            if total_width > 0:
+                # Pour les petits espaces (< 400px), utiliser une vitesse fixe rapide
+                if total_width < 400:
+                    pixels_per_second = 100  # Vitesse standard pour petits espaces
+                    target_duration = total_width / pixels_per_second
+                else:
+                    # Pour les grands espaces, adapter la durée
+                    # 400px = 4s, 1200px = 10s, 3000px = 20s
+                    min_duration = 4.0
+                    max_duration = 28.0
+                    
+                    # Interpolation progressive
+                    normalized = min(1.0, (total_width - 400) / 2600)  # 0 à 400px → 0, 3000px → 1
+                    target_duration = min_duration + normalized * (max_duration - min_duration)
+                    
+                    pixels_per_second = total_width / target_duration
+            else:
+                pixels_per_second = 100
+                target_duration = 2.0
 
         # Sauvegarder pour le playhead
         self.playback_min_x = min_x
@@ -1274,7 +1365,7 @@ class GeometricSynth:
                 for seg_idx, segment in enumerate(segments):
                     seg_x = segment['x_pos']
                     seg_time = (seg_x - min_x) / pixels_per_second
-                    
+
                     # Calculate when NEXT note starts (this is when current note should stop)
                     if seg_idx < len(segments) - 1:
                         next_seg_x = segments[seg_idx + 1]['x_pos']
@@ -1319,10 +1410,14 @@ class GeometricSynth:
                         print(f"  Skipping middle note (too short: {seg_duration:.2f}s)")
                         continue
                     
-                    # Quantize only first note for polyphony
-                    if is_first:
+                    # Quantize time if enabled 
+                    if self.quantize_enabled:
+                        quantize_step = self.get_quantize_step()
+                        seg_time = round(seg_time / quantize_step) * quantize_step
+                        print(f"  Quantized to {seg_time:.3f}s (grid: {quantize_step:.3f}s)")
+                    elif is_first:  # Quantize only first note for polyphony (code existant)
                         seg_time = round(seg_time / 0.05) * 0.05
-                    
+                
                     event = {
                         'time': seg_time,
                         'shape': shape,
@@ -1335,7 +1430,35 @@ class GeometricSynth:
                     
                     note_name = self.midi_to_note_name(segment['midi_approx'])
                     print(f"  Note {seg_idx}: {note_name} at {seg_time:.2f}s, dur={seg_duration:.2f}s (trace={trace_length:.0f}px)")
-                    
+            
+            else:
+                # Simple trace: single event
+                horizontal_duration = st['horizontal_length'] / pixels_per_second
+                note_duration = min(st['duration'], horizontal_duration * 0.95)
+                
+                # Calculate start time
+                start_time_simple = (st['x_start'] - min_x) / pixels_per_second
+                
+                # Apply quantization if enabled
+                if self.quantize_enabled:
+                    quantize_step = self.get_quantize_step()
+                    quantized_time_simple = round(start_time_simple / quantize_step) * quantize_step
+                    print(f"Simple trace quantized: {start_time_simple:.3f}s -> {quantized_time_simple:.3f}s")
+                else:
+                    # Use regular time tolerance for polyphony
+                    time_tolerance = 0.05
+                    quantized_time_simple = round(start_time_simple / time_tolerance) * time_tolerance
+                
+                event = {
+                    'time': quantized_time_simple,
+                    'shape': shape,
+                    'duration': note_duration,
+                    'original_index': st['original_index'],
+                    'sub_index': 0,
+                    'midi_override': None
+                }
+                self.playback_events.append(event)
+
         # Trier par temps, puis par index original
         self.playback_events.sort(key=lambda e: (e['time'], e['original_index']))
         
@@ -1409,6 +1532,9 @@ class GeometricSynth:
     def draw(self):
         """Draw everything"""
         self.screen.fill(self.BACKGROUND)  # Professional cream background
+
+        # Draw grid first (behind everything)
+        self.draw_grid()
         
         # Draw all shapes
         for shape in self.shapes:
@@ -1492,6 +1618,20 @@ class GeometricSynth:
         self.screen.blit(preset_surface, (10, 53))
 
         # ===== TOP LEFT: Title and status =====
+        info_panel_width = 320
+        info_panel_height = 230
+        info_panel_x = 5
+        info_panel_y = 5
+        
+        info_bg = pygame.Surface((info_panel_width, info_panel_height))
+        info_bg.set_alpha(200)
+        info_bg.fill(self.UI_BG)
+        self.screen.blit(info_bg, (info_panel_x, info_panel_y))
+        
+        # Title (ajuster position relative au panel)
+        preset_text = f"[{self.current_preset.upper()}]"
+        preset_surface = small_font.render(preset_text, True, self.TERRA_COTTA)
+        self.screen.blit(preset_surface, (10, 53))
         title = font.render("GEOMETRIC SYNTHESIZER V2", True, self.SLATE_BLUE)
         self.screen.blit(title, (10, 15))
         
@@ -1529,23 +1669,35 @@ class GeometricSynth:
         pan_text = f"Pan: {'ON' if self.pan_enabled else 'OFF'}"
         pan_color = self.DEEP_TEAL if self.pan_enabled else self.TERRA_COTTA
         pan_surface = small_font.render(pan_text, True, pan_color)
-        self.screen.blit(pan_surface, (10, y_offset + 20)) 
+        self.screen.blit(pan_surface, (10, y_offset + 21)) 
 
         # Loop
         loop_text = f"Loop: {'ON' if self.loop_enabled else 'OFF'}"
         loop_color = self.DEEP_TEAL if self.loop_enabled else self.TERRA_COTTA
         loop_surface = small_font.render(loop_text, True, loop_color)
-        self.screen.blit(loop_surface, (10, y_offset + 40))
+        self.screen.blit(loop_surface, (10, y_offset + 42))
         
         # Velocity
         vel_text = f"Base Velocity: {self.base_velocity}"
         vel_surface = small_font.render(vel_text, True, self.TEXT_DARK)
-        self.screen.blit(vel_surface, (10, y_offset + 60))
+        self.screen.blit(vel_surface, (10, y_offset + 63))
+
+        # Quantization 
+        if self.quantize_enabled:
+            grid_status = " [Grid ON]" if self.show_grid else ""
+            quant_text = f"Quantize: 1/{self.quantize_division} @ {self.bpm}BPM{grid_status}"
+            quant_color = self.DEEP_TEAL
+        else:
+            grid_status = " [Grid ON]" if self.show_grid else ""
+            quant_text = f"Quantize: OFF ({self.bpm}BPM){grid_status}"
+            quant_color = self.TERRA_COTTA
+        quant_surface = small_font.render(quant_text, True, quant_color)
+        self.screen.blit(quant_surface, (10, y_offset + 84))
 
         # Active notes
         active_count = len(self.audio.active_notes)
         active_surface = small_font.render(f"Playing: {active_count} notes", True, self.SLATE_BLUE)
-        self.screen.blit(active_surface, (10, y_offset + 80))
+        self.screen.blit(active_surface, (10, y_offset + 105))
         
         # Playback status
         if self.is_playing:
@@ -1558,7 +1710,7 @@ class GeometricSynth:
                 status_color = self.SAGE_GREEN
             
             status_surface = small_font.render(status_text, True, status_color)
-            self.screen.blit(status_surface, (10, y_offset + 100))
+            self.screen.blit(status_surface, (10, y_offset + 126))
         
        # ===== TOP RIGHT: Live note info =====
         if self.active_live_note_id is not None and self.last_live_pitch is not None:
@@ -1573,13 +1725,13 @@ class GeometricSynth:
             self.screen.blit(info_surface, (self.width - info_width - 10, 10))
         
         # ===== BOTTOM LEFT: Instruments panel =====
-        panel_width = 470
+        panel_width = 450
         panel_height = 120
         panel_x = 10
         panel_y = self.height - panel_height - 10
         
         panel_bg = pygame.Surface((panel_width, panel_height))
-        panel_bg.set_alpha(230)
+        panel_bg.set_alpha(200)
         panel_bg.fill(self.UI_BG)
         self.screen.blit(panel_bg, (panel_x, panel_y))
         
@@ -1615,13 +1767,13 @@ class GeometricSynth:
         
     def draw_help_overlay(self, tiny_font, small_font, instruments_height):
         """Draw help information overlay in bottom right - adaptive column layout"""
-        help_width = 700
+        help_width = 720
         help_height = instruments_height
         help_x = self.width - help_width - 10   
         help_y = self.height - help_height - 10 
         
         help_bg = pygame.Surface((help_width, help_height))
-        help_bg.set_alpha(230)
+        help_bg.set_alpha(200)
         help_bg.fill(self.UI_BG)
         self.screen.blit(help_bg, (help_x, help_y))
         
@@ -1633,16 +1785,16 @@ class GeometricSynth:
         # Définir les colonnes avec leur contenu
         columns = [
             [
-                ("INSTRUMENTS:", self.SLATE_BLUE),
-                ("1-9: Select instrument", self.TEXT_DARK),
+                ("MUSICAL:", self.SLATE_BLUE),
+                ("1-9: Change instrument", self.TEXT_DARK),
                 ("Left/Right: Change preset", self.TEXT_DARK),
-                ("+/-: Change velocity", self.TEXT_DARK),
+                ("Up/Down: Change velocity", self.TEXT_DARK),
+                ("P: Pan on/off", self.TEXT_DARK),
             ],
             [
-                ("MUSICAL:", self.SLATE_BLUE),
+                (" ", self.SLATE_BLUE),
                 ("M: Scale lock", self.TEXT_DARK),
                 ("K: Change key", self.TEXT_DARK),
-                ("P: Pan on/off", self.TEXT_DARK),
             ],
             [
                 ("EDITING:", self.SLATE_BLUE),
@@ -1650,6 +1802,13 @@ class GeometricSynth:
                 ("Y: Redo", self.TEXT_DARK),
                 ("E: Eraser", self.TEXT_DARK),
                 ("C: Clear canvas", self.TEXT_DARK),
+            ],
+            [
+                ("TEMPO:", self.SLATE_BLUE),
+                ("T: Change tempo", self.TEXT_DARK),  
+                ("G: Grid on/off", self.TEXT_DARK),  
+                ("Q: Quantize on/off", self.TEXT_DARK),  
+                ("D: Change division", self.TEXT_DARK),
             ],
             [
                 ("PLAYBACK:", self.SLATE_BLUE),
