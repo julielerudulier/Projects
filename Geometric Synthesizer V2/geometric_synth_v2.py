@@ -554,48 +554,96 @@ class GeometricSynth:
         )
 
     def extract_note_segments(self, shape):
-        """Extract distinct note segments from a shape based on vertical position changes"""
-        if 'points' not in shape or len(shape['points']) < 2:
+        """Extract note segments at direction changes (up->down or down->up)"""
+        if 'points' not in shape or len(shape['points']) < 10:
             return None
         
         points = shape['points']
-        segments = []
         
-        # Seuil de changement de note (en pixels Y)
-        y_threshold = 50  # Ajustable selon préférence
+        # Check if this is essentially a horizontal line (no significant Y variation)
+        y_values = [p[1] for p in points]
+        y_range = max(y_values) - min(y_values)
         
-        # Premier segment
-        current_start_idx = 0
-        current_y = points[0][1]
+        if y_range < 35:  # Less than 35px variation = horizontal line
+            print(f"Horizontal line detected (y_range={y_range:.0f}px) - single note")
+            return None  # Will be played as single note by else branch
         
-        for i in range(1, len(points)):
-            y_diff = abs(points[i][1] - current_y)
+        # Smooth Y values to reduce noise
+        window = 5
+        smoothed_y = []
+        for i in range(len(points)):
+            start = max(0, i - window)
+            end = min(len(points), i + window + 1)
+            avg_y = sum(points[j][1] for j in range(start, end)) / (end - start)
+            smoothed_y.append(avg_y)
+        
+        # Find where direction changes (derivative sign changes)
+        extrema_indices = [0]  # Always start
+        
+        for i in range(window, len(points) - window, window):  # Skip by window to avoid duplicates
+            # Calculate local slopes
+            slope_before = smoothed_y[i] - smoothed_y[i - window]
+            slope_after = smoothed_y[i + window] - smoothed_y[i]
             
-            # Si différence significative, créer un nouveau segment
-            if y_diff > y_threshold:
-                # Enregistrer le segment précédent
-                segment_points = points[current_start_idx:i+1]
-                if len(segment_points) > 0:
-                    segments.append({
-                        'points': segment_points,
-                        'start_idx': current_start_idx,
-                        'end_idx': i
-                    })
+            # Direction change detected (peak or valley)
+            if slope_before * slope_after < 0:  # Opposite signs
+                # Verify it's significant enough
+                y_change = abs(smoothed_y[i] - smoothed_y[extrema_indices[-1]])
+                x_change = abs(points[i][0] - points[extrema_indices[-1]][0])
                 
-                # Commencer un nouveau segment
-                current_start_idx = i
-                current_y = points[i][1]
+                if y_change > 25 and x_change > 40:  # Significant change
+                    extrema_indices.append(i)
+                    print(f"Direction change at index {i}: y={points[i][1]:.0f}")
         
-        # Dernier segment
-        if current_start_idx < len(points):
-            segment_points = points[current_start_idx:]
+        extrema_indices.append(len(points) - 1)  # Always end
+
+        if len(extrema_indices) < 2:
+            return None
+
+        print(f"DEBUG: Found {len(extrema_indices)} extrema indices")
+
+        # Create segments
+        segments = []
+        for i, idx in enumerate(extrema_indices):
+            point = points[idx]
+            temp_shape = {
+                'type': shape['type'],
+                'center': point,
+                'width': shape['width'],
+                'height': shape['height']
+            }
+            midi = self.analyzer.shape_to_midi(temp_shape)
+            
             segments.append({
-                'points': segment_points,
-                'start_idx': current_start_idx,
-                'end_idx': len(points) - 1
+                'points': points[max(0, idx-2):min(len(points), idx+3)],
+                'start_idx': idx,
+                'end_idx': idx,
+                'midi_approx': midi,
+                'x_pos': point[0],
+                'is_first': (i == 0),
+                'is_last': (i == len(extrema_indices) - 1)
             })
-        
-        return segments if len(segments) > 1 else None
+            
+            print(f"  Segment {i}: {self.midi_to_note_name(midi)} at x={point[0]:.0f}, y={point[1]:.0f}")
+
+        # FUSION: if last two have same MIDI, merge them into one segment
+        if len(segments) >= 2:
+            if segments[-2]['midi_approx'] == segments[-1]['midi_approx']:
+                print(f"  → Merging last two segments (same MIDI)")
+                # Keep the earlier x_pos but mark as last
+                segments[-2]['is_last'] = True
+                segments[-2]['end_idx'] = segments[-1]['end_idx']  # Extend to actual end
+                segments.pop()  # Remove the duplicate end segment
+
+        # Remove consecutive same MIDI (except first and last which are always kept)
+        filtered = [segments[0]]
+        for i in range(1, len(segments) - 1):
+            if segments[i]['midi_approx'] != filtered[-1]['midi_approx']:
+                filtered.append(segments[i])
+        if len(segments) > 1:
+            filtered.append(segments[-1])
+
+        return filtered if len(filtered) >= 2 else None
     
     def erase_at_position(self, pos):
         """Erase shapes near the mouse position"""
@@ -1090,14 +1138,19 @@ class GeometricSynth:
                 else:
                     break
             
-            # End of playback - SEULEMENT si on a fini de jouer toutes les notes
-            # ET qu'il n'y a plus de notes actives
+            # End of playback - ONLY if all notes finished AND all events played
             if self.playback_index >= len(self.playback_events):
-                # Attendre que toutes les notes se terminent avant de finir
+                # Wait for all active notes to finish before ending
                 if len(self.audio.active_notes) == 0:
-                    print("Playback finished")
-                    self.is_playing = False
-                    self.playback_index = 0
+                    # Add extra time for visual metronome (2 seconds)
+                    if not hasattr(self, 'playback_end_time'):
+                        self.playback_end_time = time.time()
+                    
+                    if time.time() - self.playback_end_time >= 0.2:
+                        print("Playback finished")
+                        self.is_playing = False
+                        self.playback_index = 0
+                        delattr(self, 'playback_end_time')  # Clean up
 
         # Safety: If live note expired naturally, reset tracking
         if self.active_live_note_id is not None:
@@ -1202,88 +1255,75 @@ class GeometricSynth:
             
             # Vérifier s'il y a des segments de notes multiples
             segments = self.extract_note_segments(shape)
-            
+
             if segments:
-                print(f"Shape with {len(segments)} segments detected")
+                print(f"Multi-note shape with {len(segments)} extrema")
                 
-                # Pré-calculer les temps de départ de tous les segments SANS quantization
-                segment_times = []
-                for segment in segments:
-                    seg_points = segment['points']
-                    x_coords = [p[0] for p in seg_points]
-                    seg_x_start = min(x_coords)
-                    seg_start_time = (seg_x_start - min_x) / pixels_per_second
-                    segment_times.append(seg_start_time)  # Pas de quantization
-                
-                # Quantizer seulement le premier segment pour la polyphonie
-                if len(segment_times) > 0:
-                    time_tolerance = 0.05
-                    segment_times[0] = round(segment_times[0] / time_tolerance) * time_tolerance
-                
-                # Create events with correct durations
                 for seg_idx, segment in enumerate(segments):
-                    seg_points = segment['points']
+                    seg_x = segment['x_pos']
+                    seg_time = (seg_x - min_x) / pixels_per_second
                     
-                    # Position X of segment
-                    x_coords = [p[0] for p in seg_points]
-                    seg_x_start = min(x_coords)
-                    seg_x_end = max(x_coords)
-                    seg_horizontal_length = seg_x_end - seg_x_start
-                    
-                    # Time of this segment
-                    seg_quantized_time = segment_times[seg_idx]
-                    
-                    # Duration = difference with next segment's time
+                    # Calculate when NEXT note starts (this is when current note should stop)
                     if seg_idx < len(segments) - 1:
-                        seg_duration = segment_times[seg_idx + 1] - seg_quantized_time
+                        next_seg_x = segments[seg_idx + 1]['x_pos']
+                        next_seg_time = (next_seg_x - min_x) / pixels_per_second
+                        
+                        # Get point indices for calculating visual trace length
+                        start_idx = segment['start_idx']
+                        end_idx = segments[seg_idx + 1]['start_idx']
+                        
+                        # Calculate actual trace length for display/debug
+                        trace_length = 0
+                        for i in range(start_idx, end_idx):
+                            dx = shape['points'][i+1][0] - shape['points'][i][0]
+                            dy = shape['points'][i+1][1] - shape['points'][i][1]
+                            trace_length += math.sqrt(dx*dx + dy*dy)
+                        
+                        # Duration = time until next note starts (minus small gap)
+                        seg_duration = max(0.05, next_seg_time - seg_time - 0.02)
                     else:
-                        # Last segment: use horizontal length
-                        seg_duration = seg_horizontal_length / pixels_per_second
+                        # Last note: calculate duration based on trace length to actual end
+                        start_idx = segment['start_idx']
+                        end_idx = segment.get('end_idx', len(shape['points']) - 1)
+                        
+                        trace_length = 0
+                        for i in range(start_idx, min(end_idx, len(shape['points']) - 1)):
+                            dx = shape['points'][i+1][0] - shape['points'][i][0]
+                            dy = shape['points'][i+1][1] - shape['points'][i][1]
+                            trace_length += math.sqrt(dx*dx + dy*dy)
+                        
+                        # Duration based on trace length
+                        seg_duration = max(0.2, min(2.5, trace_length / 80))
+                        
+                        print(f"  Last note trace_length={trace_length:.0f}px -> duration={seg_duration:.2f}s")
                     
-                    seg_duration = max(0.1, seg_duration)
+                    # Apply minimum duration filter ONLY for middle notes
+                    is_first = segment['is_first']
+                    is_last = segment['is_last']
+                    min_duration_threshold = 0.15
                     
-                    # LIMIT DURATION: note shouldn't be longer than its time slot
-                    max_note_duration = seg_duration * 0.95  # 95% to avoid overlap
+                    # Skip middle notes that are too short
+                    if not is_first and not is_last and seg_duration < min_duration_threshold:
+                        print(f"  Skipping middle note (too short: {seg_duration:.2f}s)")
+                        continue
                     
-                    print(f"  Segment {seg_idx}: x={seg_x_start:.0f}-{seg_x_end:.0f}, duration={seg_duration:.2f}s, time={seg_quantized_time:.2f}s")
-                    
-                    # MIDI note based on average Y of segment
-                    y_coords = [p[1] for p in seg_points]
-                    avg_y = sum(y_coords) / len(y_coords)
-                    seg_shape = {
-                        'type': shape['type'],
-                        'center': (sum(x_coords) / len(x_coords), avg_y),
-                        'width': shape['width'],
-                        'height': shape['height']
-                    }
-                    seg_midi = self.analyzer.shape_to_midi(seg_shape)
+                    # Quantize only first note for polyphony
+                    if is_first:
+                        seg_time = round(seg_time / 0.05) * 0.05
                     
                     event = {
-                        'time': seg_quantized_time,
+                        'time': seg_time,
                         'shape': shape,
-                        'duration': max_note_duration,  # USE LIMITED DURATION
+                        'duration': seg_duration,
                         'original_index': st['original_index'],
                         'sub_index': seg_idx,
-                        'midi_override': seg_midi
+                        'midi_override': segment['midi_approx']
                     }
                     self.playback_events.append(event)
-
-            else:
-                # Simple trace: single event
-                # Calculate actual horizontal time span
-                horizontal_duration = st['horizontal_length'] / pixels_per_second
-                note_duration = min(st['duration'], horizontal_duration * 0.95)  # Limit to 95% of space
-                
-                event = {
-                    'time': quantized_time,
-                    'shape': shape,
-                    'duration': note_duration,  # USE LIMITED DURATION
-                    'original_index': st['original_index'],
-                    'sub_index': 0,
-                    'midi_override': None
-                }
-                self.playback_events.append(event)
-
+                    
+                    note_name = self.midi_to_note_name(segment['midi_approx'])
+                    print(f"  Note {seg_idx}: {note_name} at {seg_time:.2f}s, dur={seg_duration:.2f}s (trace={trace_length:.0f}px)")
+                    
         # Trier par temps, puis par index original
         self.playback_events.sort(key=lambda e: (e['time'], e['original_index']))
         
