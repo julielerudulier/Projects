@@ -499,6 +499,7 @@ class GeometricSynth:
         self.playback_start_time = None
         self.shape_play_times = []  # List of timestamps for each shape
         self.playback_events = [] 
+        self.loop_enabled = False 
 
         # Undo/Redo stacks
         self.shapes_history = []  # Stack for undo
@@ -762,6 +763,11 @@ class GeometricSynth:
                     self.eraser_mode = not self.eraser_mode
                     status = "ON" if self.eraser_mode else "OFF"
                     print(f"Eraser mode: {status}")
+
+                elif event.key == pygame.K_l: 
+                    self.loop_enabled = not self.loop_enabled
+                    status = "ON" if self.loop_enabled else "OFF"
+                    print(f"Loop mode: {status}")
                                
                 # Instrument selection (1-9)
                 idx = event.key - pygame.K_1
@@ -1142,15 +1148,21 @@ class GeometricSynth:
             if self.playback_index >= len(self.playback_events):
                 # Wait for all active notes to finish before ending
                 if len(self.audio.active_notes) == 0:
-                    # Add extra time for visual metronome (2 seconds)
+                    # Add extra time for visual metronome
                     if not hasattr(self, 'playback_end_time'):
                         self.playback_end_time = time.time()
                     
                     if time.time() - self.playback_end_time >= 0.2:
-                        print("Playback finished")
-                        self.is_playing = False
-                        self.playback_index = 0
-                        delattr(self, 'playback_end_time')  # Clean up
+                        if self.loop_enabled:  # Loop
+                            print("Looping playback...")
+                            self.playback_index = 0
+                            self.playback_start_time = time.time()
+                            delattr(self, 'playback_end_time')
+                        else:  # Stop
+                            print("Playback finished")
+                            self.is_playing = False
+                            self.playback_index = 0
+                            delattr(self, 'playback_end_time')
 
         # Safety: If live note expired naturally, reset tracking
         if self.active_live_note_id is not None:
@@ -1517,17 +1529,23 @@ class GeometricSynth:
         pan_text = f"Pan: {'ON' if self.pan_enabled else 'OFF'}"
         pan_color = self.DEEP_TEAL if self.pan_enabled else self.TERRA_COTTA
         pan_surface = small_font.render(pan_text, True, pan_color)
-        self.screen.blit(pan_surface, (10, y_offset + 22)) 
+        self.screen.blit(pan_surface, (10, y_offset + 20)) 
+
+        # Loop
+        loop_text = f"Loop: {'ON' if self.loop_enabled else 'OFF'}"
+        loop_color = self.DEEP_TEAL if self.loop_enabled else self.TERRA_COTTA
+        loop_surface = small_font.render(loop_text, True, loop_color)
+        self.screen.blit(loop_surface, (10, y_offset + 40))
         
         # Velocity
         vel_text = f"Base Velocity: {self.base_velocity}"
         vel_surface = small_font.render(vel_text, True, self.TEXT_DARK)
-        self.screen.blit(vel_surface, (10, y_offset + 44))
+        self.screen.blit(vel_surface, (10, y_offset + 60))
 
         # Active notes
         active_count = len(self.audio.active_notes)
         active_surface = small_font.render(f"Playing: {active_count} notes", True, self.SLATE_BLUE)
-        self.screen.blit(active_surface, (10, y_offset + 66))
+        self.screen.blit(active_surface, (10, y_offset + 80))
         
         # Playback status
         if self.is_playing:
@@ -1540,7 +1558,7 @@ class GeometricSynth:
                 status_color = self.SAGE_GREEN
             
             status_surface = small_font.render(status_text, True, status_color)
-            self.screen.blit(status_surface, (10, y_offset + 88))
+            self.screen.blit(status_surface, (10, y_offset + 100))
         
        # ===== TOP RIGHT: Live note info =====
         if self.active_live_note_id is not None and self.last_live_pitch is not None:
@@ -1637,6 +1655,7 @@ class GeometricSynth:
                 ("PLAYBACK:", self.SLATE_BLUE),
                 ("SPACE: Play/Pause", self.TEXT_DARK),
                 ("BACKSPACE: Stop", self.TEXT_DARK),
+                ("L: Loop on/off", self.TEXT_DARK),
                 ("Q/ESC: Quit", self.TEXT_DARK),
             ]
         ]
