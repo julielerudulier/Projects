@@ -279,7 +279,7 @@ class GeometricSynth:
         pygame.init()
         
         # Display
-        self.width, self.height = 1200, 700
+        self.width, self.height = 1200, 760
         self.screen = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption("Geometric Synthesizer V2")
         
@@ -308,6 +308,10 @@ class GeometricSynth:
         self.current_points = []
         self.shapes = []
         
+        # Eraser
+        self.eraser_mode = False
+        self.eraser_radius = 30  # Rayon de la gomme en pixels
+
         # UI state
         self.clock = pygame.time.Clock()
         self.running = True
@@ -494,6 +498,7 @@ class GeometricSynth:
         self.playback_index = 0
         self.playback_start_time = None
         self.shape_play_times = []  # List of timestamps for each shape
+        self.playback_events = [] 
 
         # Undo/Redo stacks
         self.shapes_history = []  # Stack for undo
@@ -591,6 +596,28 @@ class GeometricSynth:
             })
         
         return segments if len(segments) > 1 else None
+    
+    def erase_at_position(self, pos):
+        """Erase shapes near the mouse position"""
+        shapes_to_remove = []
+        
+        for shape in self.shapes:
+            # Vérifier si un point du tracé est dans le rayon de la gomme
+            if 'points' in shape:
+                for point in shape['points']:
+                    dx = point[0] - pos[0]
+                    dy = point[1] - pos[1]
+                    dist = math.sqrt(dx*dx + dy*dy)
+                    
+                    if dist < self.eraser_radius:
+                        if shape not in shapes_to_remove:
+                            shapes_to_remove.append(shape)
+                        break  # Pas besoin de vérifier les autres points
+        
+        # Retirer les formes touchées
+        for shape in shapes_to_remove:
+            self.shapes.remove(shape)
+            print(f"Erased {shape['type']}")
 
     def run(self):
         """Main loop"""
@@ -682,6 +709,11 @@ class GeometricSynth:
                     self.pan_enabled = not self.pan_enabled
                     status = "ON" if self.pan_enabled else "OFF"
                     print(f"Pan (stereo): {status}")
+
+                elif event.key == pygame.K_e:
+                    self.eraser_mode = not self.eraser_mode
+                    status = "ON" if self.eraser_mode else "OFF"
+                    print(f"Eraser mode: {status}")
                                
                 # Instrument selection (1-9)
                 idx = event.key - pygame.K_1
@@ -729,26 +761,36 @@ class GeometricSynth:
                     
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    self.drawing = True
-                    self.current_points = [event.pos]
+                    if self.eraser_mode:
+                        self.erase_at_position(event.pos)
+                    else:
+                        self.drawing = True
+                        self.current_points = [event.pos]
                     
                     # Start continuous live note
                     if self.live_drawing_mode:
                         self.start_live_sound(event.pos)
                     
             elif event.type == pygame.MOUSEBUTTONUP:
-                if event.button == 1 and self.drawing:
-                    # Stop continuous live note
-                    if self.live_drawing_mode and self.active_live_note_id is not None:
-                        self.stop_live_sound()
-                    
-                    self.drawing = False
-                    if len(self.current_points) > 1:
-                        self.finalize_shape()
-                    self.current_points = []
+                if event.button == 1:
+                    if self.eraser_mode:
+                        # Ne rien faire en mode gomme
+                        pass
+                    elif self.drawing:
+                        # Stop continuous live note
+                        if self.live_drawing_mode and self.active_live_note_id is not None:
+                            self.stop_live_sound()
+                        
+                        self.drawing = False
+                        if len(self.current_points) > 1:
+                            self.finalize_shape()
+                        self.current_points = []
                     
             elif event.type == pygame.MOUSEMOTION:
-                if self.drawing:
+                if self.eraser_mode and pygame.mouse.get_pressed()[0]:
+                    # Effacer pendant le drag
+                    self.erase_at_position(event.pos)
+                elif self.drawing:
                     self.current_points.append(event.pos)
                     
                     # Continuous live sound during drawing
@@ -1135,6 +1177,17 @@ class GeometricSynth:
             pixels_per_second = 100
             target_duration = 2.0
 
+        # Sauvegarder pour le playhead
+        self.playback_min_x = min_x
+        self.playback_pixels_per_second = pixels_per_second
+
+        # Calculate total_duration :
+        if self.playback_events:
+            max_event_time = max(e['time'] + e['duration'] for e in self.playback_events)
+            total_duration = max_event_time
+        else:
+            total_duration = 2.0
+
         print(f"Reading speed: {pixels_per_second:.0f}px/s (total: {target_duration:.1f}s)")
         
         self.playback_events = []
@@ -1167,32 +1220,34 @@ class GeometricSynth:
                     time_tolerance = 0.05
                     segment_times[0] = round(segment_times[0] / time_tolerance) * time_tolerance
                 
-                # Créer les événements
+                # Create events with correct durations
                 for seg_idx, segment in enumerate(segments):
-                    # ... reste du code identique, mais utiliser segment_times[seg_idx] directement
                     seg_points = segment['points']
                     
-                    # Position X du segment
+                    # Position X of segment
                     x_coords = [p[0] for p in seg_points]
                     seg_x_start = min(x_coords)
                     seg_x_end = max(x_coords)
                     seg_horizontal_length = seg_x_end - seg_x_start
                     
-                    # Temps de ce segment
+                    # Time of this segment
                     seg_quantized_time = segment_times[seg_idx]
                     
-                    # Durée = différence avec le temps du segment suivant
+                    # Duration = difference with next segment's time
                     if seg_idx < len(segments) - 1:
                         seg_duration = segment_times[seg_idx + 1] - seg_quantized_time
                     else:
-                        # Dernier segment : utiliser sa longueur horizontale
+                        # Last segment: use horizontal length
                         seg_duration = seg_horizontal_length / pixels_per_second
                     
                     seg_duration = max(0.1, seg_duration)
                     
+                    # LIMIT DURATION: note shouldn't be longer than its time slot
+                    max_note_duration = seg_duration * 0.95  # 95% to avoid overlap
+                    
                     print(f"  Segment {seg_idx}: x={seg_x_start:.0f}-{seg_x_end:.0f}, duration={seg_duration:.2f}s, time={seg_quantized_time:.2f}s")
                     
-                    # MIDI note basée sur Y moyen du segment
+                    # MIDI note based on average Y of segment
                     y_coords = [p[1] for p in seg_points]
                     avg_y = sum(y_coords) / len(y_coords)
                     seg_shape = {
@@ -1206,7 +1261,7 @@ class GeometricSynth:
                     event = {
                         'time': seg_quantized_time,
                         'shape': shape,
-                        'duration': seg_duration,
+                        'duration': max_note_duration,  # USE LIMITED DURATION
                         'original_index': st['original_index'],
                         'sub_index': seg_idx,
                         'midi_override': seg_midi
@@ -1214,11 +1269,15 @@ class GeometricSynth:
                     self.playback_events.append(event)
 
             else:
-                # Tracé simple : un seul événement
+                # Simple trace: single event
+                # Calculate actual horizontal time span
+                horizontal_duration = st['horizontal_length'] / pixels_per_second
+                note_duration = min(st['duration'], horizontal_duration * 0.95)  # Limit to 95% of space
+                
                 event = {
                     'time': quantized_time,
                     'shape': shape,
-                    'duration': st['duration'],  
+                    'duration': note_duration,  # USE LIMITED DURATION
                     'original_index': st['original_index'],
                     'sub_index': 0,
                     'midi_override': None
@@ -1302,14 +1361,58 @@ class GeometricSynth:
         # Draw all shapes
         for shape in self.shapes:
             self.draw_shape(shape)
+
+        # Draw playback line (playhead)
+        if self.is_playing and not self.is_paused and hasattr(self, 'playback_events'):
+            elapsed = time.time() - self.playback_start_time
+            
+            # Calculate current X position based on elapsed time
+            if len(self.playback_events) > 0:
+                # Get min_x and pixels_per_second from last playback
+                if hasattr(self, 'playback_min_x') and hasattr(self, 'playback_pixels_per_second'):
+                    current_x = self.playback_min_x + (elapsed * self.playback_pixels_per_second)
+                    
+                    # Only draw if within screen bounds
+                    if 0 <= current_x <= self.width:
+                        # Semi-transparent vertical line
+                        line_surface = pygame.Surface((3, self.height))
+                        line_surface.set_alpha(180)
+                        line_surface.fill((255, 171, 149))
+                        self.screen.blit(line_surface, (int(current_x) - 1, 0))
+                        
+                        # Triangle at top for better visibility
+                        triangle_points = [
+                            (int(current_x), 10),
+                            (int(current_x) - 8, 0),
+                            (int(current_x) + 8, 0)
+                        ]
+                        pygame.draw.polygon(self.screen, (255, 171, 149), triangle_points)
             
         # Draw current shape being drawn
         if self.drawing and len(self.current_points) > 1:
             pygame.draw.lines(self.screen, self.TEXT_DARK, False, self.current_points, 3)
             
+        # Draw current shape being drawn
+        if self.drawing and len(self.current_points) > 1:
+            pygame.draw.lines(self.screen, self.TEXT_DARK, False, self.current_points, 3)
+ 
+        # Draw eraser cursor
+        if self.eraser_mode:
+            mouse_pos = pygame.mouse.get_pos()
+            # Cercle extérieur (rayon de la gomme)
+            pygame.draw.circle(self.screen, self.TERRA_COTTA, mouse_pos, self.eraser_radius, 2)
+            # Petite croix au centre
+            cross_size = 5
+            pygame.draw.line(self.screen, self.TERRA_COTTA, 
+                            (mouse_pos[0] - cross_size, mouse_pos[1]), 
+                            (mouse_pos[0] + cross_size, mouse_pos[1]), 2)
+            pygame.draw.line(self.screen, self.TERRA_COTTA, 
+                            (mouse_pos[0], mouse_pos[1] - cross_size), 
+                            (mouse_pos[0], mouse_pos[1] + cross_size), 2)
+
         # Draw UI
         self.draw_ui()
-        
+
         pygame.display.flip()
         
     def draw_shape(self, shape):
@@ -1370,6 +1473,7 @@ class GeometricSynth:
         scale_surface = small_font.render(scale_text, True, scale_color)
         self.screen.blit(scale_surface, (10, y_offset))
 
+        # Pan
         pan_text = f"Pan: {'ON' if self.pan_enabled else 'OFF'}"
         pan_color = self.DEEP_TEAL if self.pan_enabled else self.TERRA_COTTA
         pan_surface = small_font.render(pan_text, True, pan_color)
@@ -1379,7 +1483,7 @@ class GeometricSynth:
         vel_text = f"Base Velocity: {self.base_velocity}"
         vel_surface = small_font.render(vel_text, True, self.TEXT_DARK)
         self.screen.blit(vel_surface, (10, y_offset + 44))
-        
+
         # Active notes
         active_count = len(self.audio.active_notes)
         active_surface = small_font.render(f"Playing: {active_count} notes", True, self.SLATE_BLUE)
@@ -1412,7 +1516,7 @@ class GeometricSynth:
         
         # ===== BOTTOM LEFT: Instruments panel =====
         panel_width = 470
-        panel_height = 100
+        panel_height = 120
         panel_x = 10
         panel_y = self.height - panel_height - 10
         
@@ -1486,6 +1590,7 @@ class GeometricSynth:
                 ("EDITING:", self.SLATE_BLUE),
                 ("Z: Undo", self.TEXT_DARK),
                 ("Y: Redo", self.TEXT_DARK),
+                ("E: Eraser", self.TEXT_DARK),
                 ("C: Clear canvas", self.TEXT_DARK),
             ],
             [
