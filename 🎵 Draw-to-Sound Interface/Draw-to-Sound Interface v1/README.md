@@ -516,7 +516,4 @@ SOFTWARE.
 
 ---
 
-
----
-
 **Made with sound and vision in Python**
