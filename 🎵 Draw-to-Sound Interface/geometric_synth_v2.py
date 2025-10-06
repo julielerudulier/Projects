@@ -17,9 +17,10 @@ try:
     MIDI_EXPORT_AVAILABLE = True
 except ImportError:
     MIDI_EXPORT_AVAILABLE = False
-    print("⚠️ MIDI export disabled. Install with: pip install midiutil")
+    print("MIDI export disabled. Install with: pip install midiutil")
 
 os.environ['SDL_AUDIODRIVER'] = 'coreaudio'
+os.environ["AUDIODEV"] = "BlackHole 2ch"  
 
 # ======================
 # CONFIGURATION
@@ -242,34 +243,31 @@ class ShapeAnalyzer:
         else:
             raw = min(1.0, area / 8000.0)  
         
-        # courbe de réponse pour lisser les variations
-        gamma = 0.6   # <1 = accentue les petites différences, >1 = compresse
+        # Response curve to smooth variations
+        gamma = 0.6   # <1 = accentuates small differences, >1 = compresses
         raw = raw ** gamma
         
-        # interpolation relative à la base
+        # Interpolation relative to base
         velocity = int(self.velocity_base + (127 - self.velocity_base) * raw)
         
         return max(30, min(127, velocity))
         
     def shape_to_duration(self, shape):
         """Convert shape to note duration in seconds (for note length)"""
-        # Utiliser la longueur du tracé si disponible
+        # Use trace length if available
         if 'length' in shape:
             length = shape['length']
-            duration = max(0.1, min(3.0, length / 100))  # Ajuster diviseur selon préférence
-            print(f"DEBUG: Trace length={length:.0f}px -> duration={duration:.2f}s")
+            duration = max(0.1, min(3.0, length / 100))  # Adjust divisor according to preference
             return duration
         
-        # Fallback sur aire pour vieilles formes
+        # Fallback on area for old shapes
         if shape['type'] == 'line':
             length = shape.get('length', 100)
             duration = max(0.1, min(3.0, length / 100))
-            print(f"DEBUG: Line length={length:.0f}px -> duration={duration:.2f}s")
             return duration
         else:
             area = shape['width'] * shape['height']
             duration = max(0.2, min(3.0, area / 6000))
-            print(f"DEBUG: Shape area={area:.0f} -> duration={duration:.2f}s")
             return duration
             
     def shape_to_pan(self, shape):
@@ -286,6 +284,8 @@ class GeometricSynth:
     
     def __init__(self):
         pygame.init()
+        pygame.mixer.pre_init(44100, -16, 2, 512)
+        pygame.mixer.music.set_volume(0.7)
         
         # Display
         self.width, self.height = 1200, 760
@@ -319,7 +319,7 @@ class GeometricSynth:
         
         # Eraser
         self.eraser_mode = False
-        self.eraser_radius = 30  # Rayon de la gomme en pixels
+        self.eraser_radius = 30  # Eraser radius in pixels
 
         # UI state
         self.clock = pygame.time.Clock()
@@ -332,7 +332,7 @@ class GeometricSynth:
         self.last_live_pitch = None
         self.base_velocity = 50 # Base velocity (30-127), adjustable with +/-
         self.current_velocity = self.base_velocity
-        self.pan_enabled = True  # Pan activé par défaut
+        self.pan_enabled = True  # Pan enabled by default
         
         # Instrument presets by musical style
         self.instrument_presets = {
@@ -527,35 +527,44 @@ class GeometricSynth:
         print("\nDRAWING:")
         print("  • Click & drag to draw shapes")
         print("  • Piano is the active instrument by default")
+        print("  • E: Toggle eraser mode")
         print("\nINSTRUMENT SELECTION:")
         print("  • Keys 1-9: Select instrument from current preset")
-        print("  • Key Right arrow: Select next preset of instruments (Classical→Jazz→Rock→Electro→Latin→Country→Soul→World→Drum Kit→Percussions→Latin Drums→Miscellaneous)")
-        print("  • Key Left arrow: Select previous preset of instruments")
+        print("  • Right arrow: Next preset (Classical→Jazz→Rock→Electro→Latin→Country→Soul→World→Drum Kit→Percussions→Latin Drums→Miscellaneous)")
+        print("  • Left arrow: Previous preset")
         print(f"  • Current preset: {self.current_preset.upper()}")
         print("\nMUSICAL CONTROLS:")
         print("  • M: Toggle scale lock (quantize to scale)")
         print("  • K: Cycle key signature (C, G, D, F, Am, Em)")
-        print("  • +/-: Increase/decrease velocity")
-        print("  • P: Activate/deactivate pan")
+        print("  • Up/Down: Increase/decrease base velocity")
+        print("  • P: Toggle pan (stereo positioning)")
+        print("\nTEMPO & QUANTIZATION:")
+        print("  • T: Change tempo (60→80→100→120→140→160→180 BPM)")
+        print("  • Q: Toggle quantization on/off")
+        print("  • D: Change division (1/2→1/4→1/8→1/16→1/32 notes)")
+        print("  • G: Toggle grid display")
         print("\nEDITING:")
-        print("  • Z: Undo last drawing")
-        print("  • Y: Redo last drawing")
+        print("  • Z: Undo last action")
+        print("  • Y: Redo last action")
         print("  • C: Clear all shapes from canvas")
         print("\nSPATIAL MAPPING:")
         print("  • Y position → Pitch (top=high notes, bottom=low notes)")
         print("  • X position → Stereo pan (left=L speaker, right=R speaker)")
-        print("  • Shape size → Duration & velocity (quicker=louder)")
+        print("  • Drawing speed → Velocity (faster=louder)")
+        print("  • Trace length → Note duration")
         print("\nPLAYBACK:")
-        print("  • SPACCE → Play/Pause")
-        print("  • BACKSPACE → Stop")
+        print("  • SPACE: Play/Pause")
+        print("  • BACKSPACE: Stop")
+        print("  • L: Toggle loop mode")
+        print("  • X: Export to MIDI file")
         print("\nOTHER CONTROLS:")
         print("  • H: Toggle help display on screen")
-        print("  • ESC or Q: Quit application")
+        print("  • ESC: Quit application")
         print("="*60 + "\n")
         
     def play_instrument_preview(self, program, is_drum):
         """Play a preview note when changing instrument"""
-        # Note par défaut : C4 (MIDI 60) pour mélodique, ou la note drum définie
+        # Default note: C4 (MIDI 60) for melodic, or the defined drum note
         midi_note = program if is_drum else 60
         velocity = 50
         duration = 0.2
@@ -584,17 +593,16 @@ class GeometricSynth:
         if not self.show_grid:
             return
         
-        # Calculate grid spacing
         beat_duration = self.get_beat_duration()
         
-        # Utiliser les paramètres du playback si disponibles, sinon paramètres actuels
+        # Use playback parameters if available, otherwise current parameters
         if hasattr(self, 'playback_pixels_per_second'):
             pixels_per_second = self.playback_pixels_per_second
         else:
             pixels_per_beat = 80
             pixels_per_second = pixels_per_beat / beat_duration
 
-        # Calculer l'espacement de la grille
+        # Calculate grid spacing        
         pixels_per_beat = pixels_per_second * beat_duration
         grid_spacing = pixels_per_beat / (self.quantize_division / 4)
         
@@ -669,8 +677,6 @@ class GeometricSynth:
         if len(extrema_indices) < 2:
             return None
 
-        print(f"DEBUG: Found {len(extrema_indices)} extrema indices")
-
         # Create segments
         segments = []
         for i, idx in enumerate(extrema_indices):
@@ -692,10 +698,8 @@ class GeometricSynth:
                 'is_first': (i == 0),
                 'is_last': (i == len(extrema_indices) - 1)
             })
-            
-            print(f"  Segment {i}: {self.midi_to_note_name(midi)} at x={point[0]:.0f}, y={point[1]:.0f}")
 
-        # FUSION: if last two have same MIDI, merge them into one segment
+        # If last two have same MIDI, merge them into one segment
         if len(segments) >= 2:
             if segments[-2]['midi_approx'] == segments[-1]['midi_approx']:
                 print(f"  → Merging last two segments (same MIDI)")
@@ -735,7 +739,7 @@ class GeometricSynth:
         shapes_to_remove = []
         
         for shape in self.shapes:
-            # Vérifier si un point du tracé est dans le rayon de la gomme
+            # Check if a point of the trace is within the eraser radius
             if 'points' in shape:
                 for point in shape['points']:
                     dx = point[0] - pos[0]
@@ -745,9 +749,42 @@ class GeometricSynth:
                     if dist < self.eraser_radius:
                         if shape not in shapes_to_remove:
                             shapes_to_remove.append(shape)
-                        break  # Pas besoin de vérifier les autres points
+                            
+                            # Use mouse position to determine the note
+                            temp_shape = {
+                                'type': shape['type'],
+                                'center': pos, 
+                                'width': shape['width'],
+                                'height': shape['height'],
+                                'length': 80
+                            }
+                            
+                            duration_preview = 0.3
+                            
+                            midi_note = self.analyzer.shape_to_midi(temp_shape)
+                            velocity = shape.get('velocity', 60)
+                            pan = pos[0] / self.width if self.pan_enabled else 0.5
+                            
+                            saved_instrument = shape.get('instrument')
+                            saved_is_drum = shape.get('is_drum', False)
+                            
+                            self.audio.play_note(
+                                midi_note,
+                                velocity,
+                                duration_preview,
+                                pan,
+                                instrument=saved_instrument if saved_instrument else self.audio.current_instrument,
+                                is_drum=saved_is_drum
+                            )
+                        break
         
-        # Retirer les formes touchées
+        # Save to history before erasing
+        if shapes_to_remove:
+            self.shapes_history.append(self.shapes.copy())
+            # Clear redo stack on new action
+            self.shapes_redo = []
+        
+        # Remove affected shapes
         for shape in shapes_to_remove:
             self.shapes.remove(shape)
             print(f"Erased {shape['type']}")
@@ -807,7 +844,7 @@ class GeometricSynth:
                     next_idx = (current_idx + 1) % len(preset_order)
                     self.current_preset = preset_order[next_idx]
                     self.quick_instruments = self.instrument_presets[self.current_preset]
-                    # reset selected index and set instrument/drum properly
+                    # Reset selected index and set instrument/drum properly
                     self.selected_instrument_index = 0
                     name0, program0, color0, *rest0 = self.quick_instruments[0]
                     is_drum0 = rest0[0] if rest0 else False
@@ -826,7 +863,7 @@ class GeometricSynth:
                     prev_idx = (current_idx - 1) % len(preset_order)
                     self.current_preset = preset_order[prev_idx]
                     self.quick_instruments = self.instrument_presets[self.current_preset]
-                    # reset selected index and set instrument/drum properly
+                    # Reset selected index and set instrument/drum properly
                     self.selected_instrument_index = 0
                     name0, program0, color0, *rest0 = self.quick_instruments[0]
                     is_drum0 = rest0[0] if rest0 else False
@@ -866,7 +903,7 @@ class GeometricSynth:
                     self.bpm = tempos[next_idx]
                     print(f"Tempo: {self.bpm} BPM")
 
-                    # Recalculer le playback si en cours
+                    # Recalculate playback if in progress
                     if self.is_playing and self.quantize_enabled:
                         print("⚠️ Stop and restart playback to apply new tempo")
 
@@ -898,20 +935,20 @@ class GeometricSynth:
 
                     # If already selected, do nothing (no toggle)
                     if getattr(self, "selected_instrument_index", None) == idx:
-                        # already selected — ignore
+                        # Already selected — ignore
                         pass
                     else:
-                        # apply selection
+                        # Apply selection
                         self.selected_instrument_index = idx
                         self.current_instrument_is_drum = is_drum
 
                         if is_drum:
-                            # program here is actually the drum MIDI key (e.g. 35)
+                            # Program here is actually the drum MIDI key (e.g. 35)
                             self.audio.set_instrument(None, drum_note=program)
                         else:
-                            # melodic program id
+                            # Melodic program id
                             self.audio.set_instrument(program)
-                            # clear any drum note
+                            # Clear any drum note
                             self.audio.current_drum_note = None
 
                     print(f"Instrument: {name} {'(Drum Kit)' if is_drum else ''}")
@@ -947,7 +984,7 @@ class GeometricSynth:
             elif event.type == pygame.MOUSEBUTTONUP:
                 if event.button == 1:
                     if self.eraser_mode:
-                        # Ne rien faire en mode gomme
+                        # Do nothing in eraser mode
                         pass
                     elif self.drawing:
                         # Stop continuous live note
@@ -961,7 +998,7 @@ class GeometricSynth:
                     
             elif event.type == pygame.MOUSEMOTION:
                 if self.eraser_mode and pygame.mouse.get_pressed()[0]:
-                    # Effacer pendant le drag
+                    # Erase during drag
                     self.erase_at_position(event.pos)
                 elif self.drawing:
                     self.current_points.append(event.pos)
@@ -972,23 +1009,23 @@ class GeometricSynth:
                     
     def finalize_shape(self):
         """Analyze and save the drawn shape (no sound)"""
-        # Déterminer le type de forme
+        # Determine shape type
         x_coords = [p[0] for p in self.current_points]
         y_coords = [p[1] for p in self.current_points]
         width = max(x_coords) - min(x_coords)
         height = max(y_coords) - min(y_coords)
         
-        # Calculer la longueur totale du tracé
+        # Calculate total trace length
         total_length = 0
         for i in range(len(self.current_points) - 1):
             dx = self.current_points[i+1][0] - self.current_points[i][0]
             dy = self.current_points[i+1][1] - self.current_points[i][1]
             total_length += math.sqrt(dx*dx + dy*dy)
         
-        # Détecter si c'est une ligne (tracé allongé)
+        # Detect if it's a line (elongated trace)
         if width > 0 and height > 0:
             aspect_ratio = max(width, height) / min(width, height)
-            # Si ratio > 3 ou tracé assez long, c'est une ligne
+            # If ratio > 3 or trace long enough, it's a line
             if aspect_ratio > 2.5 or total_length > 100:
                 shape_type = 'line'
             else:
@@ -1008,7 +1045,7 @@ class GeometricSynth:
             'points': self.current_points.copy(),
             'timestamp': time.time(),
             'color': self.get_shape_color(shape_type),
-            'length': total_length  # IMPORTANT : stocker la longueur réelle du tracé
+            'length': total_length  # Store the actual trace length
         }
 
         last_point = self.current_points[-1]
@@ -1024,6 +1061,13 @@ class GeometricSynth:
 
         shape['velocity'] = getattr(self, 'current_velocity', self.base_velocity)
         shape['pan_at_creation'] = self.pan_enabled 
+
+        # Save history before adding new shape
+        self.shapes_history.append(self.shapes.copy())
+
+        # Clear redo stack when new shape is added
+        if self.shapes_redo:
+            self.shapes_redo = []
 
         self.shapes.append(shape)
 
@@ -1049,9 +1093,9 @@ class GeometricSynth:
         velocity = self.base_velocity
         duration = 10.0 # Will be stopped manually
         pan = pos[0] / self.width
-        # store the initial pan for this drawing gesture
+        # Store the initial pan for this drawing gesture
         self.initial_live_pan = pan
-        # also store last_pan so UI is consistent immediately
+        # Also store last_pan so UI is consistent immediately
         self.last_live_pan = pan
 
         instrument_param = (self.audio.current_drum_note if getattr(self, "current_instrument_is_drum", False)
@@ -1114,7 +1158,7 @@ class GeometricSynth:
             duration = 10.0
 
             pan = pos[0] / self.width if self.pan_enabled else 0.5
-            # update current pan for UI
+            # Update current pan for UI
             self.last_live_pan = pan
             
             instrument_param = (self.audio.current_drum_note if getattr(self, "current_instrument_is_drum", False)
@@ -1152,7 +1196,7 @@ class GeometricSynth:
     def play_shape(self, shape, midi_override=None, duration_override=None):
         """Convert shape to sound and play it — returns note_id (or None)."""
         
-        # Utiliser midi_override si fourni
+        # Use midi_override si given
         if midi_override is not None:
             midi_note = midi_override
             note_pos_shape = shape
@@ -1177,17 +1221,14 @@ class GeometricSynth:
         else:
             velocity = self.analyzer.shape_to_velocity(shape)
 
-        # UTILISER duration_override si fourni, sinon calculer
+        # Use duration_override if given, otherwise calculate
         if duration_override is not None:
             duration = duration_override
         else:
             duration = self.analyzer.shape_to_duration(shape)
-        
-        # ... reste du code inchangé
 
-        # Pan based on last point X position
-        # Utiliser l'état du pan au moment de la création du shape
-        pan_was_enabled = shape.get('pan_at_creation', True)  # True par défaut pour anciennes formes
+        # Pan based on X position at shape creation 
+        pan_was_enabled = shape.get('pan_at_creation', True)  # True by default for past shapes
 
         if pan_was_enabled and self.pan_enabled:
             if 'note_position' in shape:
@@ -1195,7 +1236,7 @@ class GeometricSynth:
             else:
                 pan = self.analyzer.shape_to_pan(shape)
         else:
-            pan = 0.5  # Centre si pan désactivé
+            pan = 0.5  
 
         note_name = self.midi_to_note_name(midi_note)
         pan_str = "L" if pan < 0.4 else "R" if pan > 0.6 else "C"
@@ -1250,9 +1291,9 @@ class GeometricSynth:
             # Play events whose time has come
             while self.playback_index < len(self.playback_events):
                 event = self.playback_events[self.playback_index]
-                # Tolérance de 50ms pour ne pas rater les événements au tout début
+                # 50ms tolerance to not miss events at the beginning
                 if elapsed >= event['time'] - 0.05:
-                    # Jouer la note
+                    # Play the note
                     note_id = self.play_shape(
                         event['shape'], 
                         midi_override=event.get('midi_override'),
@@ -1269,7 +1310,7 @@ class GeometricSynth:
                 
                 # Wait until end of measure (quantized) or all notes finished (free)
                 if self.quantize_enabled:
-                    # En mode quantifié : attendre la fin de la mesure
+                    # In quantized mode: wait for end of measure
                     if elapsed >= self.playback_total_duration:
                         if self.loop_enabled:
                             print("Looping at measure boundary...")
@@ -1280,7 +1321,7 @@ class GeometricSynth:
                             self.is_playing = False
                             self.playback_index = 0
                 else:
-                    # En mode libre : attendre que toutes les notes finissent
+                    # In free mode: wait for all notes to finish
                     if len(self.audio.active_notes) == 0:
                         if not hasattr(self, 'playback_end_time'):
                             self.playback_end_time = time.time()
@@ -1346,10 +1387,9 @@ class GeometricSynth:
             max_x = max(st['x_end'] for st in shape_timings)
             total_width = max_x - min_x
             
-            # En mode quantifié, utiliser l'origine absolue (0) comme référence
-            # pour que les positions ne changent pas quand on ajoute des traits
+            # In quantized mode, use absolute origin (0) as reference so positions don't change when adding traces
             if self.quantize_enabled:
-                min_x = 0  # Origine fixe
+                min_x = 0  # Fixed origin
                 print(f"Quantized playback from origin (shapes span {total_width:.0f}px)")
             else:
                 print(f"Playback space: {min_x:.0f}px to {max_x:.0f}px ({total_width:.0f}px)")
@@ -1360,15 +1400,15 @@ class GeometricSynth:
 
         # Calculate reading speed based on quantization or adaptive mode
         if self.quantize_enabled:
-            # En mode quantifié : utiliser le BPM pour déterminer la vitesse
+            # In quantized mode: use BPM to determine speed
             beat_duration = self.get_beat_duration()
-            # Fixer arbitrairement : 1 beat = 80 pixels
+            # Arbitrarily fix: 1 beat = 80 pixels
             pixels_per_beat = 80
             pixels_per_second = pixels_per_beat / beat_duration
             target_duration = (total_width / pixels_per_second) - 0.5
             print(f"Quantized mode: {pixels_per_beat}px/beat @ {self.bpm}BPM")
         else:
-            # Mode libre : vitesse adaptative basée sur la largeur du canvas
+            # Free mode: adaptive speed based on canvas width
             if total_width < 400:
                 pixels_per_second = 100
                 target_duration = total_width / pixels_per_second
@@ -1402,7 +1442,7 @@ class GeometricSynth:
                     seg_x = segment['x_pos']
                     seg_time = (seg_x - min_x) / pixels_per_second
 
-                    # Calculate when NEXT note starts (when current note should stop)
+                    # Calculate when next note starts (when current note should stop)
                     if seg_idx < len(segments) - 1:
                         next_seg_x = segments[seg_idx + 1]['x_pos']
                         next_seg_time = (next_seg_x - min_x) / pixels_per_second
@@ -1539,8 +1579,7 @@ class GeometricSynth:
             else:
                 break  # Stop when reaching future events
 
-        # Réinitialiser le timestamp APRÈS avoir joué les notes à t=0
-        # pour éviter un décalage sur le premier beat
+        # Reset timestamp after playing notes at t=0 to avoid offset on first beat
         self.playback_start_time = time.time()
 
     def pause_playback(self):
@@ -1571,27 +1610,30 @@ class GeometricSynth:
         print("Stopped")
 
     def undo(self):
-        """Undo last shape (Ctrl+Z)"""
-        if not self.shapes:
+        """Undo last action (drawing or erasing)"""
+        if not self.shapes_history:
             print("Nothing to undo")
             return
         
-        # Pop last shape and move to redo stack
-        last_shape = self.shapes.pop()
-        self.shapes_redo.append(last_shape)
-        print(f"✓ Undo: {last_shape['type']}")
+        # Save current state to redo
+        self.shapes_redo.append(self.shapes.copy())
+        
+        # Restore previous state
+        self.shapes = self.shapes_history.pop()
+        print(f"✓ Undo (now {len(self.shapes)} shapes)")
 
     def redo(self):
-        """Redo last undone shape (Ctrl+Y)"""
+        """Redo last undone action"""
         if not self.shapes_redo:
             print("Nothing to redo")
             return
         
-        # Pop from redo stack and add back to shapes
-        shape = self.shapes_redo.pop()
-        self.shapes.append(shape)
+        # Save current state to history
+        self.shapes_history.append(self.shapes.copy())
         
-        print(f"✓ Redo: {shape['type']}")
+        # Restore next state
+        self.shapes = self.shapes_redo.pop()
+        print(f"✓ Redo (now {len(self.shapes)} shapes)")
 
     def export_to_midi(self, filename="output.mid"):
         """Export shapes as MIDI file"""
@@ -1721,9 +1763,9 @@ class GeometricSynth:
         # Draw eraser cursor
         if self.eraser_mode:
             mouse_pos = pygame.mouse.get_pos()
-            # Cercle extérieur (rayon de la gomme)
+            # Outer circle (eraser radius)
             pygame.draw.circle(self.screen, self.TERRA_COTTA, mouse_pos, self.eraser_radius, 2)
-            # Petite croix au centre
+            # Small cross at center
             cross_size = 5
             pygame.draw.line(self.screen, self.TERRA_COTTA, 
                             (mouse_pos[0] - cross_size, mouse_pos[1]), 
@@ -1772,7 +1814,7 @@ class GeometricSynth:
         info_bg.fill(self.UI_BG)
         self.screen.blit(info_bg, (info_panel_x, info_panel_y))
         
-        # Title (ajuster position relative au panel)
+        # Title
         preset_text = f"[{self.current_preset.upper()}]"
         preset_surface = small_font.render(preset_text, True, self.TERRA_COTTA)
         self.screen.blit(preset_surface, (10, 53))
@@ -1964,7 +2006,7 @@ class GeometricSynth:
             ]
         ]
         
-        # Calculer la largeur de chaque colonne selon son contenu
+        # Calculate width of each column according to its content
         col_widths = []
         total_content_width = 0
         for col_lines in columns:
@@ -1975,11 +2017,11 @@ class GeometricSynth:
             col_widths.append(max_width)
             total_content_width += max_width
 
-        # Calculer l'espace disponible et distribuer proportionnellement
+        # Calculate available space and distribute proportionally
         available_width = help_width - 30  # Marges
         spacing_unit = (available_width - total_content_width) / len(columns)
 
-        # Dessiner les colonnes avec espacement proportionnel
+        # Draw columns with proportional spacing
         x_offset = help_x + 15
         for col_idx, col_lines in enumerate(columns):
             y_off = start_y
@@ -1994,7 +2036,7 @@ class GeometricSynth:
             # Save current state before clearing for potential undo
             self.shapes_history.append(self.shapes.copy())
         
-        # Arrêter la lecture en cours
+        # Stop playback
         if self.is_playing:
             self.stop_playback()
         
@@ -2018,7 +2060,7 @@ if __name__ == "__main__":
         synth = GeometricSynth()
         synth.run()
     except KeyboardInterrupt:
-        print("\n⚠️ Interrupted by user")
+        print("\nInterrupted by user")
     except Exception as e:
         print(f"\nError: {e}")
         import traceback
