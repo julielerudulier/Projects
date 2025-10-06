@@ -587,19 +587,16 @@ class GeometricSynth:
         # Calculate grid spacing
         beat_duration = self.get_beat_duration()
         
-        # Utiliser les paramètres figés du playback si disponibles
-        if hasattr(self, 'playback_quantize_step'):
-            quantize_step = self.playback_quantize_step
-        else:
-            quantize_step = beat_duration / (self.quantize_division / 4)
-        
+        # Utiliser les paramètres du playback si disponibles, sinon paramètres actuels
         if hasattr(self, 'playback_pixels_per_second'):
             pixels_per_second = self.playback_pixels_per_second
         else:
-            pixels_per_second = 100
-        
-        # MAINTENANT on peut calculer grid_spacing avec pixels_per_second défini
-        grid_spacing = quantize_step * pixels_per_second
+            pixels_per_beat = 80
+            pixels_per_second = pixels_per_beat / beat_duration
+
+        # Calculer l'espacement de la grille
+        pixels_per_beat = pixels_per_second * beat_duration
+        grid_spacing = pixels_per_beat / (self.quantize_division / 4)
         
         # Draw vertical lines across the screen
         x = 0
@@ -717,6 +714,22 @@ class GeometricSynth:
 
         return filtered if len(filtered) >= 2 else None
     
+    def set_playback_origin(self):
+        """Define a fixed origin for quantized playback (leftmost point)"""
+        if not self.shapes:
+            self.playback_origin_x = 0
+            return
+        
+        # Find leftmost point across all shapes
+        min_x = float('inf')
+        for shape in self.shapes:
+            if 'points' in shape and len(shape['points']) > 0:
+                x_coords = [p[0] for p in shape['points']]
+                shape_min = min(x_coords)
+                min_x = min(min_x, shape_min)
+        
+        self.playback_origin_x = min_x if min_x != float('inf') else 0
+
     def erase_at_position(self, pos):
         """Erase shapes near the mouse position"""
         shapes_to_remove = []
@@ -852,6 +865,10 @@ class GeometricSynth:
                     next_idx = (current_idx + 1) % len(tempos)
                     self.bpm = tempos[next_idx]
                     print(f"Tempo: {self.bpm} BPM")
+
+                    # Recalculer le playback si en cours
+                    if self.is_playing and self.quantize_enabled:
+                        print("⚠️ Stop and restart playback to apply new tempo")
 
                 elif event.key == pygame.K_d:  # Change division
                     # Cycle through divisions
@@ -1329,14 +1346,29 @@ class GeometricSynth:
             max_x = max(st['x_end'] for st in shape_timings)
             total_width = max_x - min_x
             
-            print(f"Playback space: {min_x:.0f}px to {max_x:.0f}px ({total_width:.0f}px)")
+            # En mode quantifié, utiliser l'origine absolue (0) comme référence
+            # pour que les positions ne changent pas quand on ajoute des traits
+            if self.quantize_enabled:
+                min_x = 0  # Origine fixe
+                print(f"Quantized playback from origin (shapes span {total_width:.0f}px)")
+            else:
+                print(f"Playback space: {min_x:.0f}px to {max_x:.0f}px ({total_width:.0f}px)")
         else:
             min_x = 0
             max_x = 0
             total_width = 1
 
-        # Calculate reading speed (adaptive based on canvas width)
-        if total_width > 0:
+        # Calculate reading speed based on quantization or adaptive mode
+        if self.quantize_enabled:
+            # En mode quantifié : utiliser le BPM pour déterminer la vitesse
+            beat_duration = self.get_beat_duration()
+            # Fixer arbitrairement : 1 beat = 80 pixels
+            pixels_per_beat = 80
+            pixels_per_second = pixels_per_beat / beat_duration
+            target_duration = (total_width / pixels_per_second) - 0.5
+            print(f"Quantized mode: {pixels_per_beat}px/beat @ {self.bpm}BPM")
+        else:
+            # Mode libre : vitesse adaptative basée sur la largeur du canvas
             if total_width < 400:
                 pixels_per_second = 100
                 target_duration = total_width / pixels_per_second
@@ -1346,9 +1378,6 @@ class GeometricSynth:
                 normalized = min(1.0, (total_width - 400) / 2600)
                 target_duration = min_duration + normalized * (max_duration - min_duration)
                 pixels_per_second = total_width / target_duration
-        else:
-            pixels_per_second = 100
-            target_duration = 2.0
 
         print(f"Reading speed: {pixels_per_second:.0f}px/s (total: {target_duration:.1f}s)")
 
@@ -1479,8 +1508,8 @@ class GeometricSynth:
                 last_event_end = max(e['time'] + e['duration'] for e in self.playback_events)
                 
                 # Round up to next complete beat
-                import math
-                beats_needed = math.ceil(last_event_end / beat_duration)
+                tolerance = beat_duration * 0.1  # 10% du temps d’un beat
+                beats_needed = math.ceil((last_event_end - tolerance) / beat_duration)
                 self.playback_total_duration = beats_needed * beat_duration
                 
                 print(f"Quantized playback: {beats_needed} beat(s) ({self.playback_total_duration:.2f}s)")
@@ -1509,6 +1538,10 @@ class GeometricSynth:
                 self.playback_index += 1
             else:
                 break  # Stop when reaching future events
+
+        # Réinitialiser le timestamp APRÈS avoir joué les notes à t=0
+        # pour éviter un décalage sur le premier beat
+        self.playback_start_time = time.time()
 
     def pause_playback(self):
         """Pause/resume playback"""
