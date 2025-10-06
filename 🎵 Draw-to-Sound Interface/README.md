@@ -126,8 +126,8 @@ python geometric_synth_v2.py
 | **M** | Toggle scale lock (quantize to key) |
 | **K** | Cycle key signature (C, G, D, F, Am, Em) |
 | **P** | Toggle stereo pan on/off |
-| **+** or **=** | Increase base velocity (+10) |
-| **-** or **_** | Decrease base velocity (-10) |
+| **Up** or **=** | Increase base velocity (+10) |
+| **Down** or **_** | Decrease base velocity (-10) |
 
 ### Tempo & Quantization
 | Key | Action |
@@ -149,7 +149,7 @@ python geometric_synth_v2.py
 |-----|--------|
 | **X** | Export to MIDI file |
 | **H** | Toggle help overlay |
-| **Q** or **ESC** | Quit application |
+| **ESC** | Quit application |
 
 ## 🎼 Musical Concepts
 
