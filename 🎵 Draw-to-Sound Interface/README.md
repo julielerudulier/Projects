@@ -187,12 +187,14 @@ Enable with M key to snap all notes to the current key signature:
 ## 📦 Project Structure
 
 ```
-geometric-synthesizer-v2/
-├── geometric_synth_v2.py      # Main application
-├── FluidR3_GM.sf2              # SoundFont file (not included)
-├── requirements.txt            # Python dependencies
-├── README.md                   # This file
-├── LICENSE                     # MIT License
+Draw-to-Sound Interface/
+├── geometric_synth_v2.py         # Main application
+├── FluidR3_GM.sf2                # SoundFont file (not included)
+├── requirements.txt              # Python dependencies
+├── README.md                     # This file
+├── Draw-to-Sound Interface v1/   # First version of the app (prototype)
+│   ├── geometric_synth_v2.py
+│   └── README.md
 ├── docs/
 │   ├── technical_documentation.md
 │   └── article.md
