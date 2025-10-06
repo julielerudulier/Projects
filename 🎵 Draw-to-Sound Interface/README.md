@@ -97,7 +97,7 @@ python geometric_synth_v2.py
 1. **Select an instrument**: Press keys `1-9` to choose from the current preset
 2. **Change presets**: Use `Left/Right` arrow keys to cycle through instrument categories
 3. **Draw to play**: Click and drag vertically - higher positions = higher notes
-4. **Adjust settings**: Press `M` for scale lock, `K` to change key, `+/-` for velocity
+4. **Adjust settings**: Press `M` for scale lock, `K` to change key, `Up/Down` for velocity
 5. **Enable quantization**: Press `Q` to snap to tempo, `T` to change BPM, `G` to show grid
 6. **Playback**: Press `SPACE` to play back your composition from left to right
 7. **Export**: Press `X` to save as MIDI file
