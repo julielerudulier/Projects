@@ -509,6 +509,7 @@ class GeometricSynth:
         self.shape_play_times = []  # List of timestamps for each shape
         self.playback_events = [] 
         self.loop_enabled = False 
+        self.playback_total_duration = 0
 
         # Tempo and quantization 
         self.bpm = 80  # Beats per minute
@@ -585,14 +586,19 @@ class GeometricSynth:
         
         # Calculate grid spacing
         beat_duration = self.get_beat_duration()
-        quantize_step = beat_duration / (self.quantize_division / 4)
         
-        # Convert time to pixels
+        # Utiliser les paramètres figés du playback si disponibles
+        if hasattr(self, 'playback_quantize_step'):
+            quantize_step = self.playback_quantize_step
+        else:
+            quantize_step = beat_duration / (self.quantize_division / 4)
+        
         if hasattr(self, 'playback_pixels_per_second'):
             pixels_per_second = self.playback_pixels_per_second
         else:
             pixels_per_second = 100
         
+        # MAINTENANT on peut calculer grid_spacing avec pixels_per_second défini
         grid_spacing = quantize_step * pixels_per_second
         
         # Draw vertical lines across the screen
@@ -601,7 +607,7 @@ class GeometricSynth:
         
         # Calculate beat interval (avoid division by zero)
         if self.quantize_division <= 4:
-            beat_interval = 1  # Every line is a beat for half-notes and quarter-notes
+            beat_interval = 1
         else:
             beat_interval = self.quantize_division // 4
         
@@ -1240,25 +1246,39 @@ class GeometricSynth:
                 else:
                     break
             
-            # End of playback - ONLY if all notes finished AND all events played
+            # End of playback - check against total_duration instead of events
             if self.playback_index >= len(self.playback_events):
-                # Wait for all active notes to finish before ending
-                if len(self.audio.active_notes) == 0:
-                    # Add extra time for visual metronome
-                    if not hasattr(self, 'playback_end_time'):
-                        self.playback_end_time = time.time()
-                    
-                    if time.time() - self.playback_end_time >= 0:
-                        if self.loop_enabled:  # Loop
-                            print("Looping playback...")
+                elapsed = time.time() - self.playback_start_time
+                
+                # Wait until end of measure (quantized) or all notes finished (free)
+                if self.quantize_enabled:
+                    # En mode quantifié : attendre la fin de la mesure
+                    if elapsed >= self.playback_total_duration:
+                        if self.loop_enabled:
+                            print("Looping at measure boundary...")
                             self.playback_index = 0
                             self.playback_start_time = time.time()
-                            delattr(self, 'playback_end_time')
-                        else:  # Stop
-                            print("Playback finished")
+                        else:
+                            print("Playback finished (quantized)")
                             self.is_playing = False
                             self.playback_index = 0
-                            delattr(self, 'playback_end_time')
+                else:
+                    # En mode libre : attendre que toutes les notes finissent
+                    if len(self.audio.active_notes) == 0:
+                        if not hasattr(self, 'playback_end_time'):
+                            self.playback_end_time = time.time()
+                        
+                        if time.time() - self.playback_end_time >= 0:
+                            if self.loop_enabled:
+                                print("Looping playback...")
+                                self.playback_index = 0
+                                self.playback_start_time = time.time()
+                                delattr(self, 'playback_end_time')
+                            else:
+                                print("Playback finished")
+                                self.is_playing = False
+                                self.playback_index = 0
+                                delattr(self, 'playback_end_time')
 
         # Safety: If live note expired naturally, reset tracking
         if self.active_live_note_id is not None:
@@ -1277,7 +1297,7 @@ class GeometricSynth:
         self.playback_index = 0
         self.playback_start_time = time.time()
         
-        # Calculer les positions de début et fin pour chaque shape
+        # Calculate start and end positions for each shape
         shape_timings = []
         for idx, shape in enumerate(self.shapes):
             if 'points' in shape and len(shape['points']) > 0:
@@ -1291,20 +1311,19 @@ class GeometricSynth:
                 x_end = x_center
                 horizontal_length = 0
             
-            # UTILISER la longueur horizontale pour calculer la durée au lieu de shape_to_duration
-            # Car on veut que la durée corresponde à l'espace horizontal occupé
-            playback_duration = max(0.2, horizontal_length / 70)  # Ajustable
+            # Use horizontal length to calculate duration
+            playback_duration = max(0.2, horizontal_length / 70)
             
             shape_timings.append({
                 'shape': shape,
                 'x_start': x_start,
                 'x_end': x_end,
                 'horizontal_length': horizontal_length,
-                'duration': playback_duration,  # Utiliser la durée basée sur l'horizontal
+                'duration': playback_duration,
                 'original_index': idx
             })
         
-        # Trouver l'étendue totale de l'espace dessiné
+        # Find total extent of drawn space
         if shape_timings:
             min_x = min(st['x_start'] for st in shape_timings)
             max_x = max(st['x_end'] for st in shape_timings)
@@ -1316,61 +1335,35 @@ class GeometricSynth:
             max_x = 0
             total_width = 1
 
-        # Calculer la vitesse de lecture
-        if self.quantize_enabled:
-            # Mode quantifié : la vitesse dépend du tempo
-            beat_duration = self.get_beat_duration()
-            # On veut qu'un beat occupe environ 200px (ajustable)
-            pixels_per_beat = 200
-            pixels_per_second = pixels_per_beat / beat_duration
-            target_duration = total_width / pixels_per_second
-            print(f"Quantized playback at {self.bpm} BPM ({pixels_per_second:.0f}px/s)")
-        else:
-            # Mode libre : vitesse adaptée à l'espace total (votre code actuel)
-            if total_width > 0:
-                # Pour les petits espaces (< 400px), utiliser une vitesse fixe rapide
-                if total_width < 400:
-                    pixels_per_second = 100  # Vitesse standard pour petits espaces
-                    target_duration = total_width / pixels_per_second
-                else:
-                    # Pour les grands espaces, adapter la durée
-                    # 400px = 4s, 1200px = 10s, 3000px = 20s
-                    min_duration = 4.0
-                    max_duration = 28.0
-                    
-                    # Interpolation progressive
-                    normalized = min(1.0, (total_width - 400) / 2600)  # 0 à 400px → 0, 3000px → 1
-                    target_duration = min_duration + normalized * (max_duration - min_duration)
-                    
-                    pixels_per_second = total_width / target_duration
-            else:
+        # Calculate reading speed (adaptive based on canvas width)
+        if total_width > 0:
+            if total_width < 400:
                 pixels_per_second = 100
-                target_duration = 2.0
-
-        # Sauvegarder pour le playhead
-        self.playback_min_x = min_x
-        self.playback_pixels_per_second = pixels_per_second
-
-        # Calculate total_duration :
-        if self.playback_events:
-            max_event_time = max(e['time'] + e['duration'] for e in self.playback_events)
-            total_duration = max_event_time
+                target_duration = total_width / pixels_per_second
+            else:
+                min_duration = 4.0
+                max_duration = 28.0
+                normalized = min(1.0, (total_width - 400) / 2600)
+                target_duration = min_duration + normalized * (max_duration - min_duration)
+                pixels_per_second = total_width / target_duration
         else:
-            total_duration = 2.0
+            pixels_per_second = 100
+            target_duration = 2.0
 
         print(f"Reading speed: {pixels_per_second:.0f}px/s (total: {target_duration:.1f}s)")
+
+        # Save for playhead and grid
+        self.playback_min_x = min_x
+        self.playback_pixels_per_second = pixels_per_second
+        self.playback_quantize_step = self.get_quantize_step()
         
+        # Create playback events
         self.playback_events = []
 
-        # Créer les évènements
         for st in shape_timings:
             shape = st['shape']
-            start_time = (st['x_start'] - min_x) / pixels_per_second
             
-            time_tolerance = 0.05
-            quantized_time = round(start_time / time_tolerance) * time_tolerance
-            
-            # Vérifier s'il y a des segments de notes multiples
+            # Check for multi-note segments
             segments = self.extract_note_segments(shape)
 
             if segments:
@@ -1380,7 +1373,7 @@ class GeometricSynth:
                     seg_x = segment['x_pos']
                     seg_time = (seg_x - min_x) / pixels_per_second
 
-                    # Calculate when NEXT note starts (this is when current note should stop)
+                    # Calculate when NEXT note starts (when current note should stop)
                     if seg_idx < len(segments) - 1:
                         next_seg_x = segments[seg_idx + 1]['x_pos']
                         next_seg_time = (next_seg_x - min_x) / pixels_per_second
@@ -1429,7 +1422,7 @@ class GeometricSynth:
                         quantize_step = self.get_quantize_step()
                         seg_time = round(seg_time / quantize_step) * quantize_step
                         print(f"  Quantized to {seg_time:.3f}s (grid: {quantize_step:.3f}s)")
-                    elif is_first:  # Quantize only first note for polyphony (code existant)
+                    elif is_first:  # Quantize only first note for polyphony
                         seg_time = round(seg_time / 0.05) * 0.05
                 
                     event = {
@@ -1451,20 +1444,20 @@ class GeometricSynth:
                 note_duration = min(st['duration'], horizontal_duration * 0.95)
                 
                 # Calculate start time
-                start_time_simple = (st['x_start'] - min_x) / pixels_per_second
+                start_time = (st['x_start'] - min_x) / pixels_per_second
                 
                 # Apply quantization if enabled
                 if self.quantize_enabled:
                     quantize_step = self.get_quantize_step()
-                    quantized_time_simple = round(start_time_simple / quantize_step) * quantize_step
-                    print(f"Simple trace quantized: {start_time_simple:.3f}s -> {quantized_time_simple:.3f}s")
+                    start_time = round(start_time / quantize_step) * quantize_step
+                    print(f"Simple trace quantized: {start_time:.3f}s")
                 else:
                     # Use regular time tolerance for polyphony
                     time_tolerance = 0.05
-                    quantized_time_simple = round(start_time_simple / time_tolerance) * time_tolerance
+                    start_time = round(start_time / time_tolerance) * time_tolerance
                 
                 event = {
-                    'time': quantized_time_simple,
+                    'time': start_time,
                     'shape': shape,
                     'duration': note_duration,
                     'original_index': st['original_index'],
@@ -1473,13 +1466,37 @@ class GeometricSynth:
                 }
                 self.playback_events.append(event)
 
-        # Trier par temps, puis par index original
+        # Sort by time, then by original index
         self.playback_events.sort(key=lambda e: (e['time'], e['original_index']))
         
-        total_duration = (total_width / pixels_per_second) if total_width > 0 else 2.0
-        print(f"Playing {len(self.shapes)} shapes over {total_duration:.1f}s")
+        # Calculate total duration for loop
+        if self.quantize_enabled:
+            # Round up to next complete BEAT (trait épais on grid)
+            beat_duration = self.get_beat_duration()
+            
+            # Find last event
+            if self.playback_events:
+                last_event_end = max(e['time'] + e['duration'] for e in self.playback_events)
+                
+                # Round up to next complete beat
+                import math
+                beats_needed = math.ceil(last_event_end / beat_duration)
+                self.playback_total_duration = beats_needed * beat_duration
+                
+                print(f"Quantized playback: {beats_needed} beat(s) ({self.playback_total_duration:.2f}s)")
+            else:
+                self.playback_total_duration = beat_duration
+        else:
+            # Free mode: duration based on last event
+            if self.playback_events:
+                self.playback_total_duration = max(e['time'] + e['duration'] 
+                                                for e in self.playback_events)
+            else:
+                self.playback_total_duration = 2.0
+        
+        print(f"Playing {len(self.shapes)} shapes over {self.playback_total_duration:.1f}s")
 
-        # Forcer l'exécution immédiate des événements à time=0
+        # Force immediate playback of t=0 events
         for event in self.playback_events:
             if event['time'] <= 0.0:
                 print(f"Playing immediate event: midi={event.get('midi_override', 'auto')}")
@@ -1491,7 +1508,7 @@ class GeometricSynth:
                 event['note_id'] = note_id
                 self.playback_index += 1
             else:
-                break  # Arrêter dès qu'on atteint un événement futur
+                break  # Stop when reaching future events
 
     def pause_playback(self):
         """Pause/resume playback"""
