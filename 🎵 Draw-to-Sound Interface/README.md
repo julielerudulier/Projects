@@ -193,7 +193,7 @@ Draw-to-Sound Interface/
 ├── requirements.txt              # Python dependencies
 ├── README.md                     # This file
 ├── Draw-to-Sound Interface v1/   # First version of the app (prototype)
-│   ├── geometric_synth_v2.py
+│   ├── geometric_synth_v1.py
 │   └── README.md
 ├── docs/
 │   ├── technical_documentation.md
