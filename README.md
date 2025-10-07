@@ -5,7 +5,7 @@ Here is the list of projects presented in this folder:
 
   - **1 - [🎵 Draw-to-Sound Interface:](https://github.com/julielerudulier/Projects/tree/main/%F0%9F%8E%B5%20Draw-to-Sound%20Interface)** In this project, I designed an interactive musical interface that transforms hand-drawn gestures into expressive music using real instrument sounds. Draw vertically to control pitch, horizontally to control stereo positioning, and create melodic phrases through continuous gestural motion.
     - Language: Python
-    - Librairies: Numpy, PyGame, FluidSynth, MIDIUtil <br /> <br />
+    - Librairies: PyGame, FluidSynth, Numpy, MIDIUtil <br /> <br />
     
   - **2 - [🎵 Music Battles, a web application:](https://github.com/julielerudulier/Projects/tree/main/Music%20Battles)** This was my final project for Harvard's CS50 program. It’s a web application where music artists compete with each other on a musical level.
     - Languages: Python, JavaScript, HTML, CSS
