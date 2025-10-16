@@ -1,0 +1,21 @@
+[package]
+name = "voice_to_instrument_app"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# Audio I/O
+cpal = "0.15"
+
+# Maths and random
+rand = "0.8"
+
+# Pitch detection
+aubio-rs = { version = "0.2", features = ["bindgen"] }
+
+# FluidSynth for real instruments
+fluidsynth = { git = "https://github.com/scholtzan/rust-fluidsynth" }
+
+[profile.release]
+opt-level = 3
+lto = true

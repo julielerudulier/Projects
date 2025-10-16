@@ -1,0 +1,19 @@
+# Ignore local environment and build files
+venv/
+__pycache__/
+.DS_Store
+
+# Ignore JUCE framework
+🎵  Voice-to-Instrument Application/JUCE/
+
+# Ignore audio assets and temporary files
+*.wav
+*.aiff
+*.mp3
+*.mid
+
+# Ignore notebooks checkpoints
+.ipynb_checkpoints/
+
+# Soundfonts and large binaries
+*.sf2
